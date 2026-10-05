@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "applicable": true,
+  "auditable": true,
+  "verdict": "PASS",
+  "backend": "python-matplotlib",
+  "summary": {
+    "fail": 0,
+    "warn": 0,
+    "comparisons": 2,
+    "exemptions": 1
+  },
+  "tolerances": {
+    "alignment_pt": 1.5,
+    "gutter_pt": 1.5
+  },
+  "layout": {
+    "schema_version": 1,
+    "backend": "python-matplotlib",
+    "figure": {
+      "width_pt": 515.52,
+      "height_pt": 144.0
+    },
+    "panels": [
+      {
+        "id": "a",
+        "bbox_pt": [
+          28.8,
+          30.96,
+          112.32,
+          114.47999999999999
+        ]
+      },
+      {
+        "id": "b",
+        "bbox_pt": [
+          130.32000000000002,
+          30.96,
+          213.84,
+          114.47999999999999
+        ]
+      },
+      {
+        "id": "c",
+        "bbox_pt": [
+          231.83999999999997,
+          30.96,
+          315.3599999999999,
+          114.47999999999999
+        ]
+      },
+      {
+        "id": "d",
+        "bbox_pt": [
+          388.7999999999999,
+          30.96,
+          511.9199999999999,
+          114.47999999999999
+        ]
+      }
+    ],
+    "row_groups": [
+      {
+        "id": "row-1",
+        "panels": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    ],
+    "column_groups": [],
+    "boundary_groups": [],
+    "exemptions": [
+      {
+        "panels": [
+          "d"
+        ],
+        "checks": [
+          "panel-width",
+          "horizontal-gutter"
+        ],
+        "reason": "panel d is a dot plot whose long category labels sit in a wider gutter; the three confusion matrices are square by design"
+      }
+    ]
+  },
+  "findings": []
+}

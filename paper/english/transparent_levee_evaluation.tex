@@ -1,340 +1,393 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 \IEEEoverridecommandlockouts
-\usepackage{amsmath,amssymb,booktabs,multirow,graphicx}
-\usepackage{array}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,multirow,array}
+\usepackage{graphicx}
 \usepackage{url}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
 \usepackage[hidelinks]{hyperref}
 \usepackage{balance}
 \graphicspath{{figures/}}
-\newcommand{\Aclass}{A}
-\newcommand{\Bclass}{B}
-\newcommand{\Cclass}{C}
-\newcommand{\RF}{random forest}
-\newcommand{\OOF}{out-of-fold}
+
+% Palette shared with the data figures (experiments/analysis/paper_revision/make_paper_figures.py)
+\definecolor{rulec}{HTML}{5A5A5A}
+\definecolor{rfc}{HTML}{2F6DA8}
+\definecolor{floorc}{HTML}{0E7C6B}
+\definecolor{dangerc}{HTML}{C0392B}
+\definecolor{evc}{HTML}{8A6D3B}
+\colorlet{neutc}{black!60}
+
 \newcommand{\CtoA}{C$\rightarrow$A}
-
-\title{Safety-Aware Multi-Objective Transparent Evaluation of Levee Seepage Stability: Integrating Geological, Seepage-Field, and UAV Inspection Evidence}
-
-\author{\IEEEauthorblockN{Author names and affiliations to be completed}
-\IEEEauthorblockA{Internal working manuscript, September 2026\\
-Corresponding author: to be completed}}
+\newcommand{\CtoB}{C$\rightarrow$B}
+\newcommand{\BtoA}{B$\rightarrow$A}
+\newcommand{\AtoB}{A$\rightarrow$B}
+\newcommand{\Lsafe}{L_{\mathrm{safe}}}
+\newtheorem{proposition}{Proposition}
 
 \begin{document}
+
+\title{Safety-Constrained Transparent Evaluation of Levee Seepage Stability: An Ordinal Physical Floor for Learned Grades and Evidence-State Control of Inspection Data}
+
+\author{\IEEEauthorblockN{Author names and affiliations to be completed}%
+\thanks{Internal working manuscript, revision of October 2026. Corresponding author: to be completed.}%
+\thanks{Code, data, per-record predictions and figure sources are in the accompanying de-identified repository (Section~\ref{sec:availability}).}}
+
 \maketitle
 
 \begin{abstract}
-Levee seepage evaluation is often compressed into a final grade, while the geological evidence, simulated seepage field, inspection observations, and decision rules that produced the grade remain difficult to audit. We formulate transparent evaluation as a traceable decision chain from evidence state and provenance to indicator transformation, failure-mode response, risk grade, and triggering rule. The framework separates three roles that are frequently conflated in digital-twin workflows: the physics-based rule chain defines admissible safety constraints, a random-forest layer estimates nonlinear interactions among heterogeneous indicators, and a Pareto decision layer exposes the trade-off among classification quality, critical-class recall, dangerous underestimation, and review burden. The method was evaluated on 875 controlled synthetic scenarios spanning seven target modes and five severity levels, five additional generator realizations from the same controlled family, and a field infrared inspection set used to test the status handling of candidate piping detections. The reproduced rule baseline achieved 0.8446 accuracy, 0.8272 macro-F1, and 0.8371 recall for the critical class C. A grouped five-fold out-of-fold random forest increased class-C recall to 0.8543 but did not replace the rule baseline in aggregate performance. A representative threshold policy reached 0.8731 accuracy and 0.8584 macro-F1 in the original controlled batch, but introduced 50 direct C-to-A underestimates. A physical-veto hybrid that imposed the rule-model grade as a lower risk bound reached 0.9257 accuracy, 0.9119 macro-F1, and 1.0000 class-C recall with zero C-class underestimates in that batch; across five additional realizations, it achieved 0.9214$\pm$0.0042 accuracy and 0.9983$\pm$0.0038 class-C recall. A lower-review operating point routed 1.53$\pm$0.67\% of records to review while retaining 0.9903$\pm$0.0080 C recall in the same controlled family. Nine field detections were rejected during manual review, showing why algorithmic candidates cannot be injected into an evaluation as confirmed piping. The results establish a reproducible decision protocol and quantify its safety--performance trade-offs; they do not constitute independent field generalization evidence.
+Levee seepage assessments increasingly combine physics-based rule chains, data-driven classifiers and unmanned aerial vehicle (UAV) inspection, yet a single safety grade hides whether a learned model has lowered a physically identified risk or whether an inspection candidate was ever confirmed. We formulate transparent evaluation as an auditable decision chain with explicit evidence states, and we test one safety constraint: an ordinal physical floor that lets a random forest (RF) raise, but never lower, the grade of the rule chain. On a controlled benchmark of 875 synthetic scenarios evaluated with grouped five-fold out-of-fold prediction, a threshold-tuned RF raised accuracy from 0.845 to 0.873, but every critical-class record it missed became a direct C$\rightarrow$A downgrade. None of 10{,}000 threshold pairs avoided these errors, because the learned features assign the through-structure scenarios one identical vector at every severity. The floor hybrid reached 0.926 accuracy and 0.912 macro-F1, corrected 71 of the rule chain's 136 errors without introducing any, and removed all critical-class underestimates. Across five additional generator seeds it retained $0.921\pm0.004$ accuracy and $0.998\pm0.004$ critical-class recall. The mechanism is algebraic: the hybrid underestimates only where both components underestimate and inherits the union of their overestimates. In the field data, all nine reviewed infrared piping candidates were false positives, which bounds candidate precision below 0.28 (one-sided 95\%); unreviewed detections must therefore not enter a grade as confirmed events. These results hold within one synthetic generator; independent field labels are required before any claim of field accuracy.
 \end{abstract}
 
 \begin{IEEEkeywords}
-levee seepage, transparent evaluation, digital twin, random forest, Pareto optimization, piping detection, evidence traceability
+Levee seepage, piping, transparent evaluation, physics-guided machine learning, random forest, ordinal safety grade, reject option, UAV infrared inspection, evidence provenance.
 \end{IEEEkeywords}
 
 \section{Introduction}
-Levee seepage safety is governed by the interaction of heterogeneous soil layers, hydraulic boundary conditions, transient water levels, local gradients, slope stability, and visible or thermal signs of abnormal discharge. A single safety grade is useful for operation, but it is insufficient for diagnosing why a grade was produced or whether the underlying evidence is current, applicable, and spatially aligned. This limitation becomes more consequential when a levee digital twin combines three-dimensional geology, numerical seepage computation, and airborne inspection: a visually convincing scene can still conceal an ambiguous indicator, a stale observation, or a rule that is not valid for the evaluated location.
+\IEEEPARstart{I}{nternal} erosion and overtopping dominate the historical failure record of embankment structures: in a review of large embankment dams, piping through the embankment, the foundation or their interface accounted for close to half of the failures and overtopping for a similar share~\cite{Foster2000}, and backward erosion piping remains a governing mechanism for levees on sandy foundations~\cite{vanBeek2015}. Operators do not act on these mechanisms directly. They act on a safety grade that compresses soil stratigraphy, hydraulic boundary conditions, local gradients, slope stability and visible or thermal signs of abnormal discharge into one ordinal class.
 
-Existing levee and dam assessment methods provide strong components for individual tasks. Numerical seepage models resolve hydraulic gradients and pore-pressure responses; reliability methods propagate parameter variability; and computer-vision systems detect candidate leakage or piping signatures. However, these components are commonly evaluated with different data models and different notions of truth. The final grade therefore becomes difficult to reproduce when a geological property, a computed field value, and an inspection box are merged without an explicit evidence state. In addition, a data-driven classifier can improve aggregate accuracy while increasing the probability of a safety-critical downgrade from class C to class A. Digital-twin research emphasizes synchronization between a physical asset and its virtual representation, but synchronization alone does not define whether a stale, unregistered, or merely suspected observation is admissible for a safety decision~\cite{Fuller2020}.
+Two developments make that compression harder to audit. First, levee digital twins now combine three-dimensional geology, numerical seepage fields and airborne inspection in one scene~\cite{Fuller2020,Hou}, so a grade can be produced from evidence that is stale, spatially misregistered or merely suspected. Second, data-driven classifiers are increasingly used beside or instead of rule-based indices~\cite{Xu,Chen}. A classifier can improve aggregate accuracy while changing the direction of its errors, and in an ordinal safety grade the direction matters: issuing the lowest-risk grade A to a critical case C is not equivalent to issuing B to a safe case.
 
-We address this gap by treating transparent evaluation as an auditable decision problem rather than as a display function. The evaluation unit is defined by a section, hydraulic scenario, time, and evidence version. Every indicator retains its raw value, unit, source, applicability, availability, spatial and temporal scope, and transformation rule. Physics-based gates remain authoritative for known critical conditions. A machine-learning layer is used as a controlled comparator and as a probability estimator, not as an unrestricted replacement for the physical model. A Pareto policy then exposes the trade-off among aggregate classification quality, critical-class recall, dangerous underestimation, and escalation burden. This formulation leads to three testable questions: whether a nonlinear comparator improves the closed-set classification metrics; whether it changes the direction of errors in safety-critical cases; and whether an explicit physical lower bound or reject state can preserve safety while limiting unnecessary escalation.
+Existing work addresses parts of this problem. Reliability methods update piping probabilities with field performance observations~\cite{Schweckendiek,Roscoe,Baecher2003}; evidence theory combines partial support and ignorance~\cite{Shafer1976,Chen}; theory-guided and interpretable machine learning argue that scientific knowledge should constrain learned models in high-stakes settings~\cite{Karpatne2017,Rudin2019}; and cost-sensitive learning and reject options trade errors against costs or abstention~\cite{Elkan2001,Chow1970,Geifman2017}. What remains unresolved is how a learned grade should be \emph{composed} with a physics-based grade so that the composition cannot produce a false-safe downgrade, what structural property determines whether the composition helps, and how unconfirmed inspection evidence should enter that composition.
 
-The paper makes five contributions. First, it formalizes an evidence-state and provenance model for integrating geological, seepage-field, and UAV inspection information. Second, it defines a reproducible benchmark in which duplicate physical feature vectors are grouped during cross-validation and target labels are derived from the frozen scenario severity rather than from delivered model outputs. Third, it compares a shallow decision tree and a random forest with the reproduced rule baseline and evaluates threshold policies through Pareto dominance and a safety loss. Fourth, it introduces a physics-veto hybrid that prevents the learned policy from lowering an existing physical risk grade. Fifth, it reports the current boundary of field evidence: nine reviewed field detections were false positives, while the remaining images and validation images do not yet provide a complete image-level truth set.
+This paper asks three questions. (Q1) Under leakage-controlled validation, does a nonlinear learned comparator, here a random forest (RF), improve on a physics-based rule chain, and in which direction do its errors move? (Q2) Can a monotone physical lower bound remove false-safe errors while retaining the learned improvements, and when does that guarantee hold? (Q3) How should algorithmic inspection candidates and incomplete engineering evidence be represented so that they cannot silently change a grade? Our contributions are as follows.
+\begin{itemize}
+\item An evidence-state and admissibility model that separates missing, inapplicable, candidate, reviewed and admissible evidence and records the provenance of every value that reaches a grade (Section~\ref{sec:framework}).
+\item A leakage-controlled benchmark protocol with error-direction metrics, and an analysis showing that the false-safe errors of the learned layer arise from a feature-set blind spot that no threshold choice can remove (Sections~\ref{sec:protocol} and \ref{sec:res-learned}).
+\item An ordinal physical floor, a proposition that characterizes its error sets, and its evaluation on the original batch, five additional generator seeds, a floor-scope ablation and a review-budget sweep (Sections~\ref{sec:floor}, \ref{sec:res-floor} and \ref{sec:res-robust}).
+\item A field audit that treats unmanned aerial vehicle (UAV) infrared detections and a delivered engineering case as evidence-state and provenance tests rather than as accuracy tests (Sections~\ref{sec:res-inspection} and \ref{sec:res-case}).
+\end{itemize}
+The controlled benchmark and the additional seeds come from one synthetic generator. The results therefore establish the behaviour and the failure conditions of the decision protocol, not field-wide predictive accuracy.
 
-\section{Related Work and Research Gap}
-\subsection{Geological and numerical representations}
-Implicit geological modeling provides a compact way to interpolate stratigraphic interfaces from boreholes, sections, and structural observations. Reviews of three-dimensional structural models emphasize that the interpolation method, conditioning data, and geological uncertainty are inseparable from the resulting geometry~\cite{Wellmann2018}. Open-source implementations such as GemPy make geological interpolation and visualization accessible and support arbitrary slicing of a three-dimensional model~\cite{GemPy}. For seepage analysis, however, the geological representation must be converted into material zones, hydraulic properties, and a mesh or solver grid. The conversion is a potential source of silent inconsistency: a layer that is visible in the geological scene may not be represented in the numerical domain, and a numerical maximum may be extracted from a region whose material identity is unknown. A transparent workflow must therefore preserve the mapping from geological surface to numerical material, rather than treating the rendered model as evidence of numerical consistency.
+\section{Related Work}
+\label{sec:related}
+\subsection{Physical and numerical evidence for seepage safety}
+Implicit geological modelling interpolates stratigraphic interfaces from boreholes and sections, and the interpolation method and conditioning data are inseparable from the resulting geometry~\cite{Wellmann2018,GemPy}. Transient seepage is commonly described by Richards-type formulations~\cite{Richards,Celia1990} with unsaturated properties such as the van Genuchten relationship~\cite{vanGenuchten1980}, and piping models relate local gradients at the exit to erosion progression~\cite{vanBeek2015}. Reliability and Bayesian updating propagate parameter variability and incorporate proven-strength observations~\cite{Schweckendiek,Roscoe,Baecher2003,Xu}. These methods produce physical responses and probabilities, but they do not specify when a response extracted from a particular material zone, scenario and version is admissible input to an operational grade. That admissibility rule is one of the gaps addressed here.
 
-\subsection{Digital twins and provenance-aware infrastructure models}
-Digital-twin studies commonly describe a loop linking sensing, model updating, simulation, and decision support~\cite{Fuller2020}. For levees, the difficult part is not only maintaining a three-dimensional scene but also maintaining the identity, validity interval, and spatial support of every observation that enters the scene. BIM- and mechanism-based levee studies similarly motivate lifecycle integration, yet they do not by themselves solve the admissibility problem for incomplete or conflicting evidence~\cite{Hou}. We therefore use the digital twin as an information and visualization context, while defining the safety decision through explicit evidence states and versioned transformations.
+\subsection{Digital twins and provenance}
+Digital-twin studies describe a loop linking sensing, model updating, simulation and decision support~\cite{Fuller2020}, and building information modelling has been combined with mechanism algorithms for the full life cycle of levees~\cite{Hou}. Provenance standards such as PROV-DM model how entities derive from activities and agents~\cite{PROVDM}. Synchronizing a virtual levee with its physical counterpart does not, however, decide whether a stale, unregistered or merely suspected observation may constrain a safety decision. We therefore use the twin as context and define admissibility separately.
 
-\subsection{Seepage safety and uncertainty}
-Transient seepage is commonly described by Richards-type formulations~\cite{Richards,Celia1990}, with unsaturated hydraulic properties often represented through constitutive relationships such as the van Genuchten model~\cite{vanGenuchten1980} or related soil--water characteristic curves. Saturated-flow reductions are useful for operational screening, but the choice of formulation, hydraulic parameters, boundary conditions, and extraction region can change the interpretation of a local gradient. Reliability and Bayesian approaches can incorporate spatial variability and field observations~\cite{Xu,Schweckendiek,Roscoe,Baecher2003}, but they do not by themselves specify how an inspection candidate, a missing observation, or an inapplicable indicator should alter the final operational grade. A transparent evaluation layer must therefore preserve both the numerical response and its evidence status, including the distinction between model uncertainty, observation uncertainty, and evidence absence.
+\subsection{Learned safety classifiers and physical guidance}
+Data-driven seepage evaluation has used surrogate classifiers for reliability analysis~\cite{Xu} and deep learning combined with Dempster--Shafer fusion for dam seepage~\cite{Chen}. Tree ensembles~\cite{Quinlan,Breiman,Hastie2009} are attractive comparators because they model interactions among heterogeneous indicators and admit feature-level inspection~\cite{LundbergLee}. Theory-guided data science and the case for interpretable models in high-stakes decisions both argue that scientific knowledge should constrain the learner~\cite{Karpatne2017,Rudin2019}. Most such approaches constrain the model's inputs, loss or structure. Few constrain the \emph{direction} of its errors at the decision layer, which is what an ordinal safety grade with asymmetric error costs requires~\cite{Elkan2001}.
 
-\subsection{Inspection and data-driven decision support}
-UAV and infrared inspection can cover long levee reaches and provide candidate locations for follow-up; the broader remote-sensing literature also shows that georegistration, radiometric calibration, and flight metadata determine whether an image can support a spatial engineering inference~\cite{Colomina2014}. Image segmentation and object detection methods such as U-Net~\cite{Ronneberger2015} and YOLO~\cite{Redmon2016} are effective for screening, but thermal contrast from water boundaries, vegetation, shadow, wet soil, buildings, and lens effects can mimic a piping signature. Manual review and spatial registration are therefore part of the safety decision, not post-processing details. Tree-based models such as decision trees and random forests~\cite{Quinlan,Breiman,Hastie2009} are attractive for a complementary decision layer because they can represent nonlinear interactions and provide probability estimates and feature-level inspection~\cite{LundbergLee}, yet their use in safety assessment requires explicit control of false-safe decisions. Because the classes are ordinal and the cost of a critical downgrade is asymmetric, macro-F1, balanced accuracy, and precision--recall behavior are more informative than accuracy alone~\cite{Saito2015}.
-
-\subsection{Evidence fusion and the remaining gap}
-Evidence-fusion formalisms, including Dempster--Shafer theory, provide a language for combining partially specified support and ignorance~\cite{Shafer1976}. Their use in engineering evaluation does not remove the need to define when evidence is applicable, how conflicts are handled, or whether a candidate observation is sufficiently localized to constrain a current state. The unresolved issue is therefore not the absence of a classifier or a visualization platform. It is the lack of a common, traceable decision protocol that (i) distinguishes unavailable, inapplicable, suspected, and confirmed evidence; (ii) compares data-driven predictions with a physics-based rule chain under leakage-safe validation; and (iii) makes the cost of a critical-class downgrade explicit.
-
-\subsection{Gap addressed in this study}
-We use the 875-scenario controlled package as a reproducibility benchmark and use the field inspection records to test the evidence-state interface, while keeping engineering generalization claims separate from controlled behavior. The study is consequently positioned as a decision-layer and protocol contribution: it asks how heterogeneous evidence should be represented and constrained before it is visualized or fused, rather than claiming that a classifier trained on a controlled package has already generalized to unseen levees.
+\subsection{Inspection candidates and selective decisions}
+UAV photogrammetry and thermography can cover long levee reaches, provided that georegistration, radiometric calibration and flight metadata support the intended inference~\cite{Colomina2014}. Segmentation and detection networks~\cite{Ronneberger2015,Redmon2016} and thermographic deep-learning frameworks~\cite{Kumar2025} can localize seepage-like signatures, but water boundaries, vegetation, shadow and wet ground produce similar thermal contrast. Selective classification and reject options formalize abstention when confidence is low~\cite{Chow1970,Geifman2017}. In levee practice, abstention means sending a record to an engineer, so the review rate and the consequences of the fallback must be measured rather than assumed.
 
 \section{Transparent Evaluation Framework}
-\subsection{Evaluation unit and evidence states}
-An evaluation record is indexed by the tuple $(s,w,t,v)$, where $s$ denotes the levee section, $w$ the hydraulic scenario, $t$ the observation or simulation time, and $v$ the evidence and rule version. The record contains the indicator code, raw value, unit, transformed score, source location, value type, applicability, availability, time window, spatial support, and transformation rule. The value type distinguishes direct measurements, numerical outputs, representative assignments, controlled synthetic values, and manual assignments.
+\label{sec:framework}
+Fig.~\ref{fig:framework} summarizes the decision chain. Evidence passes an admissibility gate, the physics-based rule chain and a learned layer each produce a grade, an ordinal physical floor combines them, and an optional review gate routes low-confidence records to an engineer. Every output carries the triggered gates, the evidence states and the version identifiers used to produce it.
 
-Applicability and availability are kept as separate fields. An indicator is marked \emph{inapplicable} only after the relevant facility or failure mode has been confirmed absent; it is marked \emph{missing} when the indicator should be evaluated but evidence was not obtained. Neither state is silently encoded as a zero or a perfect score. For inspection evidence, three states are retained: algorithmic candidate, manually reviewed status, and evaluation input. Only an event with closed temporal and spatial correspondence can impose a deterministic defect or piping constraint on the current evaluation unit.
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=4pt]},
+  box/.style={draw=#1, fill=#1!7, rounded corners=2pt, align=center, inner sep=3pt, line width=0.55pt},
+  lab/.style={font=\scriptsize\itshape, text=black!70, align=center},
+  arr/.style={->, line width=0.6pt, draw=black!65},
+]
+% evidence channels (UAV last so that the candidate path leaves the column freely)
+\node[box=evc, text width=2.85cm] (geo) at (0,1.62) {Geology and materials\\[-1pt]{\scriptsize layers, soil properties}};
+\node[box=evc, text width=2.85cm] (see) at (0,0.54) {Seepage field\\[-1pt]{\scriptsize gradients, $i/i_{cr}$, FoS}};
+\node[box=evc, text width=2.85cm] (his) at (0,-0.54) {History and records\\[-1pt]{\scriptsize events, code versions}};
+\node[box=evc, text width=2.85cm] (uav) at (0,-1.62) {UAV infrared inspection\\[-1pt]{\scriptsize candidate boxes}};
+\node[lab] at (0,2.38) {Evidence channels};
+% admissibility
+\node[box=neutc, text width=2.6cm, minimum height=3.75cm] (adm) at (3.6,0) {\textbf{Admissibility gate}\\ $a_j=1$ only if support,\\ validity interval and\\ version match, Eq.~(\ref{eq:admissibility})\\[4pt]
+{\scriptsize\emph{evidence states:}\\ admissible, missing,\\ inapplicable,\\ candidate, reviewed}};
+\foreach \n in {geo,see,his,uav} \draw[arr] (\n.east) -- (\n.east -| adm.west);
+% branches
+\node[box=rulec, text width=3.6cm] (rule) at (7.75,0.95) {\textbf{Physics-based rule chain}\\ 29 indicators $\rightarrow R_m \rightarrow S$, Eqs.~(\ref{eq:risk})--(\ref{eq:score})\\ observation cap $\rightarrow$ hard gates};
+\node[box=rfc, text width=3.6cm] (rf) at (7.75,-0.95) {\textbf{Learned layer (RF)}\\ 14 features $\rightarrow \mathbf{p}=(p_A,p_B,p_C)$\\ thresholds $(\tau_C,\tau_B)$, Eq.~(\ref{eq:threshold})};
+\draw[arr] (adm.east |- rule.west) -- node[above, font=\scriptsize]{admissible} (rule.west);
+\draw[arr] (adm.east |- rf.west) -- node[below, font=\scriptsize]{admissible} (rf.west);
+% floor
+\node[box=floorc, text width=2.7cm, line width=0.9pt] (floor) at (11.8,0) {\textbf{Ordinal physical floor}\\ $\hat y=\max(\hat y_{\mathrm{RF}},y_{\mathrm{rule}})$\\ Eq.~(\ref{eq:veto})};
+\draw[arr] (rule.east) -- node[above, sloped, font=\scriptsize]{$y_{\mathrm{rule}}$} (floor.north west);
+\draw[arr] (rf.east) -- node[below, sloped, font=\scriptsize]{$\hat y_{\mathrm{RF}}$} (floor.south west);
+\node[font=\scriptsize, text=floorc, align=center] at (11.8,-1.1) {may raise, never lower,\\ the physical grade};
+% review and output
+\node[box=neutc, text width=2.2cm] (rev) at (15.05,-0.75) {\textbf{Review gate}\\ $\max_c p_c<u$\\ $\rightarrow$ engineer};
+\node[box=neutc, text width=2.2cm] (out) at (15.05,0.95) {\textbf{Grade + trace}\\ {\scriptsize gates, states, versions}};
+\draw[arr] (floor.east) -- (rev.west);
+\draw[arr] (rev.north) -- (out.south);
+% candidate path
+\draw[arr, dashed, draw=dangerc] (uav.south) -- ++(0,-0.42) -| node[pos=0.25, below, font=\scriptsize, text=dangerc]{inspection candidate $\rightarrow$ review task, never a confirmed event} (rev.south);
+\end{tikzpicture}
+\caption{Transparent evaluation chain (FoS, factor of safety). Evidence enters only through the admissibility gate, which records an explicit state for every indicator. The rule chain and the learned layer each return an ordinal grade (A~$<$~B~$<$~C in risk). The ordinal physical floor lets the learned layer escalate, but not downgrade, the rule grade. Inspection candidates create review tasks; they constrain a grade only after review closes their time, location and status.}
+\label{fig:framework}
+\end{figure*}
 
-Table~\ref{tab:evidence} summarizes the main evidence channels used in this study.
+\subsection{Evaluation unit, evidence states and admissibility}
+\label{sec:states}
+An evaluation record is indexed by $(s,w,t,v)$: levee section $s$, hydraulic scenario $w$, observation or simulation time $t$, and evidence-and-rule version $v$. Each indicator retains its raw value, unit, transformed score, source location, value type (direct measurement, numerical output, representative assignment, controlled synthetic value or manual assignment), applicability, availability, time window, spatial support and transformation rule.
+
+Applicability and availability are separate fields. An indicator is \emph{inapplicable} only after the corresponding facility or failure mode has been confirmed absent; it is \emph{missing} when it should be evaluated but evidence was not obtained. Neither state is encoded as a zero or as a perfect score. Inspection evidence has three further states: \emph{candidate} (algorithmic detection), \emph{reviewed} (manual status recorded) and \emph{admissible} (time, location and status closed for the current unit). Only an admissible confirmed event can impose a deterministic piping or defect constraint. Table~\ref{tab:evidence} lists the channels and their admissibility conditions.
 
 \begin{table}[t]
-\caption{Evidence channels and their admissibility in transparent evaluation.}
+\caption{Evidence channels and admissibility conditions.}
 \label{tab:evidence}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{2pt}\begin{tabular}{@{}p{0.18\columnwidth}p{0.25\columnwidth}p{0.39\columnwidth}@{}}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.17\columnwidth}>{\raggedright\arraybackslash}p{0.33\columnwidth}>{\raggedright\arraybackslash}p{0.44\columnwidth}@{}}
 \toprule
 Channel & Example evidence & Admissibility condition \\
 \midrule
-Geology & control layer, soil properties, contact zone & spatially registered and material identity retained \\
-Seepage field & local gradient, critical-gradient ratio, FoS & boundary condition, scenario, extraction region, and material known \\
-Inspection & candidate box, confidence, review status & time, location, and review state explicitly stored \\
-History & previous piping or seepage event & event time and current relevance distinguished \\
-Missingness & unavailable or stale input & reported as an evidence state with a missing-item list \\
+Geology & control layer, soil properties, contact zone & spatially registered; material identity retained in the numerical domain \\
+Seepage field & local gradient, $i/i_{cr}$, factor of safety & scenario, boundary condition, extraction region and material known \\
+Inspection & candidate box, confidence, review status & capture time, location and review state stored; candidate $\neq$ confirmed \\
+History & previous piping or seepage event & event interval distinguished from current relevance \\
+Missingness & unavailable or stale input & reported as a state with a missing-item list \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Provenance graph and alignment operator}
-The evidence table is implemented as a directed provenance graph rather than as a flat list of values. A node represents an observation, a geological object, a numerical field, a review action, or a decision output; an edge records derivation, spatial registration, temporal precedence, or rule triggering. For an evaluation unit $(s,w,t,v)$, an indicator $x_j$ is admissible only when its support intersects the unit, its validity interval contains $t$, and its version $v_j$ is compatible with the evaluation version. We represent this condition with
+The evidence table is implemented as a directed provenance graph in the sense of PROV-DM~\cite{PROVDM}. Nodes represent observations, geological objects, numerical fields, review actions and decision outputs; edges record derivation, spatial registration, temporal precedence and rule triggering. For a unit $(s,w,t,v)$, indicator $x_j$ is admissible only when its spatial support $\mathcal{S}_j$ intersects the unit support $\mathcal{S}_s$, its validity interval $\mathcal{T}_j$ contains $t$, and its version $v_j$ is compatible with $v$:
 \begin{equation}
- a_j(s,w,t,v)=\mathbf{1}\{\mathcal{S}_j\cap\mathcal{S}_s\neq\varnothing\}\,\mathbf{1}\{t\in\mathcal{T}_j\}\,\mathbf{1}\{v_j\preceq v\},
- \label{eq:admissibility}
+a_j(s,w,t,v)=\mathbf{1}\{\mathcal{S}_j\cap\mathcal{S}_s\neq\varnothing\}\,\mathbf{1}\{t\in\mathcal{T}_j\}\,\mathbf{1}\{v_j\preceq v\}.
+\label{eq:admissibility}
 \end{equation}
-where $\mathcal{S}_j$ and $\mathcal{T}_j$ are the spatial support and validity interval of the indicator. If $a_j=0$, the value is retained for traceability but cannot silently become a normal score. This representation makes a spatially misregistered inspection box and a stale simulation output visible as provenance failures rather than as numerical zeros.
+If $a_j=0$, the value is retained for traceability but cannot become a normal score. A misregistered inspection box or a stale simulation output therefore appears as a provenance failure rather than as a numerical zero.
 
-The same rule is applied to model outputs. A local seepage maximum is linked to the material zone and extraction region from which it was computed; an inspection candidate is linked to its image, timestamp, camera position, and review record; and a historical event is linked to the event interval rather than copied into every later evaluation. This design follows the broader digital-twin requirement that state synchronization must preserve identity and context, but it adds an explicit admissibility gate for safety evaluation~\cite{Fuller2020}.
+\subsection{Physics-based rule chain}
+\label{sec:rule}
+The rule chain contains 29 secondary indicators and five failure modes: overtopping, seepage, slope instability, scour and through-structure effects. Let $R_m\in[0,1]$ be the management-barrier-adjusted response of failure mode $m$, $\pi_m$ its normalized weight and $\alpha$ a shortfall coefficient. The composite risk measure and the score are
+\begin{align}
+\rho&=\alpha\max_m R_m+(1-\alpha)\sum_m \pi_m R_m, \label{eq:risk}\\
+S&=100(1-\rho), \label{eq:score}
+\end{align}
+with $\alpha=0.45$. The score grade is A for $S\geq80$, B for $40\leq S<80$ and C for $S<40$. An observation cap and physical hard gates are then applied in sequence; the gates cover overtopping, the seepage indicators C1, C4 and C5 (foundation, embankment and contact zone), slope factors of safety, scour, structures and settlement. Each stage may keep the grade or move it towards higher risk, never towards lower risk. The dominant failure mode is the largest internal response and is not a calibrated failure probability.
 
-\subsection{Physics-based score and grade}
-The existing evaluation model contains 29 secondary indicators and five failure modes: overtopping, seepage, slope instability, scour, and through-structure effects. Let $R_m\in[0,1]$ be the management-barrier-adjusted response for failure mode $m$, $\pi_m$ its normalized weight, and $\alpha$ the shortfall coefficient. The composite risk measure and score are
+\subsection{Learned comparator}
+\label{sec:learner}
+The learned layer uses 14 features from the physical and inspection channels: crest elevation; foundation, embankment and contact-zone gradients; downstream and upstream slope factors of safety; scour depth; inspection anomaly density and evidence level; the three gradients divided by 0.25; the inverse downstream factor of safety; and the scour depth divided by a 1.0~m reference, which duplicates the raw depth. It never sees target mode, target severity, any delivered grade, the composite score, the risk measure or the dominant mode. The 14 features contain no structure-condition indicator; Section~\ref{sec:res-learned} shows the consequence.
+
+Both learners are deterministic NumPy implementations of classification and regression trees (CART) with Gini impurity~\cite{Quinlan,Hastie2009}. Candidate split thresholds are the midpoints between consecutive distinct feature values; when a node holds more than 30 distinct values, the midpoints are taken between 19 quantiles from the 5th to the 95th percentile. The decision tree uses maximum depth 5 and minimum leaf size 5 with all features. The random forest~\cite{Breiman} uses 120 bootstrap trees, maximum depth 7, minimum leaf size 3 and four randomly drawn features per split; its class probability is the fraction of trees voting for the class. Cost-weighted variants draw bootstrap samples with probability proportional to a class weight $w_C\in\{1.5,2,3,4,6\}$ for class C~\cite{Elkan2001}. All hyperparameters were fixed before the additional seeds were generated and were not retuned. The probability vector $\mathbf p=(p_A,p_B,p_C)$ is a decision-support score under the controlled target construction, not a calibrated field failure probability.
+
+\subsection{Threshold policy, safety loss and Pareto comparison}
+For thresholds $(\tau_C,\tau_B)$ the learned policy is
 \begin{equation}
-\rho=\alpha\max_m R_m+(1-\alpha)\sum_m \pi_m R_m,
-\label{eq:risk}
-\end{equation}
-\begin{equation}
-S=100(1-\rho).
-\label{eq:score}
-\end{equation}
-The reproduced baseline uses $\alpha=0.45$. The raw grade is A for $S\geq80$, B for $40\leq S<80$, and C for $S<40$. An observation upper bound and physical hard gates are then applied in sequence. The gates cover overtopping, the C1/C4/C5 seepage indicators, slope factors of safety, scour, structures, and settlement. The final grade is allowed to remain unchanged or move toward a higher-risk class; it cannot be made safer by a conflicting observation rule.
-
-The seepage indicators C1, C4, and C5 are associated with the foundation, embankment, and contact zone, respectively. A local maximum is admissible only when its extraction region and material identity are retained. The dominant failure mode is reported as the largest internal response and is not interpreted as a calibrated failure probability.
-
-\subsection{Machine-learning comparator}
-We trained a shallow decision tree and a random forest using 14 features derived from the physical and inspection channels: crest elevation, foundation/body/contact gradients, upstream and downstream factors of safety, scour depth, inspection density and level, and their normalized ratios or inverse factors of safety. The feature exclusion list contains target mode, target severity, grade, model grade, composite score, risk measure, dominant mode, and all delivered model outputs. The target class is derived from the frozen scenario severity: safe and slight map to A, moderate maps to B, and severe and critical map to C. The reference forest used 120 trees, maximum depth 7, minimum leaf size 3, and four randomly selected features per split. These settings were fixed before the five additional generator realizations and were not retuned for the reported seed means.
-
-Because the controlled package contains repeated physical feature vectors, all identical vectors are assigned to the same cross-validation fold. We use grouped five-fold out-of-fold (OOF) predictions. The random forest probability vector $p=(p_A,p_B,p_C)$ is retained for threshold selection; majority voting is used as the untuned machine-learning comparator.
-
-The probability vector is used as a decision-support object rather than as a calibrated failure probability. A high $p_C$ indicates that the learned model favors the critical class under the controlled target construction; it does not imply that the field probability of piping is $p_C$. This distinction is important because the benchmark labels are generated from scenario severity, whereas a field label would require an independently timed and spatially registered observation.
-
-\subsection{Metrics, error direction, and paired comparison}
-For each class $k$, precision and recall are computed from the held-out predictions, and macro-F1 is the unweighted mean of the three class-specific F1 scores. Balanced accuracy is the mean recall over A, B, and C. We additionally report the number of C-class underestimates, the direct C-to-A count, the A-class overestimate count, and the review rate. These metrics separate ordinary classification quality from the direction and operational burden of errors. Because only five additional generator realizations were available, multi-seed results are summarized as paired means and standard deviations; no inferential claim is made from a small number of synthetic seeds.
-
-\subsection{Pareto decision layer}
-For a candidate pair $(\tau_C,\tau_B)$, the policy is
-\begin{equation}
-\hat y=\begin{cases}
+\hat y_{\mathrm{RF}}=\begin{cases}
 C,&p_C\geq\tau_C,\\
 B,&p_C<\tau_C\ \text{and}\ p_B\geq\tau_B,\\
-A,&\text{otherwise.}
+A,&\text{otherwise}.
 \end{cases}
 \label{eq:threshold}
 \end{equation}
-Candidate policies are compared using accuracy, macro-F1, balanced accuracy, recall for C, C-class underestimates, direct C-to-A underestimates, A-class overestimates, and escalation rate. To expose the operational asymmetry, we define
+Because accuracy alone is uninformative when classes are imbalanced and errors are asymmetric~\cite{Saito2015}, policies are compared on accuracy, macro-F1, balanced accuracy, recall for C, the number of C-class underestimates split into \CtoA{} and \CtoB, the number of A-class overestimates, and the escalation rate (fraction of records assigned C). To make the asymmetry explicit we use
 \begin{equation}
-L_{\mathrm{safe}}=2N(C\rightarrow A)+N(C\rightarrow B),
+\Lsafe=2N(\mathrm{C}\rightarrow\mathrm{A})+N(\mathrm{C}\rightarrow\mathrm{B}),
 \label{eq:safeloss}
 \end{equation}
-where a direct C-to-A decision is assigned twice the loss of a one-level C-to-B downgrade. The Pareto set contains non-dominated policies over aggregate quality, critical recall, safety loss, and escalation, following the standard logic of multi-objective optimization~\cite{Deb}. Physical hard gates and evidence completeness checks have priority over the learned policy.
+which weights a direct two-level downgrade twice as heavily as a one-level downgrade. Non-dominated policies over quality, critical recall, $\Lsafe$ and escalation form the Pareto set~\cite{Deb}. The representative operating point $(\tau_C,\tau_B)=(0.35,0.20)$ was chosen on a 0.05 grid from 0.20 to 0.90 as the highest macro-F1 point with zero A-class overestimates and C recall of at least 0.85. It is a declared operating point, not an engineering optimum. A 0.01 grid of 10{,}000 pairs tests whether any threshold alone avoids \CtoA{} errors.
 
-For the representative RF operating point reported below, we first required zero A-class overestimates and C recall of at least 0.85 on the exploratory $0.05$ threshold grid, and then selected the point with the largest macro-F1. This yields $(\tau_C,\tau_B)=(0.35,0.20)$. It is a declared operating point rather than an independently optimized engineering policy. A finer $0.01$-grid audit is used to test whether the learned threshold layer alone can satisfy the stronger direct C-to-A constraint.
-
-\subsection{Physics-veto hybrid policy}
-The grade labels are ordinal for decision purposes, with A, B, and C encoded as 0, 1, and 2. Let $\hat y_{\mathrm{RF}}$ be a learned prediction from Eq.~(\ref{eq:threshold}) and let $y_{\mathrm{rule}}$ be the final grade returned by the existing physics-based rule chain. We define a monotone physical-veto hybrid as
+\subsection{Ordinal physical floor}
+\label{sec:floor}
+Encode A, B and C as 0, 1 and 2. Given the learned decision $\hat y_{\mathrm{RF}}$ and the final grade $y_{\mathrm{rule}}$ of the rule chain, the ordinal physical floor returns
 \begin{equation}
-\hat y_{\mathrm{hyb}}=\max\left(\hat y_{\mathrm{RF}}, y_{\mathrm{rule}}\right).
+\hat y_{\mathrm{H}}=\max\left(\hat y_{\mathrm{RF}},\,y_{\mathrm{rule}}\right).
 \label{eq:veto}
 \end{equation}
-The operation is a decision-layer lower bound: the learned model may escalate a rule result, but it cannot make the result safer. It does not retrain either component and it leaves the evidence trace and triggered physical gate intact. The construction is monotone with respect to the ordinal risk order, but it does not claim that the rule output is a calibrated probability or an error-free truth label. As an operational variant, predictions with $\max_c p_c<u$ are routed to review and use $y_{\mathrm{rule}}$ as a fallback. The review rate and the fallback metrics are reported separately from the hybrid's closed-set classification metrics. In the exploratory budget analysis, $u=0.50$ and $u=0.60$ are compared to expose the cost of demanding a more confident learned output.
+We call this policy the \emph{floor hybrid}; tables and figures label it RF + ordinal floor. It retrains neither component and leaves the evidence trace and triggered gates intact. Its error behaviour follows directly from the order structure.
+
+\begin{proposition}
+\label{prop:floor}
+For a record with reference class $y$, (i) $\hat y_{\mathrm{H}}<y$ if and only if $\hat y_{\mathrm{RF}}<y$ and $y_{\mathrm{rule}}<y$; (ii) $\hat y_{\mathrm{H}}>y$ if and only if $\hat y_{\mathrm{RF}}>y$ or $y_{\mathrm{rule}}>y$; (iii) $\hat y_{\mathrm{H}}=0$ if and only if both components return 0. Consequently, the hybrid's underestimates are the intersection of the components' underestimates, its overestimates are their union, and the hybrid issues a \CtoA{} decision only where the rule chain does.
+\end{proposition}
+\begin{IEEEproof}
+For integers $a,b,y$: $\max(a,b)<y\Leftrightarrow a<y\wedge b<y$; $\max(a,b)>y\Leftrightarrow a>y\vee b>y$; and $\max(a,b)=0\Leftrightarrow a=b=0$ for $a,b\geq0$.
+\end{IEEEproof}
+
+Proposition~\ref{prop:floor} states when the floor helps and when it fails. The hybrid gains when the two components err on different records and the learned layer rarely overestimates; it inherits every conservative error of the rule chain; and its protection against \CtoA{} decisions is exactly as good as the rule chain's. It is not a statement about the accuracy of either component. We also evaluate a \emph{C-only floor} (RF + C-only floor), $\hat y=2$ if $y_{\mathrm{rule}}=2$ and $\hat y=\hat y_{\mathrm{RF}}$ otherwise, which removes the rule chain's influence below C. As an operational variant, records with $\max_c p_c<u$ are routed to review. Offline, no reviewer decision exists, so the rule grade is substituted as a proxy; review-rate and fallback metrics are reported separately from the closed-set metrics.
 
 \section{Data and Validation Protocol}
-\subsection{Controlled 875-scenario benchmark}
-The benchmark was generated with a frozen random seed and contains 875 records: seven target modes, five severity levels, and 25 records per mode--severity combination. The reference class is defined by the scenario severity and is used only to test behavior under the controlled generator. It is not a field safety label. The authoritative rule baseline is reconstructed from the final-grade error trace, rather than from the raw grade column in the input CSV.
+\label{sec:protocol}
+\subsection{Controlled benchmark}
+The benchmark was produced by a frozen generator and contains 875 records: seven target modes (safe reference, overtopping, seepage, slope, scour, through-structure and mixed) $\times$ five severities (safe, slight, moderate, severe, critical) $\times$ 25 records. The reference class follows the frozen severity mapping: safe and slight $\rightarrow$ A (350 records), moderate $\rightarrow$ B (175), severe and critical $\rightarrow$ C (350). It is a closed-set reference for testing decision behaviour under the generator, not a field safety label. The rule chain's final grades were reconstructed from the delivered final-grade error trace rather than from the raw grade column of the input file, and a replay of the generator reproduced all five delivered benchmark files byte for byte.
 
-We report accuracy, macro-F1, balanced accuracy, per-class precision and recall, C underestimates, A overestimates, and the confusion matrix. We also preserve the original score grade, observation upper-bound grade, final grade, and triggered gate for each record. All machine-learning results in the main text are controlled-batch results; a five-outer by three-inner grouped nested validation prototype is reported as a robustness check. The physical-veto hybrid uses the fixed delivered rule output only at the decision layer and uses the OOF learned prediction for each held-out fold.
+\subsection{Splits and validation hierarchy}
+The 875 records contain 722 distinct 14-feature vectors. Identical vectors are assigned to the same fold, and all learned results are grouped five-fold out-of-fold (OOF) predictions, which prevents duplicated inputs from leaking across folds~\cite{Kaufman2012,Roberts2017}. Forest seeds are derived from the fold index and held fixed across methods. A five-outer by three-inner grouped nested validation re-selects $(\tau_C,\tau_B)$ inside each outer fold (with 80 trees). Validation is organized in three levels: the original 875 records test behaviour against the frozen reference; five additional 875-record batches (generator seeds 20260930--20260934, same construction, features, splits, hyperparameters and policies) test sensitivity to the generator realization; and the inspection and engineering packages test whether evidence states and provenance survive the interface. None of the latter is used to claim external predictive accuracy.
 
-The validation hierarchy is deliberately separated into three levels. The original 875 records test reconstruction against the frozen reference; the five additional batches test sensitivity to the generator realization; and the inspection and engineering packages test whether evidence states and provenance fields can be carried through the interface. None of the latter packages is used to claim external predictive accuracy. In particular, a reviewed field candidate is evidence about that candidate's status, not a complete denominator for image-level detection performance.
+\subsection{Statistical analysis}
+Paired comparisons with the rule chain on the same records use the exact two-sided McNemar test on per-record correctness~\cite{McNemar1947,Dietterich1998}. Within-batch uncertainty of the hybrid-minus-rule differences is summarized by a paired percentile bootstrap that resamples the 722 feature-vector groups (2000 resamples)~\cite{Efron1993}; it conditions on the fitted OOF predictions and does not include retraining variability. Results across the five additional seeds are reported as mean $\pm$ sample standard deviation (SD) without inferential claims, because five realizations of one generator do not support population inference. For the 0/9 confirmed field candidates we report the exact Clopper--Pearson bound~\cite{Clopper1934}.
 
-\subsection{Implementation and reproducibility controls}
-The analysis scripts use deterministic random seeds and write the feature manifest, fold assignments, threshold grid, per-record predictions, and summary metrics. The five additional batches use seeds 20260930--20260934; the forest seed is derived from the fold index and held fixed across methods. The fine safety audit enumerates 10,000 pure-RF threshold pairs on a 0.01 grid, while the multi-objective exploratory grid uses 0.05 increments. These grids are reported to make the search space auditable, not to imply that the selected point is an engineering optimum. The source package also preserves the original rule output, the physical-veto output, and the review-fallback output for each record, allowing every aggregate metric to be reconstructed from a confusion matrix.
+\begin{table*}[t]
+\caption{Grouped five-fold OOF comparison on the 875 controlled records. C$\rightarrow$A and C$\rightarrow$B count C-class underestimates (350 C records); A$\uparrow$ counts A-class overestimates (350 A records); Esc.\ is the fraction of records assigned C (reference prevalence 0.400). The proposed ordinal floor is shaded.}
+\label{tab:main}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{@{}llccccrrrrc@{}}
+\toprule
+ & Method & Accuracy & Macro-F1 & Bal.\ acc. & Recall C & C$\rightarrow$A & C$\rightarrow$B & $\Lsafe$ & A$\uparrow$ & Esc. \\
+\midrule
+Physics & Rule chain & .845 & .827 & .847 & .837 & 0 & 57 & 57 & 54 & .335 \\
+\midrule
+\multirow{5}{*}{Learned only} & Decision tree & .707 & .646 & .635 & .631 & 129 & 0 & 258 & 0 & .253 \\
+ & RF, majority vote & .829 & .784 & .763 & .854 & 51 & 0 & 102 & 0 & .342 \\
+ & RF, threshold $(0.35,0.20)$ & .873 & .858 & .836 & .857 & 50 & 0 & 100 & 0 & .343 \\
+ & RF, best of 0.01 grid $(0.19,0.06)$ & .887 & .890 & .882 & .857 & 50 & 0 & 100 & 24 & .361 \\
+ & RF, C weight 6 & .707 & .701 & .683 & 1.000 & 0 & 0 & 0 & 179 & .683 \\
+\midrule
+\multirow{3}{*}{Floor policies} & RF + C-only floor & .930 & .903 & .884 & 1.000 & 0 & 0 & 0 & 0 & .400 \\
+ & \cellcolor{floorc!10}RF + ordinal floor (Eq.~\ref{eq:veto}) & \cellcolor{floorc!10}.926 & \cellcolor{floorc!10}.912 & \cellcolor{floorc!10}.928 & \cellcolor{floorc!10}1.000 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}54 & \cellcolor{floorc!10}.400 \\
+ & RF + ordinal floor + review, $u=0.60$ & .911 & .896 & .914 & .966 & 0 & 12 & 12 & 54 & .386 \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
-\subsection{Scope of the reference labels}
-The target class is a closed-set reference derived from controlled scenario severity. It is useful for testing whether a decision layer responds in the intended direction, but it is not equivalent to a field diagnosis. This distinction is especially important for the critical class: a zero C-to-A count in the controlled benchmark verifies the behavior of the imposed decision constraint under the available reference labels; it does not prove zero false-safe decisions in an unseen levee. We therefore report the physical-veto result as a safety-constrained architecture result and state the missing external validation as a boundary of the present study.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_error_structure.pdf}
+\caption{Error structure on the 875 controlled records. (a)--(c) Confusion matrices for the rule chain, the RF threshold policy $(\tau_C,\tau_B)=(0.35,0.20)$ and the floor hybrid (RF + ordinal floor); cell colour encodes error direction. The RF policy removes the rule chain's \CtoB{} errors but converts its C-class misses into 50 direct \CtoA{} decisions. The floor hybrid keeps the rule chain's 54 conservative \AtoB{} errors and none of the underestimates of either component. (d) Accuracy within each generator target mode ($n=125$). All RF \CtoA{} errors occur in the through-structure mode, where every record shares one 14-feature vector.}
+\label{fig:errors}
+\end{figure*}
 
-\subsection{UAV and infrared inspection records}
-The inspection package contains 114 field infrared images and associated visualizations, nine reviewed field detections, 13 artificial validation images, and 14 validation detections. The nine field candidates were all classified as false positives during manual review. The reported causes include water-boundary contrast, vegetation and shadow, building thermal inertia, wet ground, and lens-edge effects. The remaining field images do not yet have image-level truth labels, and the validation images do not provide a complete positive-boundary and missed-detection record. We therefore report the review-subset result as 0/9 confirmed piping and do not report field-wide accuracy, recall, or F1.
+\subsection{Field inspection package}
+The inspection package contains 114 field thermal infrared images with GPS and capture-time metadata, nine algorithmic piping candidates from those images that entered manual review, and 13 images of artificial piping with 14 detector boxes. The remaining field images have no image-level truth labels, and the artificial set has no record of missed detections, so neither supports a detection accuracy, recall or F1 estimate.
 
-\subsection{Engineering case trace}
-The K45+500 delivery case is used to test provenance and interface fields. It reports a representative high-water level of 35.90~m, a deep silty-clay controlling ratio of approximately 1.045, a downstream slope factor of safety of approximately 1.155, a composite score of 24.3481, and a C-grade seepage-dominant result. These values are delivery-result excerpts rather than an independent physical re-run. The case also contains unresolved conflicts between the 29-indicator table and the result JSON and includes historical piping information in the input. It is therefore not treated as a blind test.
+\subsection{Engineering-case trace}
+The delivered K45+500 case, a representative section of a reach with a recorded 2017 piping event, is used only to test provenance and interface fields. Its values are delivery excerpts rather than an independent physical re-run, and its input includes the historical piping information, so it is not a blind test.
+
+\subsection{Reproducibility}
+All analyses use fixed seeds and write their feature manifests, fold assignments, threshold grids, per-record predictions and summary metrics. The supplementary statistics and all data figures in this paper are regenerated by two scripts that read only repository files and reuse the unchanged model code (Section~\ref{sec:availability}).
 
 \section{Results}
-\subsection{Reproduced rule baseline}
-The five delivered benchmark files were byte-consistent after re-running the generator, and all 875 records had unique identifiers. The final-grade confusion matrix is shown in Table~\ref{tab:baseline}. The rule chain classified 739 of 875 records correctly, corresponding to 0.8446 accuracy, 0.8272 macro-F1, and 0.8467 balanced accuracy. Recall was 0.8457 for A, 0.8571 for B, and 0.8371 for C. The 57 C underestimates were C-to-B; the 54 A overestimates were A-to-B. There were no direct A-to-C or C-to-A errors in the reproduced baseline.
+\label{sec:results}
 
-\begin{table}[t]
-\caption{Final-grade confusion matrix of the reproduced rule baseline.}
-\label{tab:baseline}
+\begin{table*}[t]
+\caption{Five additional generator seeds (mean $\pm$ sample SD over seeds 20260930--20260934; 875 records each). Review rate is the fraction of records with $\max_c p_c<u$, routed to the rule grade as an offline reviewer proxy.}
+\label{tab:seeds}
 \centering
-\scriptsize
-\begin{tabular}{c|rrr|r}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccccrrrr@{}}
 \toprule
-Reference $\backslash$ output & A & B & C & Total \\
+Method & Accuracy & Macro-F1 & Bal.\ acc. & Recall C & C$\rightarrow$A & $\Lsafe$ & A$\uparrow$ & Review (\%) \\
 \midrule
-A & 296 & 54 & 0 & 350 \\
-B & 25 & 150 & 0 & 175 \\
-C & 0 & 57 & 293 & 350 \\
+Rule chain & $.847\pm.002$ & $.830\pm.002$ & $.849\pm.001$ & $.842\pm.002$ & $0$ & $55.4\pm0.5$ & $53.2\pm1.1$ & -- \\
+RF, majority vote & $.827\pm.008$ & $.789\pm.013$ & $.767\pm.012$ & $.837\pm.013$ & $57.0\pm4.5$ & $114.0\pm9.1$ & $0$ & -- \\
+RF, threshold $(0.35,0.20)$ & $.875\pm.010$ & $.862\pm.015$ & $.841\pm.016$ & $.855\pm.004$ & $50.6\pm1.3$ & $101.2\pm2.7$ & $0$ & -- \\
+RF + C-only floor & $.933\pm.010$ & $.907\pm.015$ & $.888\pm.016$ & $.998\pm.004$ & $0.6\pm1.3$ & $1.2\pm2.7$ & $0$ & -- \\
+\rowcolor{floorc!10}RF + ordinal floor & $.921\pm.004$ & $.906\pm.005$ & $.920\pm.006$ & $.998\pm.004$ & $0$ & $0.6\pm1.3$ & $53.2\pm1.1$ & -- \\
+RF + ordinal floor + review, $u=0.50$ & $.918\pm.006$ & $.902\pm.007$ & $.917\pm.007$ & $.990\pm.008$ & $0$ & $3.4\pm2.8$ & $53.2\pm1.1$ & $1.5\pm0.7$ \\
+RF + ordinal floor + review, $u=0.60$ & $.908\pm.006$ & $.892\pm.007$ & $.908\pm.008$ & $.969\pm.008$ & $0$ & $10.8\pm2.8$ & $53.2\pm1.1$ & $6.6\pm0.9$ \\
 \bottomrule
 \end{tabular}
-\end{table}
-
-The original score grade agreed with the reference in 450 records, whereas the observation upper bound changed no grade in this batch. Hard gates changed 322 grades and increased the final number of correct decisions to 739. This dependence on hard gates is a property of the controlled generator and the delivered rule configuration; it is not evidence of field prediction gain.
-
-The error pattern is asymmetric even before machine learning is introduced. The rule chain's 57 C-to-B errors are one-level underestimates, whereas its 54 A-to-B errors are conservative overestimates; neither direction should be collapsed into a single accuracy value. The benchmark therefore provides a useful stress test for the decision layer: a method that increases macro-F1 but converts C-to-B errors into C-to-A errors is operationally worse under the safety loss in Eq.~(\ref{eq:safeloss}), despite looking better under ordinary classification metrics. This motivates reporting the confusion matrix and the error direction alongside every aggregate score.
+\end{table*}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{overall_confusion.png}
-\caption{Overall and seepage-target confusion matrices in the controlled benchmark.}
-\label{fig:confusion}
+\includegraphics[width=\columnwidth]{fig_safety_tradeoff.pdf}
+\caption{Quality against direct \CtoA{} errors on the 875 controlled records. Light points are all 10{,}000 RF threshold pairs on the 0.01 grid; no pure RF threshold reaches fewer than 50 \CtoA{} errors. The dashed line traces cost-weighted forests ($w_C=1.5$ to 6). Only the rule chain, the C-weight-6 forest and the two floor policies reach zero, and RF + ordinal floor has the highest macro-F1 among them. Points at zero are offset horizontally by up to four units so that none is hidden.}
+\label{fig:tradeoff}
 \end{figure}
 
-\subsection{Machine-learning comparison}
-Table~\ref{tab:ml} compares the rule chain and grouped five-fold OOF machine-learning models. The shallow tree underperformed the rule baseline on all aggregate metrics. Majority-vote random forest increased C recall from 0.8371 to 0.8543 and reduced C underestimates from 57 to 51, but its accuracy and macro-F1 were lower than those of the rule chain. Thus, the machine-learning layer is useful as a nonlinear comparator and probability estimator, but not as a direct replacement for the physical rule chain. The physical-veto hybrid retained the safety direction of the rule chain while correcting a subset of its A/B errors: it reached 0.9257 accuracy, 0.9119 macro-F1, 0.9276 balanced accuracy, and 1.0000 C recall, with zero C underestimates and a safety loss of zero. It changed 154 of the 875 decisions relative to the RF threshold policy. The uncertainty-review fallback routed 62 records (7.09\%) to the rule-based fallback and achieved 0.9109 accuracy, 0.8964 macro-F1, 0.9657 C recall, and 12 C-to-B underestimates, with no direct C-to-A errors.
-
-The hybrid's gain came from the decision layer rather than from an additional training signal. Relative to the RF threshold output, the physical lower bound changed 154 of 875 decisions, and the changes were constrained to prevent a downward movement in the ordinal risk scale. This makes the source of improvement auditable: the learned model supplies nonlinear ranking and upward corrections, while the existing rule chain supplies the admissibility floor. The result also explains why the hybrid should not be described as a pure machine-learning predictor; it is a constrained composition of a learned comparator and a physics-based safety rule.
-
-\begin{table}[t]
-\caption{Grouped five-fold OOF comparison on the 875 controlled records.}
-\label{tab:ml}
+\begin{figure*}[t]
 \centering
-\scriptsize
-\begin{tabular}{lrrrrrr}
-\toprule
-Method & Acc. & mF1 & Bal. & Rec. C & C low & A high \\
-\midrule
-Rule baseline & .8446 & .8272 & .8467 & .8371 & 57 & 54 \\
-Decision tree & .7074 & .6456 & .6352 & .6314 & 129 & 0 \\
-RF majority & .8286 & .7835 & .7629 & .8543 & 51 & 0 \\
-RF threshold & .8731 & .8584 & .8362 & .8571 & 50 & 0 \\
-RF safety weight 6 & .7074 & .7009 & .6829 & 1.0000 & 0 & 179 \\
-RF + physical veto & .9257 & .9119 & .9276 & 1.0000 & 0 & 54 \\
-RF + veto + review & .9109 & .8964 & .9143 & .9657 & 12 & 54 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\includegraphics[width=\textwidth]{fig_multiseed_review.pdf}
+\caption{Five additional generator seeds. (a) Macro-F1 and (b) safety loss $\Lsafe$ per seed (points) and their mean (bar); C-only floor, ordinal floor and floor + review denote RF + C-only floor, RF + ordinal floor and RF + ordinal floor + review ($u=0.50$). (c) Review-budget sweep for RF + ordinal floor, $u\in\{0.50,0.55,\ldots,0.90\}$ (mean $\pm$ SD over seeds). Because the offline fallback replaces a routed decision with the rule grade, every routed record can only lose an upward correction, so $\Lsafe$ rises with the review rate. The shaded box marks the exploratory budget of at most 5\% review and $\Lsafe\leq6$.}
+\label{fig:seeds}
+\end{figure*}
+
+\subsection{The rule chain errs conservatively, and its gates do the work}
+\label{sec:res-rule}
+The rule chain classified 739 of 875 records correctly (accuracy 0.845, macro-F1 0.827, balanced accuracy 0.847; Table~\ref{tab:main}). All 136 errors were one-level errors (Fig.~\ref{fig:errors}a): 54 \AtoB{} and 25 \BtoA{} decisions and 57 \CtoB{} underestimates, with no \CtoA{} or A$\rightarrow$C decision. The score grade alone was correct for only 450 records; the observation cap changed no grade, and the hard gates changed 322 grades. An ablation of the inspection channel confirmed its inertness in this benchmark: replacing the inspection indicator C3 with its no-anomaly anchor changed 150 scores by at most 1.39 points, but no grade. The rule chain's accuracy therefore rests on gates that are aligned with the generator's severity construction, which makes it a strong comparator and is a property of the benchmark rather than evidence of field skill.
+
+\subsection{Learned policies improve aggregate metrics but create false-safe downgrades}
+\label{sec:res-learned}
+The shallow tree underperformed the rule chain on every aggregate metric (Table~\ref{tab:main}). The majority-vote forest raised C recall from 0.837 to 0.854 but lowered accuracy and macro-F1, and all 51 of its C-class misses were direct \CtoA{} decisions, doubling $\Lsafe$ from 57 to 102. The representative threshold policy reached 0.873 accuracy and 0.858 macro-F1. Its accuracy gain over the rule chain was not distinguishable within the batch (125 records correct only under the RF policy against 100 correct only under the rule chain; exact McNemar $p=0.11$), and all 50 of its C-class misses were again \CtoA{} ($\Lsafe=100$).
+
+Threshold tuning cannot remove these errors. Of the 10{,}000 pairs on the 0.01 grid, none produced fewer than 50 \CtoA{} decisions; the best pair by macro-F1, $(0.19,0.06)$, reached 0.890 macro-F1 with the same 50 \CtoA{} errors (Fig.~\ref{fig:tradeoff}). Cost weighting removed them only at $w_C=6$, where accuracy fell to 0.707 and 179 of 350 A records were escalated; weights 1.5 to 4 left 50 or 51 \CtoA{} errors. The nested validation reproduced the pattern (accuracy 0.881, macro-F1 0.870, 50 \CtoA{} errors in the pooled outer predictions).
+
+The cause is a blind spot in the learned features rather than a poor threshold. All 50 \CtoA{} errors occur in the through-structure target mode (Fig.~\ref{fig:errors}d), whose severity is expressed through structure indicators that the rule chain gates on but the 14 learned features do not contain. In that mode all 125 records, from safe to critical, share one identical feature vector, the same vector as the safe reference scenarios. No function of those features can separate them. The learned layer is nevertheless complementary to the rule chain elsewhere: it corrected the 57 \CtoB{} errors that the rule chain made in the safe-reference, overtopping and slope modes and the 54 \AtoB{} errors in the seepage, mixed and scour modes.
+
+\subsection{The ordinal floor removes underestimates without adding errors}
+\label{sec:res-floor}
+The floor hybrid reached 0.926 accuracy, 0.912 macro-F1, 0.928 balanced accuracy and C recall 1.000, with no C-class underestimate and $\Lsafe=0$ (Table~\ref{tab:main}, Fig.~\ref{fig:errors}c). Relative to the rule chain it corrected 71 of 136 errors and introduced none (exact McNemar $p<10^{-20}$). The paired group bootstrap gave differences of $+8.1$ percentage points in accuracy (95\% interval 5.4 to 11.5), $+8.5$ points in macro-F1 (6.0 to 11.3) and $-57$ in $\Lsafe$ ($-72$ to $-42$). Relative to the RF threshold policy, the floor changed 154 decisions: it corrected 100 RF errors (all 50 \CtoA{} and 50 of 61 \BtoA) and introduced 54 \AtoB{} escalations, which are exactly the rule chain's conservative errors.
+
+Proposition~\ref{prop:floor} accounts for each of these counts. The rule chain and the RF policy never missed the same C record, so the intersection of their C underestimates, and hence the hybrid's, was empty. The RF policy made no overestimate, so the union of overestimates equals the rule chain's 54. The 11 remaining \BtoA{} errors are safe-reference records that both components placed in A. The hybrid's escalation rate of 0.400 equals the C prevalence of the benchmark.
+
+The scope of the floor matters. The C-only floor reached a higher accuracy (0.930) and avoided the 54 \AtoB{} escalations, but its balanced accuracy fell to 0.884 because it discarded the rule chain's B-level corrections (61 \BtoA{} errors remained). More importantly, it does not inherit the \CtoA{} guarantee of Proposition~\ref{prop:floor}(iii): a C record that the rule chain places in B and the learned layer places in A is issued A. This occurred in one of the five additional seeds (Section~\ref{sec:res-robust}).
+
+Removing the two inspection features from the learned layer changed 23 RF decisions and lowered the hybrid's accuracy from 0.926 to 0.917 with one \CtoB{} error. Within the generator the synthetic inspection features thus carried a small amount of signal for the learned layer, whereas they carried none for the rule chain's grades.
+
+\subsection{Robustness across generator seeds}
+\label{sec:res-robust}
+
+The pattern held in each of the five additional batches (Table~\ref{tab:seeds}, Fig.~\ref{fig:seeds}a,b). The floor hybrid introduced no new error relative to the rule chain in any seed, corrected 61 to 68 rule errors per seed (exact McNemar $p<10^{-18}$ in every seed), and improved accuracy, macro-F1 and balanced accuracy over the paired rule chain by $7.4\pm0.3$, $7.7\pm0.4$ and $7.1\pm0.5$ percentage points. The RF threshold policy's accuracy gain over the rule chain reached $p<0.05$ in only one seed (range $p=0.017$ to 0.34). In seed 20260932 both components missed the same three C records; the floor hybrid issued B for them (three \CtoB), whereas the C-only floor issued A (three \CtoA), as Proposition~\ref{prop:floor} predicts. The majority-vote forest's C recall ($0.837\pm0.013$) fell below the rule chain's ($0.842\pm0.002$), so its gain on the original batch did not replicate. The small between-seed spread shows that the decision-layer behaviour is reproducible within the generator family; all batches share the feature construction, severity mapping and rule logic, so the spread says nothing about transfer to field data.
+
+\subsection{Review budget}
+\label{sec:res-review}
+Routing low-confidence records to review had a cost that grew with the review rate (Fig.~\ref{fig:seeds}c). At $u=0.50$, $1.5\pm0.7\%$ of records were routed, C recall was $0.990\pm0.008$ and $\Lsafe$ was $3.4\pm2.8$ (range 0 to 6); this point met the exploratory budget of at most 5\% review and $\Lsafe\leq6$ in every seed. At $u=0.60$ the review rate rose to $6.6\pm0.9\%$ and $\Lsafe$ to $10.8\pm2.8$; at $u=0.70$, to $16.0\pm1.4\%$ and $37.4\pm8.6$. On the original batch, $u=0.50$ routed 7 records and changed no metric, and $u=0.60$ routed 62 records (7.1\%) and produced 12 \CtoB{} errors (Table~\ref{tab:main}). These costs measure the proxy, not review: the rule grade substitutes for an engineer, so the sweep quantifies the upward corrections that a reviewer would have to recover. A reviewer who is correct wherever the rule chain is correct on routed records, and never grades below it, could not lower accuracy or raise $\Lsafe$ relative to these values. The thresholds were selected post hoc within the same generator family and must be fixed before an external evaluation.
+
+\subsection{Inspection candidates as evaluation states}
+\label{sec:res-inspection}
+All nine field candidates that entered manual review were rejected as piping (Fig.~\ref{fig:inspection}). Their detector confidences ranged from 0.466 to 0.777. The reviewer attributed five to the thermal contrast at water--land boundaries, two to vegetation and shadow, one to the thermal inertia and shadow of a building edge, and one to wet ground or lens-edge vignetting. With 0 confirmations in 9 reviews, the exact one-sided 95\% upper bound on candidate precision is 0.28: the data exclude a high-precision detector, but they do not show that the detector never finds piping. The 14 boxes on the 13 artificial-piping images had higher confidences (0.670 to 0.930), but without missed-detection records they establish no recall or field transfer.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{ml_tradeoff.png}
-\caption{Aggregate quality and critical-class recall for the rule and machine-learning policies. Color indicates the safety loss defined in Eq.~(\ref{eq:safeloss}).}
-\label{fig:mltradeoff}
-\end{figure}
-
-\subsection{Pareto trade-off and nested validation}
-A representative threshold $(\tau_C,\tau_B)=(0.35,0.20)$ reached 0.8731 accuracy, 0.8584 macro-F1, 0.8362 balanced accuracy, and 0.8571 C recall on the same OOF batch. Relative to the rule baseline, these are increases of 2.86, 3.12, and 2.00 percentage points for accuracy, macro-F1, and C recall, respectively. The improvement is not safety-neutral: all 50 C underestimates were direct C-to-A errors, producing $L_{\mathrm{safe}}=100$.
-
-The finer $0.01$ threshold audit evaluated 10,000 pure RF policies. No threshold pair produced zero direct C-to-A errors. The best pure-RF macro-F1 point was $(0.19,0.06)$ with 0.8869 accuracy and 0.8900 macro-F1, but it still produced 50 direct C-to-A errors and $L_{\mathrm{safe}}=100$. This ablation makes the role of the physical lower bound explicit: the zero-C-to-A result is a property of the hybrid decision layer, not of RF thresholding alone.
-
-A safety-priority class-weighted forest with C weight 6 achieved C recall 1.000 and zero C underestimates, but accuracy fell to 0.7074 and A overestimates rose to 179. This policy is not an engineering optimum; it represents one point on the risk--review-cost frontier. The threshold frontier is shown in Fig.~\ref{fig:pareto}.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{pareto_frontier.png}
-\caption{Threshold-policy Pareto frontier from grouped OOF random-forest probabilities. Color indicates escalation rate.}
-\label{fig:pareto}
-\end{figure}
-
-A five-outer by three-inner grouped nested-validation prototype produced 0.8811 accuracy, 0.8704 macro-F1, 0.8495 balanced accuracy, and 0.8571 C recall, with 50 C underestimates in the pooled outer predictions. The persistence of direct C-to-A errors shows that selecting a C-recall constraint alone is insufficient. The physical-veto hybrid demonstrates one auditable implementation of a direct C-to-A hard constraint, while the review fallback quantifies the associated manual-review burden. Because both policies are evaluated on the same controlled generator, they should be treated as architecture evidence rather than as independent field performance.
-
-The five-seed results provide a second check on direction rather than an external validation set. The hybrid's mean improvement over the paired rule baseline was 7.41 percentage points in accuracy and 7.65 percentage points in macro-F1, while the mean number of C underestimates decreased by 54.8. The consistency of these differences across generator realizations supports reproducibility of the decision-layer behavior. It does not remove the shared-generator limitation, because all five batches inherit the same feature construction, severity mapping, and rule logic.
-
-\subsection{Multi-seed robustness}
-To test sensitivity to the arbitrary generator realization, we regenerated five additional 875-record batches with seeds 20260930--20260934. The target construction, feature exclusion list, grouped five-fold split, forest hyperparameters, and threshold policy were unchanged; only the controlled-scenario random seed varied. These are independent generator realizations within the same synthetic family, not independent field labels. Table~\ref{tab:multiseed} reports mean$\pm$SD across the five batches. The delivered rule baseline remained stable at 0.8473$\pm$0.0017 accuracy and 0.8298$\pm$0.0017 macro-F1. The RF threshold policy reached 0.8754$\pm$0.0101 accuracy but retained 50.6$\pm$1.3 C underestimates and a safety loss of 101.2$\pm$2.7. The physical-veto hybrid reached 0.9214$\pm$0.0042 accuracy, 0.9064$\pm$0.0051 macro-F1, 0.9202$\pm$0.0062 balanced accuracy, and 0.9983$\pm$0.0038 C recall; C underestimates averaged 0.6$\pm$1.3. Paired with the rule baseline on the same five seeds, this corresponds to mean gains of 7.41, 7.65, and 7.12 percentage points in accuracy, macro-F1, and balanced accuracy, respectively, and a reduction of 54.8 C underestimates. The review fallback reduced C recall to 0.9691$\pm$0.0079 while routing 6.58$\pm$0.85\% of records to review. The small between-seed variation supports reproducibility of the decision-layer behavior within the generator family, but it does not establish transfer to field data.
-
-\begin{table}[t]
-\caption{Robustness across five additional generator seeds (mean$\pm$SD).}
-\label{tab:multiseed}
-\centering
-\scriptsize
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccccc}
-\toprule
-Method & Acc. & mF1 & Bal. & Rec. C & C low & $L_{\mathrm{safe}}$ \\
-\midrule
-Rule baseline & .8473$\pm$.0017 & .8298$\pm$.0017 & .8490$\pm$.0014 & .8417$\pm$.0016 & 55.4$\pm$.5 & 55.4$\pm$.5 \\
-RF threshold & .8754$\pm$.0101 & .8621$\pm$.0150 & .8406$\pm$.0164 & .8554$\pm$.0038 & 50.6$\pm$1.3 & 101.2$\pm$2.7 \\
-RF + physical veto & .9214$\pm$.0042 & .9064$\pm$.0051 & .9202$\pm$.0062 & .9983$\pm$.0038 & .6$\pm$1.3 & .6$\pm$1.3 \\
-RF + veto + review & .9081$\pm$.0060 & .8924$\pm$.0071 & .9078$\pm$.0081 & .9691$\pm$.0079 & 10.8$\pm$2.8 & 10.8$\pm$2.8 \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\subsection{Review-budget sensitivity}
-The manual-review threshold is itself an operational objective. We swept $u\in\{0.50,0.55,\ldots,0.90\}$, routing a hybrid prediction to the rule fallback when $\max_c p_c<u$. Across the five additional seeds, $u=0.50$ routed 1.53$\pm$0.67\% of records to review, achieved 0.9177$\pm$0.0057 accuracy, 0.9025$\pm$0.0066 macro-F1, 0.9903$\pm$0.0080 C recall, and a safety loss of 3.4$\pm$2.8 (range 0--6). It is feasible for the exploratory constraints of at most 5\% review and at most 6 safety-loss units in each seed batch. The earlier $u=0.60$ variant required 6.58$\pm$0.85\% review and yielded 0.9081$\pm$0.0060 accuracy, 0.8924$\pm$0.0071 macro-F1, and 10.8$\pm$2.8 safety-loss units. The original 875-record batch routed only 7 records at $u=0.50$ and retained the closed-set hybrid metrics. These thresholds are post-hoc operating points for protocol design; they must be fixed before an external evaluation.
-
-\subsection{Inspection evidence as an evaluation state}
-The nine field detections that entered manual review had confidence values between 0.4658 and 0.7770 and were all rejected as confirmed piping. The 13 artificial validation images produced 14 boxes with confidence values between 0.6699 and 0.9299, but the available package does not establish the positive boundary, missed detections, or a complete image-level truth table. Figure~\ref{fig:inspection} therefore reports the inspection evidence as a status distribution rather than as a field accuracy claim.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{inspection_review.png}
-\caption{Inspection candidate confidence and manual-review status. The field review subset contains nine false positives; the artificial validation set contains 14 output boxes.}
+\includegraphics[width=\columnwidth]{fig_inspection_status.pdf}
+\caption{Detector confidence of the nine reviewed field candidates, coloured by the reviewer-stated cause of the false positive, and of the 14 boxes on artificial-piping images (no review status or missed-detection record). Vertical position within a row is jitter for visibility.}
 \label{fig:inspection}
 \end{figure}
 
-The result has a direct implication for the C3 inspection indicator. An algorithmic candidate may trigger a review task, but it cannot be treated as a confirmed piping event until time, location, and manual status are closed. An unobserved image should remain unobserved rather than being encoded as no anomaly.
+The implication for the inspection indicator is direct. A candidate may create a review task, but it cannot enter the grade as a confirmed piping event until time, location and manual status are closed, and an image that was not inspected remains unobserved rather than ``no anomaly''. The two highest-confidence field candidates (0.777 and 0.767) were a water edge and vegetation, so a confidence threshold alone would not have separated them from genuine seepage.
+
+\subsection{Engineering-case provenance trace}
+\label{sec:res-case}
+The K45+500 delivery returned a C grade with a seepage-dominant mode and a score of 24.35 (Table~\ref{tab:case}). The provenance fields exposed five issues that prevent its use as validation: the water level is a representative high-water scenario rather than a measured 2017 level; 15 of the 29 indicators were reported as missing; four indicators conflict between the delivered indicator table and the result file; the evaluation module used for the case differs from the benchmark version and adds a rule that sets the inspection indicator to its worst value when piping is confirmed; and the confirmed historical piping event is part of the input. The trace therefore demonstrates that the interface carries the information needed to detect these problems; it does not test predictive skill.
+
+\begin{table}[t]
+\caption{K45+500 delivery case: values and provenance status.}
+\label{tab:case}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.25\columnwidth}>{\raggedright\arraybackslash}p{0.33\columnwidth}>{\raggedright\arraybackslash}p{0.36\columnwidth}@{}}
+\toprule
+Item & Delivered value & Provenance status \\
+\midrule
+Upstream water level & 35.90 m (crest 36.30 m) & representative scenario, not a measured 2017 level \\
+Controlling layer & silty clay, $i=0.865$, $i_{cr}=0.827$, ratio 1.045 & numerical output; extraction location and material retained; C1 gate fired \\
+Downstream slope & FoS 1.155 (Bishop simplified) & below the 1.35 allowable value; D1 gate fired \\
+Scour depth & 0.40 m & D3 gate fired \\
+Score and grade & 24.35; C, seepage-dominant & delivery excerpt; no independent re-run \\
+Completeness & 15 of 29 indicators missing & reported as a missing-item list \\
+Consistency & 4 table--result conflicts & unresolved (A8, A9, B2, D5) \\
+Code version & module differs from benchmark & adds ``confirmed piping $\rightarrow$ worst C3''; history enters the input \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Discussion}
-The main methodological result is the explicit separation of physics, evidence state, and learned decision support. The reproduced rule baseline already performs well on the controlled benchmark, partly because hard gates are aligned with the generator's severity construction. A classifier trained on the same physical channels therefore faces a strong comparator. The random forest nevertheless provides a useful probability surface for exploring nonlinear interactions and operating points that cannot be expressed by a single score threshold.
+\label{sec:discussion}
+The safety gain in this paper comes from the composition, not from the learner. A forest trained on the same physical channels improved aggregate metrics only modestly and, on every batch, converted its critical-class misses into direct downgrades; the ordinal floor removed those downgrades and kept most of the learned corrections. Proposition~\ref{prop:floor} explains why this worked here and why it need not work elsewhere: the floor is valuable exactly when the two components err on different records and the learned layer rarely overestimates. In the benchmark, 125 of the rule chain's 136 errors fell in the safe-reference, overtopping, seepage and mixed modes, 100 of the forest's 111 errors fell in the through-structure and overtopping modes, and the two never missed the same C record.
 
-This separation also clarifies the role of the digital twin. The three-dimensional geological scene and the simulated seepage field are not themselves a safety conclusion; they are context and evidence sources whose identity, spatial support, and validity interval must remain visible when an operational grade is produced. The proposed provenance graph provides a lightweight contract between the transparent-geology, transparent-computation, and transparent-inspection modules. It can therefore be implemented in a platform without making the visualization layer responsible for deciding whether an observation is confirmed, missing, or inapplicable.
+This positions the floor between two existing strategies. Theory-guided learning places physical knowledge in the learner's inputs, loss or architecture~\cite{Karpatne2017}, and interpretable models make the learner itself auditable~\cite{Rudin2019}. The floor instead places physical knowledge in the \emph{decision layer} as an ordinal constraint, which leaves the learner unrestricted but bounds the direction of its influence. It is simpler than Bayesian updating of failure probabilities~\cite{Schweckendiek,Roscoe} and does not replace it; the two answer different questions. Unlike a reject option~\cite{Chow1970,Geifman2017}, the floor never abstains; in our sweep, abstention with a rule-based fallback only removed upward corrections, so the value of review lies in information that the offline proxy cannot represent.
 
-The Pareto analysis changes the interpretation of ``improvement.'' The representative threshold policy improves accuracy and macro-F1 in the controlled batch, but it converts adjacent C-to-B errors into direct C-to-A errors. The physical-veto hybrid shows how this failure can be blocked without discarding the learned probability surface: the learned component remains responsible for upward corrections, while the rule chain supplies a safety floor. In levee safety, this is not a minor calibration detail. It is a change in the direction of error, and it should be represented as a separate objective or a hard admissibility condition. Conversely, the safety-priority policy prevents C underestimation by issuing many conservative A-to-B or A-to-C escalations. The correct operating point depends on the cost of review, the response capacity, and the consequence of a false-safe decision; a single scalar accuracy cannot determine it.
+Two rival explanations bound the size of the gain. First, the rule chain's hard gates are aligned with the generator's severity construction, so the reference labels partly encode the rule logic; part of the hybrid's advantage over a pure learner is therefore built into the benchmark. Second, the forest's \CtoA{} errors stem from a feature set that omits structure indicators. Adding those indicators would likely shrink the learner's blind spot and narrow the hybrid's margin. Neither explanation removes the protective role of the floor, which does not depend on knowing where the learner's blind spots are. That property matters for field deployment, where blind spots are unknown in advance.
 
-The field inspection records expose a second boundary. Candidate detection is not equivalent to defect confirmation. Water boundaries, vegetation, shadow, wet soil, and buildings can produce thermal patterns that resemble leakage or piping. The transparent evaluation interface therefore needs at least three states: candidate, reviewed status, and admissible evaluation input. This state model can support a digital twin without forcing incomplete evidence into a numerical grade.
+The inspection results lead to the same design principle at the evidence layer. A detector can be optimized for candidate generation, but the evaluation should consume reviewed event objects with a location, a time window, a confidence and a status. Retaining rejected candidates is useful for retraining and flight planning~\cite{Kumar2025}; promoting them to confirmed piping would have raised the grade of a reach on the basis of water edges and vegetation. The provenance graph keeps that distinction in the data model rather than in the visualization layer.
 
-The inspection finding is consistent with the remote-sensing literature's emphasis on registration and sensor context~\cite{Colomina2014}, and it has a direct design implication for future image models. A segmentation or detector can be optimized for candidate generation, but the evaluation layer should consume a reviewed event object with a location, time, confidence, and status. This allows the platform to retain useful false positives for retraining or inspection planning while preventing them from being promoted to confirmed piping in the current safety grade.
+The claims are bounded in four ways. (i) All quantitative comparisons use one synthetic generator; the five additional seeds test realization variability, not transfer, and the reference labels share the rule logic. (ii) The \CtoA{} guarantee is conditional on the rule chain: in the field, a rule chain that misses a critical case entirely would pass that error through the floor, and the hybrid inherits every rule overestimate, which in the benchmark meant 54 unnecessary escalations. (iii) The review fallback is a proxy, so the reported review costs are not measurements of engineering review. (iv) The field evidence consists of nine reviewed candidates and one non-blind engineering trace; it supports the evidence-state design but no detection or prediction metric.
 
-Several limitations remain. The 875 labels and the five additional seed batches are derived from the controlled severity design and are not independent field observations. The OOF threshold grid and the nested prototype remain exploratory, and the physical-veto hybrid uses the delivered rule output as a decision-layer safety floor. The engineering case has unresolved input conflicts, historical information leakage, and no independent physical re-run. The field images lack complete image-level truth and GPS-to-chainage linkage. The review-budget operating points were selected from the same controlled family and therefore should be regarded as protocol candidates rather than calibrated deployment thresholds. Consequently, the present study establishes reproducibility, failure modes, and a decision protocol, but not field-wide predictive accuracy, early-warning lead time, or a validated digital-twin closed loop.
+Each boundary points to a discriminating test. Independent field labels, timed and registered against inspection and water-level records, would test whether the components remain complementary outside the generator, which Proposition~\ref{prop:floor} identifies as the condition that matters. Retraining the learner with structure indicators would separate the feature blind spot from the protective effect of the floor. Calibrating the forest's probabilities and recording actual reviewer decisions would turn the review gate from a proxy into a measured operating point.
 
 \section{Conclusion}
-We presented a safety-aware transparent evaluation framework for levee seepage stability that integrates geological evidence, seepage-field indicators, UAV inspection states, a physics-based rule chain, and a Pareto decision layer. The central result is a constrained composition rather than a replacement of physics by machine learning: the random forest supplies a nonlinear comparator, while the physical lower bound prevents a learned output from downgrading a rule-identified risk. On the original 875 controlled scenarios, this hybrid reached 0.9257 accuracy, 0.9119 macro-F1, and 1.0000 C recall with zero C underestimates; across five additional generator seeds it retained 0.9214$\pm$0.0042 accuracy, 0.9064$\pm$0.0051 macro-F1, and 0.9983$\pm$0.0038 C recall. A lower-review candidate at $u=0.50$ routed 1.53$\pm$0.67\% of records to review and retained 0.9903$\pm$0.0080 C recall within the same controlled family. These findings support the reproducibility and safety direction of the decision protocol, while the absence of independent field labels prevents a claim of engineering-optimal deployment.
+An ordinal physical floor that lets a learned layer raise but never lower a physics-based grade improved a levee seepage rule chain without adding a single error relative to that chain in six controlled batches, and removed the direct critical-to-safe downgrades that no threshold or moderate cost weighting of a random forest could avoid. The gain follows from a simple property: the composition underestimates only where both components underestimate, so it helps when their errors are complementary and protects against direct downgrades only to the extent that the rule chain does. Treating inspection detections as candidates until reviewed, and engineering deliveries as provenance traces, kept unconfirmed and inconsistent evidence out of the grade. Field labels with independent timing and registration are the next requirement for testing whether the complementarity, and hence the gain, survives outside the synthetic generator.
 
-The field inspection subset further showed that nine algorithmic candidates were all false positives after manual review. The appropriate platform behavior is therefore to preserve candidate, review, applicability, and missingness states and to expose the triggering evidence alongside the grade. Future work should complete the physical re-run of the engineering case, link inspection coordinates to levee chainage and hydraulic scenarios, obtain image-level truth labels, and evaluate the safety-constrained policies on independent field labels under a direct C-to-A hard constraint or reject option.
+\section*{Data and Code Availability}
+\label{sec:availability}
+The de-identified repository contains the controlled benchmark and its generator (\url{data/875_benchmark}), the multi-seed batches and analysis scripts (\url{experiments/analysis}), the inspection audit tables (\url{inspection/audit}) and this manuscript. The statistics and figures specific to this revision, including per-record predictions for the 875 records, are produced by \url{experiments/analysis/paper_revision/paper_statistics.py} and \url{make_paper_figures.py}, which reuse the unchanged model code. Raw field images were released with metadata removed where possible; locations are not reported in this paper.
 
 \section*{Acknowledgment}
-The authors acknowledge the project team for providing the controlled evaluation package, engineering-case materials, and UAV inspection records. The author list and funding information will be completed after internal review.
+The authors acknowledge the project team for providing the controlled evaluation package, engineering-case materials and UAV inspection records. Author list and funding information will be completed after internal review.
 
-\enlargethispage{5\baselineskip}\begin{thebibliography}{00}\tiny
-\bibitem{GemPy} C. de la Varga, A. Schaaf, and T. H. W. Wellmann, ``GemPy 1.0: open-source stochastic geological modeling and inversion,'' \emph{Geoscientific Model Development}, vol. 12, pp. 1--32, 2019.
-\bibitem{Richards} L. A. Richards, ``Capillary conduction of liquids through porous mediums,'' \emph{Physics}, vol. 1, pp. 318--333, 1931.
-\bibitem{Breiman} L. Breiman, ``Random forests,'' \emph{Machine Learning}, vol. 45, pp. 5--32, 2001.
-\bibitem{Quinlan} J. R. Quinlan, ``Induction of decision trees,'' \emph{Machine Learning}, vol. 1, pp. 81--106, 1986.
-\bibitem{Deb} K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan, ``A fast and elitist multiobjective genetic algorithm: NSGA-II,'' \emph{IEEE Transactions on Evolutionary Computation}, vol. 6, no. 2, pp. 182--197, 2002.
-\bibitem{Xu} B. Xu, Z. Liu, R. Pang, et al., ``Data-driven collaborative safety evaluation for seepage reliability of embankments considering spatial variability,'' \emph{Journal of Hydrology}, vol. 660, p. 133490, 2025.
-\bibitem{Schweckendiek} T. Schweckendiek, A. Vrouwenvelder, and E. Calle, ``Updating piping reliability with field performance observations,'' \emph{Structural Safety}, vol. 47, pp. 13--23, 2014.
-\bibitem{Roscoe} K. Roscoe and A. Hanea, ``Bayesian networks in levee system reliability,'' in \emph{Proc. 12th Int. Conf. on Applications of Statistics and Probability in Civil Engineering}, Vancouver, Canada, 2015, pp. 1--8.
-\bibitem{Chen} X. Chen, Y. Xu, H. Guo, et al., ``Comprehensive evaluation of dam seepage safety combining deep learning with Dempster--Shafer evidence theory,'' \emph{Measurement}, vol. 226, p. 114172, 2024.
-\bibitem{Hou} Y. Hou, J. Yu, W. Liu, et al., ``Research on the full life cycle safety of levee based on BIM+mechanism algorithm,'' \emph{Archives of Civil Engineering}, vol. 72, no. 2, pp. 247--263, 2026.
-\bibitem{Wellmann2018} F. Wellmann and G. Caumon, ``3-D structural geological models: Concepts, methods, and uncertainties,'' \emph{Advances in Geophysics}, vol. 59, pp. 1--121, 2018.
-\bibitem{Celia1990} M. A. Celia, E. T. Bouloutas, and R. L. Zarba, ``A general mass-conservative numerical solution for the unsaturated flow equation,'' \emph{Water Resources Research}, vol. 26, no. 7, pp. 1483--1496, 1990.
-\bibitem{vanGenuchten1980} M. T. van Genuchten, ``A closed-form equation for predicting the hydraulic conductivity of unsaturated soils,'' \emph{Soil Science Society of America Journal}, vol. 44, no. 5, pp. 892--898, 1980.
-\bibitem{Baecher2003} G. Baecher and J. Christian, \emph{Reliability and Statistics in Geotechnical Engineering}. Chichester, U.K.: Wiley, 2003.
-\bibitem{Colomina2014} I. Colomina and P. Molina, ``Unmanned aerial systems for photogrammetry and remote sensing: A review,'' \emph{ISPRS Journal of Photogrammetry and Remote Sensing}, vol. 92, pp. 79--97, 2014.
-\bibitem{Ronneberger2015} O. Ronneberger, P. Fischer, and T. Brox, ``U-Net: Convolutional networks for biomedical image segmentation,'' in \emph{Proc. Medical Image Computing and Computer-Assisted Intervention}, 2015, pp. 234--241.
-\bibitem{Redmon2016} J. Redmon, S. Divvala, R. Girshick, and A. Farhadi, ``You only look once: Unified, real-time object detection,'' in \emph{Proc. IEEE Conference on Computer Vision and Pattern Recognition}, 2016, pp. 779--788.
-\bibitem{Hastie2009} T. Hastie, R. Tibshirani, and J. Friedman, \emph{The Elements of Statistical Learning}, 2nd ed. New York, NY, USA: Springer, 2009.
-\bibitem{Saito2015} T. Saito and M. Rehmsmeier, ``The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets,'' \emph{PLoS ONE}, vol. 10, no. 3, p. e0118432, 2015.
-\bibitem{Shafer1976} G. Shafer, \emph{A Mathematical Theory of Evidence}. Princeton, NJ, USA: Princeton University Press, 1976.
-\bibitem{Fuller2020} A. Fuller, Z. Fan, C. Day, and C. Barlow, ``Digital twin: Enabling technologies, challenges and open research,'' \emph{IEEE Access}, vol. 8, pp. 108952--108971, 2020.
-\bibitem{LundbergLee} S. M. Lundberg and S.-I. Lee, ``A unified approach to interpreting model predictions,'' in \emph{Advances in Neural Information Processing Systems}, vol. 30, 2017, pp. 4765--4774.
-\end{thebibliography}
+\balance
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
 \end{document}
-
-
-
-
-
-
-
-
