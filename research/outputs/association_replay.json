@@ -1,0 +1,644 @@
+{
+  "engineering_validation": false,
+  "unique_observation_count": 1,
+  "snapshots": [
+    {
+      "as_of": "2026-09-20T10:30:00+08:00",
+      "associations": {
+        "as_of": "2026-09-20T10:30:00+08:00",
+        "records": [],
+        "unavailable_event_ids": [
+          "EVENT-1"
+        ],
+        "interpretation": "candidate links only; no diagnosis or event multiplication"
+      },
+      "evaluations": [
+        {
+          "schema_version": "0.1",
+          "unit_id": "U1",
+          "case_id": "SYNTHETIC-STEADY-01",
+          "as_of": "2026-09-20T10:30:00+08:00",
+          "model_version": "synthetic-fixture-v1",
+          "rule_id": "illustrative-v0.1-not-calibrated",
+          "illustrative_only": true,
+          "score_interval": [
+            0.10000000000000002,
+            0.10000000000000002
+          ],
+          "grade_range": [
+            0,
+            0
+          ],
+          "determined_grade": 0,
+          "evidence_sufficient": true,
+          "critical_missing": [],
+          "issues": [],
+          "modes": {
+            "exit_instability": {
+              "base_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "response_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "exit_gradient_ratio": [
+                  0.08000000000000002,
+                  0.08000000000000002
+                ],
+                "filter_deficiency": [
+                  0.020000000000000004,
+                  0.020000000000000004
+                ]
+              },
+              "triggers": []
+            },
+            "cover_uplift": {
+              "base_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "uplift_demand_ratio": [
+                  0.1,
+                  0.1
+                ]
+              },
+              "triggers": []
+            }
+          },
+          "indicator_evidence": {
+            "exit_gradient_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-exit_gradient_ratio"
+              ],
+              "source_ref": "synthetic://exit_gradient_ratio"
+            },
+            "uplift_demand_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-uplift_demand_ratio"
+              ],
+              "source_ref": "synthetic://uplift_demand_ratio"
+            },
+            "filter_deficiency": {
+              "raw_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-filter_deficiency"
+              ],
+              "source_ref": "synthetic://filter_deficiency"
+            }
+          },
+          "active_events": [],
+          "ignored_future_events": [],
+          "effective_linear_weights": {
+            "exit_gradient_ratio": 0.48,
+            "uplift_demand_ratio": 0.4,
+            "filter_deficiency": 0.12
+          },
+          "interpretation": "response index and possibility interval; not failure probability"
+        },
+        {
+          "schema_version": "0.1",
+          "unit_id": "U2",
+          "case_id": "SYNTHETIC-STEADY-01",
+          "as_of": "2026-09-20T10:30:00+08:00",
+          "model_version": "synthetic-fixture-v1",
+          "rule_id": "illustrative-v0.1-not-calibrated",
+          "illustrative_only": true,
+          "score_interval": [
+            0.10000000000000002,
+            0.10000000000000002
+          ],
+          "grade_range": [
+            0,
+            0
+          ],
+          "determined_grade": 0,
+          "evidence_sufficient": true,
+          "critical_missing": [],
+          "issues": [],
+          "modes": {
+            "exit_instability": {
+              "base_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "response_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "exit_gradient_ratio": [
+                  0.08000000000000002,
+                  0.08000000000000002
+                ],
+                "filter_deficiency": [
+                  0.020000000000000004,
+                  0.020000000000000004
+                ]
+              },
+              "triggers": []
+            },
+            "cover_uplift": {
+              "base_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "uplift_demand_ratio": [
+                  0.1,
+                  0.1
+                ]
+              },
+              "triggers": []
+            }
+          },
+          "indicator_evidence": {
+            "exit_gradient_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-exit_gradient_ratio"
+              ],
+              "source_ref": "synthetic://exit_gradient_ratio"
+            },
+            "uplift_demand_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-uplift_demand_ratio"
+              ],
+              "source_ref": "synthetic://uplift_demand_ratio"
+            },
+            "filter_deficiency": {
+              "raw_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-filter_deficiency"
+              ],
+              "source_ref": "synthetic://filter_deficiency"
+            }
+          },
+          "active_events": [],
+          "ignored_future_events": [],
+          "effective_linear_weights": {
+            "exit_gradient_ratio": 0.48,
+            "uplift_demand_ratio": 0.4,
+            "filter_deficiency": 0.12
+          },
+          "interpretation": "response index and possibility interval; not failure probability"
+        }
+      ]
+    },
+    {
+      "as_of": "2026-09-20T11:00:00+08:00",
+      "associations": {
+        "as_of": "2026-09-20T11:00:00+08:00",
+        "records": [
+          {
+            "event_id": "EVENT-1",
+            "observed_at": "2026-09-20T10:15:00+08:00",
+            "received_at": "2026-09-20T10:40:00+08:00",
+            "source_ref": "synthetic://observation",
+            "reference_id": "synthetic-axis",
+            "geometry_version": "v1",
+            "chainage_m": [
+              49.0,
+              51.0
+            ],
+            "candidate_units": [
+              "U1",
+              "U2"
+            ],
+            "candidate_links": [
+              {
+                "unit_id": "U1",
+                "context_id": "U1-ctx",
+                "model_version": "synthetic-fixture-v1",
+                "basis_ref": "synthetic fixed load"
+              },
+              {
+                "unit_id": "U2",
+                "context_id": "U2-ctx",
+                "model_version": "synthetic-fixture-v1",
+                "basis_ref": "synthetic fixed load"
+              }
+            ],
+            "status": "spatial_ambiguity"
+          }
+        ],
+        "unavailable_event_ids": [],
+        "interpretation": "candidate links only; no diagnosis or event multiplication"
+      },
+      "evaluations": [
+        {
+          "schema_version": "0.1",
+          "unit_id": "U1",
+          "case_id": "SYNTHETIC-STEADY-01",
+          "as_of": "2026-09-20T11:00:00+08:00",
+          "model_version": "synthetic-fixture-v1",
+          "rule_id": "illustrative-v0.1-not-calibrated",
+          "illustrative_only": true,
+          "score_interval": [
+            0.10000000000000002,
+            0.62
+          ],
+          "grade_range": [
+            0,
+            3
+          ],
+          "determined_grade": null,
+          "evidence_sufficient": false,
+          "critical_missing": [],
+          "issues": [
+            "inspection:uncertain_spatial_assignment"
+          ],
+          "modes": {
+            "exit_instability": {
+              "base_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "response_interval": [
+                0.10000000000000002,
+                0.75
+              ],
+              "grade_range": [
+                0,
+                3
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 3,
+              "linear_contributions": {
+                "exit_gradient_ratio": [
+                  0.08000000000000002,
+                  0.08000000000000002
+                ],
+                "filter_deficiency": [
+                  0.020000000000000004,
+                  0.020000000000000004
+                ]
+              },
+              "triggers": [
+                {
+                  "type": "observation",
+                  "event_id": "EVENT-1",
+                  "certainty": "possible",
+                  "observation_kind": "confirmed",
+                  "spatial_certainty": "possible",
+                  "association_ref": "synthetic://boundary-association-v1",
+                  "grade_floor": 3,
+                  "review_ref": "synthetic://independent-review"
+                }
+              ]
+            },
+            "cover_uplift": {
+              "base_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "uplift_demand_ratio": [
+                  0.1,
+                  0.1
+                ]
+              },
+              "triggers": []
+            }
+          },
+          "indicator_evidence": {
+            "exit_gradient_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-exit_gradient_ratio"
+              ],
+              "source_ref": "synthetic://exit_gradient_ratio"
+            },
+            "uplift_demand_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-uplift_demand_ratio"
+              ],
+              "source_ref": "synthetic://uplift_demand_ratio"
+            },
+            "filter_deficiency": {
+              "raw_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-filter_deficiency"
+              ],
+              "source_ref": "synthetic://filter_deficiency"
+            }
+          },
+          "active_events": [
+            {
+              "event_id": "EVENT-1",
+              "evidence_id": "SYNTHETIC-PHOTO-1",
+              "unit_id": "U1",
+              "kind": "confirmed",
+              "observed_at": "2026-09-20T10:15:00+08:00",
+              "received_at": "2026-09-20T10:40:00+08:00",
+              "mode_ids": [
+                "exit_instability"
+              ],
+              "source_ref": "synthetic://observation",
+              "review_ref": "synthetic://independent-review",
+              "reference_id": "synthetic-axis",
+              "geometry_version": "v1",
+              "chainage_m": [
+                49,
+                51
+              ],
+              "spatial_certainty": "possible",
+              "association_ref": "synthetic://boundary-association-v1"
+            }
+          ],
+          "ignored_future_events": [],
+          "effective_linear_weights": {
+            "exit_gradient_ratio": 0.48,
+            "uplift_demand_ratio": 0.4,
+            "filter_deficiency": 0.12
+          },
+          "interpretation": "response index and possibility interval; not failure probability"
+        },
+        {
+          "schema_version": "0.1",
+          "unit_id": "U2",
+          "case_id": "SYNTHETIC-STEADY-01",
+          "as_of": "2026-09-20T11:00:00+08:00",
+          "model_version": "synthetic-fixture-v1",
+          "rule_id": "illustrative-v0.1-not-calibrated",
+          "illustrative_only": true,
+          "score_interval": [
+            0.10000000000000002,
+            0.62
+          ],
+          "grade_range": [
+            0,
+            3
+          ],
+          "determined_grade": null,
+          "evidence_sufficient": false,
+          "critical_missing": [],
+          "issues": [
+            "inspection:uncertain_spatial_assignment"
+          ],
+          "modes": {
+            "exit_instability": {
+              "base_interval": [
+                0.10000000000000002,
+                0.10000000000000002
+              ],
+              "response_interval": [
+                0.10000000000000002,
+                0.75
+              ],
+              "grade_range": [
+                0,
+                3
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 3,
+              "linear_contributions": {
+                "exit_gradient_ratio": [
+                  0.08000000000000002,
+                  0.08000000000000002
+                ],
+                "filter_deficiency": [
+                  0.020000000000000004,
+                  0.020000000000000004
+                ]
+              },
+              "triggers": [
+                {
+                  "type": "observation",
+                  "event_id": "EVENT-1",
+                  "certainty": "possible",
+                  "observation_kind": "confirmed",
+                  "spatial_certainty": "possible",
+                  "association_ref": "synthetic://boundary-association-v1",
+                  "grade_floor": 3,
+                  "review_ref": "synthetic://independent-review"
+                }
+              ]
+            },
+            "cover_uplift": {
+              "base_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "grade_range": [
+                0,
+                0
+              ],
+              "definite_grade_floor": 0,
+              "possible_grade_floor": 0,
+              "linear_contributions": {
+                "uplift_demand_ratio": [
+                  0.1,
+                  0.1
+                ]
+              },
+              "triggers": []
+            }
+          },
+          "indicator_evidence": {
+            "exit_gradient_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-exit_gradient_ratio"
+              ],
+              "source_ref": "synthetic://exit_gradient_ratio"
+            },
+            "uplift_demand_ratio": {
+              "raw_interval": [
+                0.2,
+                0.2
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-uplift_demand_ratio"
+              ],
+              "source_ref": "synthetic://uplift_demand_ratio"
+            },
+            "filter_deficiency": {
+              "raw_interval": [
+                0.1,
+                0.1
+              ],
+              "response_interval": [
+                0.1,
+                0.1
+              ],
+              "status": "usable",
+              "evidence_ids": [
+                "SIM-filter_deficiency"
+              ],
+              "source_ref": "synthetic://filter_deficiency"
+            }
+          },
+          "active_events": [
+            {
+              "event_id": "EVENT-1",
+              "evidence_id": "SYNTHETIC-PHOTO-1",
+              "unit_id": "U2",
+              "kind": "confirmed",
+              "observed_at": "2026-09-20T10:15:00+08:00",
+              "received_at": "2026-09-20T10:40:00+08:00",
+              "mode_ids": [
+                "exit_instability"
+              ],
+              "source_ref": "synthetic://observation",
+              "review_ref": "synthetic://independent-review",
+              "reference_id": "synthetic-axis",
+              "geometry_version": "v1",
+              "chainage_m": [
+                49,
+                51
+              ],
+              "spatial_certainty": "possible",
+              "association_ref": "synthetic://boundary-association-v1"
+            }
+          ],
+          "ignored_future_events": [],
+          "effective_linear_weights": {
+            "exit_gradient_ratio": 0.48,
+            "uplift_demand_ratio": 0.4,
+            "filter_deficiency": 0.12
+          },
+          "interpretation": "response index and possibility interval; not failure probability"
+        }
+      ]
+    }
+  ]
+}

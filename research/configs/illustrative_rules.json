@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1",
+  "rule_id": "illustrative-v0.1-not-calibrated",
+  "illustrative_only": true,
+  "basis_ref": "Implementation experiments only; anchors and grades are not engineering standards",
+  "grade_cuts": [0.25, 0.5, 0.75],
+  "alpha": 0.5,
+  "confirmed_observation_grade_floor": 3,
+  "indicators": {
+    "exit_gradient_ratio": {
+      "unit": "1", "critical": true, "dependence_group": "exit_gradient",
+      "basis_ref": "Illustrative increasing response; real anchors require calibration",
+      "knots": [[0, 0], [1, 0.5], [2, 1]],
+      "constraint": {"operator": "ge", "threshold": 1, "grade_floor": 2,
+        "basis_ref": "Illustrative constraint; ratio limit needs site-specific basis"}
+    },
+    "uplift_demand_ratio": {
+      "unit": "1", "critical": true, "dependence_group": "uplift",
+      "basis_ref": "Illustrative demand-to-resistance input; not a universal piping criterion",
+      "knots": [[0, 0], [1, 0.5], [2, 1]],
+      "constraint": {"operator": "ge", "threshold": 1, "grade_floor": 2,
+        "basis_ref": "Illustrative constraint requiring an applicable cover-layer check"}
+    },
+    "filter_deficiency": {
+      "unit": "1", "critical": false, "dependence_group": "filter_condition",
+      "basis_ref": "Illustrative assessed deficiency; field rubric pending",
+      "knots": [[0, 0], [1, 1]]
+    }
+  },
+  "modes": {
+    "exit_instability": {"weight": 0.6, "weights": {"exit_gradient_ratio": 0.8, "filter_deficiency": 0.2}},
+    "cover_uplift": {"weight": 0.4, "weights": {"uplift_demand_ratio": 1.0}}
+  }
+}

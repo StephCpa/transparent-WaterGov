@@ -1,0 +1,175 @@
+{
+  "seed": 20260930,
+  "sample_count": 875,
+  "n_per_cell": 25,
+  "target_distribution": {
+    "0": 350,
+    "1": 175,
+    "2": 350
+  },
+  "unique_feature_groups": 725,
+  "features": [
+    "top_elevation_m",
+    "seepage_i",
+    "body_i",
+    "contact_i",
+    "fos_back",
+    "fos_front",
+    "scour_depth_m",
+    "uav_density",
+    "uav_level",
+    "seepage_ratio",
+    "body_ratio",
+    "contact_ratio",
+    "inv_fos_back",
+    "scour_ratio"
+  ],
+  "rule": {
+    "accuracy": 0.8491428571428571,
+    "macro_f1": 0.8315866836116327,
+    "balanced_accuracy": 0.8504761904761905,
+    "c_recall": 0.8428571428571429,
+    "c_underestimate": 55,
+    "a_overestimate": 52,
+    "cm": [
+      [
+        298,
+        52,
+        0
+      ],
+      [
+        25,
+        150,
+        0
+      ],
+      [
+        0,
+        55,
+        295
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 55,
+    "safe_loss": 55,
+    "escalation_rate": 0.33714285714285713
+  },
+  "rf_majority": {
+    "accuracy": 0.832,
+    "macro_f1": 0.7948619386251522,
+    "balanced_accuracy": 0.7723809523809524,
+    "c_recall": 0.8428571428571429,
+    "c_underestimate": 55,
+    "a_overestimate": 0,
+    "cm": [
+      [
+        350,
+        0,
+        0
+      ],
+      [
+        92,
+        83,
+        0
+      ],
+      [
+        55,
+        0,
+        295
+      ]
+    ],
+    "c_to_a": 55,
+    "c_to_b": 0,
+    "safe_loss": 110,
+    "escalation_rate": 0.33714285714285713
+  },
+  "rf_threshold": {
+    "accuracy": 0.8891428571428571,
+    "macro_f1": 0.8820850041765107,
+    "balanced_accuracy": 0.8628571428571429,
+    "c_recall": 0.8571428571428571,
+    "c_underestimate": 50,
+    "a_overestimate": 0,
+    "cm": [
+      [
+        350,
+        0,
+        0
+      ],
+      [
+        47,
+        128,
+        0
+      ],
+      [
+        50,
+        0,
+        300
+      ]
+    ],
+    "c_to_a": 50,
+    "c_to_b": 0,
+    "safe_loss": 100,
+    "escalation_rate": 0.34285714285714286
+  },
+  "hybrid_physical_veto": {
+    "accuracy": 0.9268571428571428,
+    "macro_f1": 0.912975912975913,
+    "balanced_accuracy": 0.9276190476190477,
+    "c_recall": 1.0,
+    "c_underestimate": 0,
+    "a_overestimate": 52,
+    "cm": [
+      [
+        298,
+        52,
+        0
+      ],
+      [
+        12,
+        163,
+        0
+      ],
+      [
+        0,
+        0,
+        350
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 0,
+    "safe_loss": 0,
+    "escalation_rate": 0.4
+  },
+  "review_fallback": {
+    "accuracy": 0.912,
+    "macro_f1": 0.897680150842568,
+    "balanced_accuracy": 0.9152380952380952,
+    "c_recall": 0.9628571428571429,
+    "c_underestimate": 13,
+    "a_overestimate": 52,
+    "cm": [
+      [
+        298,
+        52,
+        0
+      ],
+      [
+        12,
+        163,
+        0
+      ],
+      [
+        0,
+        13,
+        337
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 13,
+    "safe_loss": 13,
+    "escalation_rate": 0.3851428571428571
+  },
+  "review_rate": 0.06628571428571428,
+  "n_review": 58,
+  "split": "5-fold grouped OOF by identical physical feature vector"
+}

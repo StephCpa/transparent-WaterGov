@@ -1,0 +1,16 @@
+--- 875样本模型测试资料包\3_样本生成与参考规则\safety_evaluation.py
++++ 补充资料\06_独立工程历史案例验证\safety_evaluation.py
+@@ -740,9 +740,12 @@
+ 
+     兼容两种输入：
+     - 数值：历史逻辑，按渗漏点数量扣分；
+-    - 字典：无人机/巡查点状渗漏证据，按加权渗漏点密度分级。
++    - 字典：无人机/巡查点状渗漏证据，按加权渗漏点密度分级；
++      已由历史险情或现场巡查确认的管涌、带砂、明显渗漏可直接置为异常。
+     """
+     if isinstance(leak_n, dict):
++        if leak_n.get("已确认管涌或渗漏"):
++            return 0.0
+         return score_C3_from_uav_evidence(leak_n)
+     return max(0, 100 - float(leak_n) * 50)
+ 

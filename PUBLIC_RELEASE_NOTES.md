@@ -1,0 +1,1 @@
+This public release is a de-identified snapshot prepared from the internal research workspace on 2026-10-05. It is intended for method review and reproducibility. Identifying institutional strings and credentials are not part of this release. The controlled data remain synthetic or controlled-package data unless a file explicitly states otherwise.

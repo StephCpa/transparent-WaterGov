@@ -1,0 +1,125 @@
+{
+  "failure_response_barrier_alpha_lambda.csv": {
+    "rows": 720,
+    "columns": [
+      "stake",
+      "management_scenario",
+      "management_input_score",
+      "alpha",
+      "barrier_lambda",
+      "score",
+      "grade",
+      "rho",
+      "dominant_mode",
+      "barrier_ability"
+    ],
+    "duplicate_full_rows": 0,
+    "score_min": 34.0621,
+    "score_max": 78.0942,
+    "grades": {
+      "B级_基本安全": 711,
+      "C级_不安全": 9
+    },
+    "dominant_modes": {
+      "渗流破坏": 720
+    },
+    "stakes": {
+      "45+500": 240,
+      "45+600": 240,
+      "46+095": 240
+    }
+  },
+  "failure_response_barrier_physical_oat.csv": {
+    "rows": 81,
+    "columns": [
+      "stake",
+      "variable",
+      "value",
+      "base_score",
+      "score",
+      "score_change",
+      "grade",
+      "dominant_mode"
+    ],
+    "duplicate_full_rows": 0,
+    "score_min": 24.4891,
+    "score_max": 75.5159,
+    "grades": {
+      "B级_基本安全": 57,
+      "C级_不安全": 24
+    },
+    "dominant_modes": {
+      "渗流破坏": 43,
+      "边坡失稳": 20,
+      "漫顶失效": 18
+    },
+    "stakes": {
+      "45+500": 27,
+      "45+600": 27,
+      "46+095": 27
+    }
+  },
+  "qualitative_indicator_oat_sensitivity.csv": {
+    "rows": 357,
+    "columns": [
+      "stake",
+      "indicator",
+      "input_score",
+      "base_score",
+      "score",
+      "score_change",
+      "grade",
+      "grade_changed_from_missing",
+      "dominant_mode",
+      "barrier_ability"
+    ],
+    "duplicate_full_rows": 0,
+    "score_min": 42.6697,
+    "score_max": 78.4388,
+    "grades": {
+      "B级_基本安全": 357
+    },
+    "dominant_modes": {
+      "渗流破坏": 337,
+      "穿堤建筑物失效": 14,
+      "漫顶失效": 2,
+      "边坡失稳": 4
+    },
+    "stakes": {
+      "45+500": 119,
+      "45+600": 119,
+      "46+095": 119
+    }
+  },
+  "qualitative_score_scheme_sensitivity.csv": {
+    "rows": 57,
+    "columns": [
+      "stake",
+      "scenario_group",
+      "scoring_scheme",
+      "score",
+      "score_change_from_anchor",
+      "grade",
+      "grade_changed",
+      "rho",
+      "dominant_mode",
+      "barrier_ability"
+    ],
+    "duplicate_full_rows": 0,
+    "score_min": 47.2845,
+    "score_max": 78.4603,
+    "grades": {
+      "B级_基本安全": 57
+    },
+    "dominant_modes": {
+      "渗流破坏": 29,
+      "穿堤建筑物失效": 20,
+      "边坡失稳": 8
+    },
+    "stakes": {
+      "45+500": 19,
+      "45+600": 19,
+      "46+095": 19
+    }
+  }
+}

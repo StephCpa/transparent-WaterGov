@@ -1,0 +1,68 @@
+{
+  "file_counts": {
+    ".docx": 1,
+    ".png": 13,
+    ".jpg": 376,
+    ".xlsx": 1,
+    ".txt": 22,
+    ".pdf": 1
+  },
+  "image_counts": {
+    "field_raw_and_outputs": 127,
+    "artificial_validation": 26,
+    "thermal_raw": 113,
+    "track_screenshots": 13
+  },
+  "label_files": 22,
+  "label_rows": 23,
+  "label_groups": {
+    "匿名堤防现场巡检": 9,
+    "人工管涌验证": 14
+  },
+  "label_fields": {
+    "6": 23
+  },
+  "label_classes": {
+    "0": 23
+  },
+  "review_nonempty_rows": 9,
+  "review_columns": [
+    "sheet",
+    "序号",
+    "图像",
+    "文件名",
+    "日期",
+    "拍摄时间",
+    "经纬度坐标（WGS84）",
+    "识别类型",
+    "置信度",
+    "复核结果",
+    "复核情况说明",
+    "建议处置意见",
+    "复核人",
+    "复核时间"
+  ],
+  "review_records_with_algorithm_label": 9,
+  "review_records_confirmed": {
+    "误报": 9
+  },
+  "review_confidence_crosscheck": {
+    "records": 9,
+    "matches": 9,
+    "mismatches": 0
+  },
+  "image_dimensions": {
+    "1920x1080": 15,
+    "640x512": 235,
+    "640x640": 24,
+    "640x360": 2,
+    "739x555": 101,
+    "729x555": 12
+  },
+  "images_with_gps_exif": 114,
+  "images_with_datetime_exif": 114,
+  "pdf_pages": 129,
+  "pdf_text_chars": 32335,
+  "description_text_chars": 2269,
+  "status": "inventory and structure audit; no image-level accuracy claim yet"
+}

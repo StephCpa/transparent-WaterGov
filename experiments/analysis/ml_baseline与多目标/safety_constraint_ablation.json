@@ -1,0 +1,130 @@
+{
+  "grid": {
+    "step": 0.01,
+    "n_points": 10000,
+    "threshold_min": 0.01,
+    "threshold_max": 1.0
+  },
+  "pure_rf_unrestricted_best": {
+    "t_c": 0.19,
+    "t_b": 0.06,
+    "accuracy": 0.8868571428571429,
+    "macro_f1": 0.8899925224825358,
+    "balanced_accuracy": 0.8819047619047619,
+    "c_recall": 0.8571428571428571,
+    "c_underestimate": 50,
+    "a_overestimate": 24,
+    "cm": [
+      [
+        326,
+        8,
+        16
+      ],
+      [
+        25,
+        150,
+        0
+      ],
+      [
+        50,
+        0,
+        300
+      ]
+    ],
+    "c_to_a": 50,
+    "c_to_b": 0,
+    "safe_loss": 100,
+    "escalation_rate": 0.36114285714285715
+  },
+  "pure_rf_minimum_c_to_a": {
+    "t_c": 0.19,
+    "t_b": 0.06,
+    "accuracy": 0.8868571428571429,
+    "macro_f1": 0.8899925224825358,
+    "balanced_accuracy": 0.8819047619047619,
+    "c_recall": 0.8571428571428571,
+    "c_underestimate": 50,
+    "a_overestimate": 24,
+    "cm": [
+      [
+        326,
+        8,
+        16
+      ],
+      [
+        25,
+        150,
+        0
+      ],
+      [
+        50,
+        0,
+        300
+      ]
+    ],
+    "c_to_a": 50,
+    "c_to_b": 0,
+    "safe_loss": 100,
+    "escalation_rate": 0.36114285714285715
+  },
+  "pure_rf_zero_c_to_a_candidate_count": 0,
+  "rf_performance_threshold": {
+    "accuracy": 0.8731428571428571,
+    "macro_f1": 0.8583787315328962,
+    "balanced_accuracy": 0.8361904761904762,
+    "c_recall": 0.8571428571428571,
+    "c_underestimate": 50,
+    "a_overestimate": 0,
+    "cm": [
+      [
+        350,
+        0,
+        0
+      ],
+      [
+        61,
+        114,
+        0
+      ],
+      [
+        50,
+        0,
+        300
+      ]
+    ],
+    "c_to_a": 50,
+    "c_to_b": 0,
+    "safe_loss": 100,
+    "escalation_rate": 0.34285714285714286
+  },
+  "physical_veto_hybrid": {
+    "accuracy": 0.9257142857142857,
+    "macro_f1": 0.911890348991677,
+    "balanced_accuracy": 0.9276190476190477,
+    "c_recall": 1.0,
+    "c_underestimate": 0,
+    "a_overestimate": 54,
+    "cm": [
+      [
+        296,
+        54,
+        0
+      ],
+      [
+        11,
+        164,
+        0
+      ],
+      [
+        0,
+        0,
+        350
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 0,
+    "safe_loss": 0,
+    "escalation_rate": 0.4
+  },
+  "interpretation": "No pure RF threshold pair on the 0.01 grid satisfies zero direct C-to-A errors; the physical floor is a separate decision-layer constraint."
+}

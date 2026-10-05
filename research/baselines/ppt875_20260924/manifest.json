@@ -1,0 +1,106 @@
+{
+  "source_root": "PROJECT_ROOT/875样本模型测试资料包/3_样本生成与参考规则/",
+  "snapshot_id": "ppt875-20260924",
+  "source_files": [
+    {
+      "path": "PROJECT_ROOT/875样本模型测试资料包/3_样本生成与参考规则/safety_evaluation.py",
+      "name": "safety_evaluation.py",
+      "kind": "file",
+      "size_bytes": 45405,
+      "modified_utc": "2026-07-11T11:48:27.260705+00:00",
+      "mime_type": "text/x-python",
+      "extractable": true,
+      "sha256": "89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb"
+    },
+    {
+      "path": "PROJECT_ROOT/875样本模型测试资料包/3_样本生成与参考规则/failure_response_barrier_model.py",
+      "name": "failure_response_barrier_model.py",
+      "kind": "file",
+      "size_bytes": 24223,
+      "modified_utc": "2026-06-18T03:33:39.465771+00:00",
+      "mime_type": "text/x-python",
+      "extractable": true,
+      "sha256": "c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa"
+    },
+    {
+      "path": "PROJECT_ROOT/875样本模型测试资料包/3_样本生成与参考规则/synthetic_dataset_evaluation.py",
+      "name": "synthetic_dataset_evaluation.py",
+      "kind": "file",
+      "size_bytes": 14120,
+      "modified_utc": "2026-06-16T09:10:38.641277+00:00",
+      "mime_type": "text/x-python",
+      "extractable": true,
+      "sha256": "3f0fe76a512d7b2840ba6be4e59837e0cbc523abba0b61fa8200f0b7b61994a7"
+    },
+    {
+      "path": "PROJECT_ROOT/875样本模型测试资料包/3_样本生成与参考规则/failure_mode_indicator_matrix.json",
+      "name": "failure_mode_indicator_matrix.json",
+      "kind": "file",
+      "size_bytes": 8881,
+      "modified_utc": "2026-06-11T03:36:08.216489+00:00",
+      "mime_type": "application/json",
+      "extractable": true,
+      "sha256": "6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088"
+    },
+    {
+      "path": "PROJECT_ROOT/875样本模型测试资料包/2_合成样本/synthetic_evaluation_dataset.csv",
+      "name": "synthetic_evaluation_dataset.csv",
+      "kind": "file",
+      "size_bytes": 121936,
+      "modified_utc": "2026-06-16T11:42:33.859576+00:00",
+      "mime_type": "application/vnd.ms-excel",
+      "extractable": true,
+      "sha256": "11790d783d08ee0c7a907dc4143ba2badaddc62c0a3f53f999aaa9ad55799815"
+    }
+  ],
+  "validation_scope": "synthetic_scenario_consistency_only",
+  "normalized_sha256": {
+    "synthetic_dataset_evaluation.py": "3f0fe76a512d7b2840ba6be4e59837e0cbc523abba0b61fa8200f0b7b61994a7",
+    "failure_mode_indicator_matrix.json": "6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088",
+    "safety_evaluation.py": "89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb",
+    "failure_response_barrier_model.py": "c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa"
+  },
+  "expected": {
+    "samples": 875,
+    "csv_header": [
+      "sample_id",
+      "target_mode",
+      "target_severity",
+      "score",
+      "grade",
+      "model_grade",
+      "rho",
+      "dominant_mode",
+      "top_elevation_m",
+      "seepage_i",
+      "body_i",
+      "contact_i",
+      "fos_back",
+      "fos_front",
+      "scour_depth_m",
+      "uav_density",
+      "uav_level"
+    ],
+    "csv_table_sha256": "87d9837369121e22601b51ee35b5d79891dc344a1fad8c61db6c9b9f3bfe568c",
+    "confusion_matrix": [
+      [
+        296,
+        54,
+        0
+      ],
+      [
+        25,
+        150,
+        0
+      ],
+      [
+        0,
+        57,
+        293
+      ]
+    ],
+    "correct": 739,
+    "seed": 20260616
+  },
+  "recorded_python": "3.12.14"
+}

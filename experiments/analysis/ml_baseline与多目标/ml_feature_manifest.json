@@ -1,0 +1,29 @@
+{
+  "n": 875,
+  "unique_groups": 722,
+  "features": [
+    "top_elevation_m",
+    "seepage_i",
+    "body_i",
+    "contact_i",
+    "fos_back",
+    "fos_front",
+    "scour_depth_m",
+    "uav_density",
+    "uav_level",
+    "seepage_ratio",
+    "body_ratio",
+    "contact_ratio",
+    "inv_fos_back",
+    "scour_ratio"
+  ],
+  "excluded": [
+    "target_mode",
+    "target_severity",
+    "sample_id",
+    "model_grade",
+    "score",
+    "rho",
+    "dominant_mode"
+  ]
+}

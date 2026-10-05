@@ -1,0 +1,54 @@
+{
+  "accuracy": 0.8811428571428571,
+  "macro_f1": 0.8704304189378815,
+  "balanced_accuracy": 0.8495238095238095,
+  "c_recall": 0.8571428571428571,
+  "c_underestimate": 50,
+  "a_overestimate": 0,
+  "cm": [
+    [
+      350,
+      0,
+      0
+    ],
+    [
+      54,
+      121,
+      0
+    ],
+    [
+      50,
+      0,
+      300
+    ]
+  ],
+  "thresholds": [
+    {
+      "outer": 0,
+      "t_c": 0.3,
+      "t_b": 0.2
+    },
+    {
+      "outer": 1,
+      "t_c": 0.35,
+      "t_b": 0.2
+    },
+    {
+      "outer": 2,
+      "t_c": 0.35,
+      "t_b": 0.2
+    },
+    {
+      "outer": 3,
+      "t_c": 0.3,
+      "t_b": 0.2
+    },
+    {
+      "outer": 4,
+      "t_c": 0.35,
+      "t_b": 0.2
+    }
+  ],
+  "split": "5 outer x 3 inner grouped nested CV",
+  "n_estimators": 80
+}

@@ -1,0 +1,43 @@
+{
+  "model_name": "基于失效模式响应与安全屏障修正的堤防安全评价模型",
+  "source_files": {
+    "indicator_scoring_and_weights": "safety_evaluation.py",
+    "failure_response_and_gates": "failure_response_barrier_model.py",
+    "indicator_failure_mode_matrix": "failure_mode_indicator_matrix.json",
+    "synthetic_dataset_generator": "synthetic_dataset_evaluation.py"
+  },
+  "test_dataset": {
+    "random_seed": 20260616,
+    "sample_count": 875,
+    "scenario_design": "7类目标情景×5级严重程度×每组合25组",
+    "target_scenarios": ["安全参照", "漫顶", "渗流", "边坡", "冲刷", "穿堤建筑物", "复合风险"],
+    "reference_grade_rule": "安全、轻微情景为A级；中等情景为B级；严重、极严重情景为C级"
+  },
+  "engineering_thresholds": {
+    "standard_crest_width_m": 7.5,
+    "standard_outer_slope_ratio": 2.5,
+    "standard_inner_slope_ratio": 3.0,
+    "river_freeboard_m": 2.0,
+    "lake_freeboard_m": 2.5,
+    "back_slope_allowable_fos": 1.35,
+    "front_slope_allowable_fos": 1.25,
+    "settlement_allowance_cm": 15.0,
+    "differential_settlement_allowance_cm": 5.0,
+    "uav_leak_matching_max_distance_m": 250.0
+  },
+  "indicator_group_weights": {
+    "A_engineering_quality": 0.1818,
+    "B_flood_control_safety": 0.1818,
+    "C_seepage_safety": 0.3636,
+    "D_structural_safety": 0.1818,
+    "E_operation_management": 0.0909
+  },
+  "risk_aggregation": {
+    "shortboard_control_alpha": 0.45,
+    "management_barrier_lambda": 0.5,
+    "score_formula": "S=100×(1-rho)",
+    "shortboard_metric": "rho=alpha×max(各物理风险模式响应)+(1-alpha)×加权风险模式响应",
+    "grade_rule": "S≥80为A级，40≤S<80为B级，S<40为C级"
+  },
+  "note": "各二级指标权重、云模型参数、关联强度及硬门控条件均以源码为准；本文件用于集中展示运行参数，不替代源码。"
+}

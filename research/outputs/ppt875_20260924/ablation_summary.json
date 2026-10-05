@@ -1,0 +1,956 @@
+{
+  "snapshot_id": "ppt875-20260924",
+  "python": "3.12.14",
+  "engineering_validation": false,
+  "sample_count": 875,
+  "complete_input_parity": true,
+  "original_csv_canonical_sha256": "87d9837369121e22601b51ee35b5d79891dc344a1fad8c61db6c9b9f3bfe568c",
+  "reference_rule": {
+    "safe": 0,
+    "slight": 0,
+    "moderate": 1,
+    "severe": 2,
+    "critical": 2
+  },
+  "variant_definitions": {
+    "full": "Frozen legacy evaluation through strict input gateway.",
+    "no_uav_gate": "Disable only the final UAV category cap.",
+    "c3_neutral": "Replace C3 with the no-anomaly anchor 100; keep weights fixed.",
+    "both_neutral": "Apply both interventions; not a claim of no inspection in every other input."
+  },
+  "metrics": {
+    "full": {
+      "n": 875,
+      "correct": 739,
+      "accuracy": 0.8445714285714285,
+      "confusion_matrix": [
+        [
+          296,
+          54,
+          0
+        ],
+        [
+          25,
+          150,
+          0
+        ],
+        [
+          0,
+          57,
+          293
+        ]
+      ],
+      "C_underestimated": 57,
+      "C_underestimation_rate": 0.16285714285714287,
+      "non_C_to_C": 0,
+      "non_C_to_C_rate": 0.0
+    },
+    "no_uav_gate": {
+      "n": 875,
+      "correct": 739,
+      "accuracy": 0.8445714285714285,
+      "confusion_matrix": [
+        [
+          296,
+          54,
+          0
+        ],
+        [
+          25,
+          150,
+          0
+        ],
+        [
+          0,
+          57,
+          293
+        ]
+      ],
+      "C_underestimated": 57,
+      "C_underestimation_rate": 0.16285714285714287,
+      "non_C_to_C": 0,
+      "non_C_to_C_rate": 0.0
+    },
+    "c3_neutral": {
+      "n": 875,
+      "correct": 739,
+      "accuracy": 0.8445714285714285,
+      "confusion_matrix": [
+        [
+          296,
+          54,
+          0
+        ],
+        [
+          25,
+          150,
+          0
+        ],
+        [
+          0,
+          57,
+          293
+        ]
+      ],
+      "C_underestimated": 57,
+      "C_underestimation_rate": 0.16285714285714287,
+      "non_C_to_C": 0,
+      "non_C_to_C_rate": 0.0
+    },
+    "both_neutral": {
+      "n": 875,
+      "correct": 739,
+      "accuracy": 0.8445714285714285,
+      "confusion_matrix": [
+        [
+          296,
+          54,
+          0
+        ],
+        [
+          25,
+          150,
+          0
+        ],
+        [
+          0,
+          57,
+          293
+        ]
+      ],
+      "C_underestimated": 57,
+      "C_underestimation_rate": 0.16285714285714287,
+      "non_C_to_C": 0,
+      "non_C_to_C_rate": 0.0
+    }
+  },
+  "changes_vs_full": {
+    "no_uav_gate_grade_changed": 0,
+    "no_uav_gate_score_changed": 0,
+    "c3_neutral_grade_changed": 0,
+    "c3_neutral_score_changed": 150,
+    "both_neutral_grade_changed": 0,
+    "both_neutral_score_changed": 150,
+    "uav_stage_changes": 0,
+    "hard_gate_stage_changes": 322
+  },
+  "by_target_mode": {
+    "safe_reference": {
+      "full": {
+        "n": 125,
+        "correct": 75,
+        "accuracy": 0.6,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            25,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 75,
+        "accuracy": 0.6,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            25,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 75,
+        "accuracy": 0.6,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            25,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 75,
+        "accuracy": 0.6,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            25,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "overtopping": {
+      "full": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            25
+          ]
+        ],
+        "C_underestimated": 25,
+        "C_underestimation_rate": 0.5,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "seepage": {
+      "full": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "slope": {
+      "full": {
+        "n": 125,
+        "correct": 118,
+        "accuracy": 0.944,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            7,
+            43
+          ]
+        ],
+        "C_underestimated": 7,
+        "C_underestimation_rate": 0.14,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 118,
+        "accuracy": 0.944,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            7,
+            43
+          ]
+        ],
+        "C_underestimated": 7,
+        "C_underestimation_rate": 0.14,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 118,
+        "accuracy": 0.944,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            7,
+            43
+          ]
+        ],
+        "C_underestimated": 7,
+        "C_underestimation_rate": 0.14,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 118,
+        "accuracy": 0.944,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            7,
+            43
+          ]
+        ],
+        "C_underestimated": 7,
+        "C_underestimation_rate": 0.14,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "scour": {
+      "full": {
+        "n": 125,
+        "correct": 121,
+        "accuracy": 0.968,
+        "confusion_matrix": [
+          [
+            46,
+            4,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 121,
+        "accuracy": 0.968,
+        "confusion_matrix": [
+          [
+            46,
+            4,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 121,
+        "accuracy": 0.968,
+        "confusion_matrix": [
+          [
+            46,
+            4,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 121,
+        "accuracy": 0.968,
+        "confusion_matrix": [
+          [
+            46,
+            4,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "building": {
+      "full": {
+        "n": 125,
+        "correct": 125,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 125,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 125,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 125,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            50,
+            0,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    },
+    "mixed": {
+      "full": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "no_uav_gate": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "c3_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      },
+      "both_neutral": {
+        "n": 125,
+        "correct": 100,
+        "accuracy": 0.8,
+        "confusion_matrix": [
+          [
+            25,
+            25,
+            0
+          ],
+          [
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            50
+          ]
+        ],
+        "C_underestimated": 0,
+        "C_underestimation_rate": 0.0,
+        "non_C_to_C": 0,
+        "non_C_to_C_rate": 0.0
+      }
+    }
+  },
+  "missing_input_checks": [
+    {
+      "case": "missing:堤身渗透比降i",
+      "status": "insufficient_or_invalid_input",
+      "grade": null,
+      "issues": [
+        {
+          "field": "堤身渗透比降i",
+          "reason": "missing"
+        }
+      ]
+    },
+    {
+      "case": "missing:接触面渗透比降i",
+      "status": "insufficient_or_invalid_input",
+      "grade": null,
+      "issues": [
+        {
+          "field": "接触面渗透比降i",
+          "reason": "missing"
+        }
+      ]
+    },
+    {
+      "case": "missing:控制层Gs",
+      "status": "insufficient_or_invalid_input",
+      "grade": null,
+      "issues": [
+        {
+          "field": "控制层Gs",
+          "reason": "missing"
+        }
+      ]
+    },
+    {
+      "case": "missing:软基段_沉降量_cm",
+      "status": "insufficient_or_invalid_input",
+      "grade": null,
+      "issues": [
+        {
+          "field": "软基段_沉降量_cm",
+          "reason": "missing"
+        }
+      ]
+    }
+  ],
+  "constructed_low_physics_high_observation": {
+    "full": "C级_不安全",
+    "no_uav_gate": "A级_安全",
+    "c3_neutral": "C级_不安全",
+    "both_neutral": "A级_安全"
+  },
+  "J_allow_path_check": [
+    {
+      "J_allow": 0.05,
+      "score": 86.1249,
+      "grade": "A级_安全"
+    },
+    {
+      "J_allow": 0.25,
+      "score": 86.1249,
+      "grade": "A级_安全"
+    },
+    {
+      "J_allow": 1.0,
+      "score": 86.1249,
+      "grade": "A级_安全"
+    }
+  ],
+  "limitations": [
+    "Synthetic severity-derived reference, not independent field truth.",
+    "C3 neutralization is not missingness and is not feature removal with reweighting.",
+    "Other indicators may also encode observation/history; both_neutral isolates only the two explicit UAV/C3 channels.",
+    "No A/B/C to G0-G3 conversion or new engineering threshold is introduced."
+  ]
+}

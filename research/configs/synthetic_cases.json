@@ -1,0 +1,1261 @@
+[
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          1.01,
+          1.01
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.9,
+          1.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "unusable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "suspected",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      },
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      },
+      {
+        "event_id": "EVENT-2",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-25T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      },
+      {
+        "event_id": "RESOLVE-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "resolved",
+        "observed_at": "2026-09-20T10:30:00+08:00",
+        "received_at": "2026-09-20T10:31:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review",
+        "resolves_event_id": "EVENT-1"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T11:30:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "partial"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0,
+          1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "exit_gradient_ratio",
+        "value": [
+          1.8,
+          1.8
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://exit_gradient_ratio",
+        "evidence_ids": [
+          "SIM-exit_gradient_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "uplift_demand_ratio",
+        "value": [
+          0.2,
+          0.2
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://uplift_demand_ratio",
+        "evidence_ids": [
+          "SIM-uplift_demand_ratio"
+        ]
+      },
+      {
+        "unit_id": "SYNTHETIC-U01",
+        "case_id": "SYNTHETIC-STEADY-01",
+        "observed_at": "2026-09-20T10:00:00+08:00",
+        "received_at": "2026-09-20T10:01:00+08:00",
+        "valid_until": "2026-09-20T12:00:00+08:00",
+        "quality": "usable",
+        "indicator_id": "filter_deficiency",
+        "value": [
+          0.1,
+          0.1
+        ],
+        "unit": "1",
+        "source_ref": "synthetic://filter_deficiency",
+        "evidence_ids": [
+          "SIM-filter_deficiency"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "suspected",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  },
+  {
+    "schema_version": "0.1",
+    "unit_id": "SYNTHETIC-U01",
+    "case_id": "SYNTHETIC-STEADY-01",
+    "as_of": "2026-09-20T11:00:00+08:00",
+    "model_version": "synthetic-fixture-v1",
+    "measurements": [],
+    "events": [
+      {
+        "event_id": "EVENT-1",
+        "evidence_id": "SYNTHETIC-PHOTO-1",
+        "unit_id": "SYNTHETIC-U01",
+        "kind": "confirmed",
+        "observed_at": "2026-09-20T10:15:00+08:00",
+        "received_at": "2026-09-20T10:16:00+08:00",
+        "mode_ids": [
+          "exit_instability"
+        ],
+        "source_ref": "synthetic://observation",
+        "review_ref": "synthetic://independent-review"
+      }
+    ],
+    "inspection": {
+      "unit_id": "SYNTHETIC-U01",
+      "observed_at": "2026-09-20T10:00:00+08:00",
+      "received_at": "2026-09-20T10:01:00+08:00",
+      "valid_until": "2026-09-20T12:00:00+08:00",
+      "quality": "usable",
+      "source_ref": "synthetic://inspection",
+      "coverage": "complete"
+    }
+  }
+]

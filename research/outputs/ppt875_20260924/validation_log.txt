@@ -1,0 +1,14 @@
+Validation date: 2026-09-24
+Runtime: Python 3.12.14, local working copy (not Win2 server execution)
+Command: python -m unittest discover -s tests -q
+Ran 69 tests in 0.181s
+OK
+
+Command: python -m transparent_eval.legacy_experiments
+Samples: 875
+Complete-input parity: all complete output dictionaries equal frozen legacy results
+Canonical original CSV table hash matched: 87d9837369121e22601b51ee35b5d79891dc344a1fad8c61db6c9b9f3bfe568c
+Full/no_uav_gate/c3_neutral/both_neutral: 739/875 each
+Final grade changes versus full: 0/0/0
+C3 neutralization changes 150 scores
+Engineering validation: false

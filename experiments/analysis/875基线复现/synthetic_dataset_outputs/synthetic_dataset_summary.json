@@ -1,0 +1,57 @@
+{
+  "sample_count": 875,
+  "target_modes": [
+    "safe_reference",
+    "overtopping",
+    "seepage",
+    "slope",
+    "scour",
+    "building",
+    "mixed"
+  ],
+  "severities": [
+    "safe",
+    "slight",
+    "moderate",
+    "severe",
+    "critical"
+  ],
+  "n_per_target_mode_severity": 25,
+  "grade_distribution": {
+    "A级_安全": 321,
+    "B级_基本安全": 261,
+    "C级_不安全": 293
+  },
+  "dominant_mode_distribution": {
+    "渗流破坏": 479,
+    "边坡失稳": 125,
+    "漫顶失效": 100,
+    "冲刷破坏": 96,
+    "穿堤建筑物失效": 75
+  },
+  "target_vs_dominant_mode": {
+    "safe_reference -> 渗流破坏": 75,
+    "safe_reference -> 边坡失稳": 50,
+    "overtopping -> 渗流破坏": 25,
+    "overtopping -> 漫顶失效": 100,
+    "seepage -> 渗流破坏": 125,
+    "slope -> 渗流破坏": 50,
+    "slope -> 边坡失稳": 75,
+    "scour -> 渗流破坏": 46,
+    "scour -> 冲刷破坏": 79,
+    "building -> 渗流破坏": 50,
+    "building -> 穿堤建筑物失效": 75,
+    "mixed -> 渗流破坏": 108,
+    "mixed -> 冲刷破坏": 17
+  },
+  "severity_vs_grade": {
+    "safe -> A级_安全": 175,
+    "slight -> A级_安全": 121,
+    "moderate -> A级_安全": 25,
+    "severe -> B级_基本安全": 57,
+    "critical -> C级_不安全": 175,
+    "moderate -> B级_基本安全": 150,
+    "slight -> B级_基本安全": 54,
+    "severe -> C级_不安全": 118
+  }
+}

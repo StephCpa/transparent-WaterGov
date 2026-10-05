@@ -1,0 +1,32 @@
+{
+  "cap_off": {
+    "n": 875,
+    "score_changed": 0,
+    "score_delta_min": 0.0,
+    "score_delta_max": 0.0,
+    "raw_grade_changed": 0,
+    "final_grade_changed": 0,
+    "mode_changed": 0,
+    "final_grade_changed_by_target": {}
+  },
+  "C3_anchor100": {
+    "n": 875,
+    "score_changed": 150,
+    "score_delta_min": 0.0,
+    "score_delta_max": 1.3855,
+    "raw_grade_changed": 0,
+    "final_grade_changed": 0,
+    "mode_changed": 8,
+    "final_grade_changed_by_target": {}
+  },
+  "C3_anchor100_cap_off": {
+    "n": 875,
+    "score_changed": 150,
+    "score_delta_min": 0.0,
+    "score_delta_max": 1.3855,
+    "raw_grade_changed": 0,
+    "final_grade_changed": 0,
+    "mode_changed": 8,
+    "final_grade_changed_by_target": {}
+  }
+}

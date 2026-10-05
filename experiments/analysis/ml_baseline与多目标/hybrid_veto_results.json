@@ -1,0 +1,93 @@
+{
+  "rf_threshold": {
+    "accuracy": 0.8731428571428571,
+    "macro_f1": 0.8583787315328962,
+    "balanced_accuracy": 0.8361904761904762,
+    "c_recall": 0.8571428571428571,
+    "c_underestimate": 50,
+    "a_overestimate": 0,
+    "cm": [
+      [
+        350,
+        0,
+        0
+      ],
+      [
+        61,
+        114,
+        0
+      ],
+      [
+        50,
+        0,
+        300
+      ]
+    ],
+    "c_to_a": 50,
+    "c_to_b": 0,
+    "safe_loss": 100,
+    "escalation_rate": 0.34285714285714286
+  },
+  "hybrid_physical_veto": {
+    "accuracy": 0.9257142857142857,
+    "macro_f1": 0.911890348991677,
+    "balanced_accuracy": 0.9276190476190477,
+    "c_recall": 1.0,
+    "c_underestimate": 0,
+    "a_overestimate": 54,
+    "cm": [
+      [
+        296,
+        54,
+        0
+      ],
+      [
+        11,
+        164,
+        0
+      ],
+      [
+        0,
+        0,
+        350
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 0,
+    "safe_loss": 0,
+    "escalation_rate": 0.4
+  },
+  "hybrid_uncertain_review_fallback": {
+    "accuracy": 0.9108571428571428,
+    "macro_f1": 0.8963949604121364,
+    "balanced_accuracy": 0.9142857142857143,
+    "c_recall": 0.9657142857142857,
+    "c_underestimate": 12,
+    "a_overestimate": 54,
+    "cm": [
+      [
+        296,
+        54,
+        0
+      ],
+      [
+        12,
+        163,
+        0
+      ],
+      [
+        0,
+        12,
+        338
+      ]
+    ],
+    "c_to_a": 0,
+    "c_to_b": 12,
+    "safe_loss": 12,
+    "escalation_rate": 0.3862857142857143
+  },
+  "review_rate": 0.07085714285714285,
+  "n_review": 62,
+  "veto_changed": 154,
+  "split": "5-fold grouped OOF; physical grade used only as decision-layer veto"
+}

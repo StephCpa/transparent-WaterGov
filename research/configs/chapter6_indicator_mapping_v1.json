@@ -1,0 +1,331 @@
+{
+  "mapping_version": "chapter6-map-v1-20260924",
+  "engineering_calibrated": false,
+  "scope": "堤防渗流；29项全部登记，只有经确认适用的证据进入第6章。",
+  "grade_mapping": null,
+  "grade_mapping_reason": "旧A/B/C、研究G0-G3与正式规范等级不得自动转换。",
+  "indicators": [
+    {
+      "legacy_code": "A1",
+      "legacy_name": "堤身断面尺寸达标率",
+      "chapter6_role": "计算背景",
+      "intended_use": "几何与断面版本",
+      "required_native_evidence": "原生几何、桩号、坐标、高程基准",
+      "conversion_limit": "0/100断面达标分不能恢复几何",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A2",
+      "legacy_name": "填土质量",
+      "chapter6_role": "地质背景",
+      "intended_use": "填土与材料参数依据",
+      "required_native_evidence": "原始地勘、压实度、渗透参数及来源",
+      "conversion_limit": "定性评分不能反演渗透系数",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A3",
+      "legacy_name": "穿堤建筑物完好性",
+      "chapter6_role": "适用性与结构背景",
+      "intended_use": "穿堤结构是否存在及缺陷",
+      "required_native_evidence": "结构位置、检测事实、检查覆盖",
+      "conversion_limit": "完好性不自动等于渗流验算通过",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A4",
+      "legacy_name": "护坡完好率",
+      "chapter6_role": "辅助背景",
+      "intended_use": "表面防护状况",
+      "required_native_evidence": "实际位置与病害记录",
+      "conversion_limit": "一般护坡评分不直接进入渗流分数",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A5",
+      "legacy_name": "软基段沉降",
+      "chapter6_role": "变形证据",
+      "intended_use": "沉降与裂缝的定位和演变",
+      "required_native_evidence": "量测位置、时序、误差、复核依据",
+      "conversion_limit": "不能由沉降总分确认渗流异常",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A6",
+      "legacy_name": "内部隐患",
+      "chapter6_role": "隐患证据",
+      "intended_use": "洞穴等潜在通道",
+      "required_native_evidence": "隐患位置、机制、确认状态、原始记录",
+      "conversion_limit": "缺陷存在与正在发生渗漏分别记录",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A7",
+      "legacy_name": "堤基不良地质处理",
+      "chapter6_role": "工程版本背景",
+      "intended_use": "地基处理与材料版本",
+      "required_native_evidence": "处理范围、时间、验收资料",
+      "conversion_limit": "处理分数不能直接降低已确认险情等级",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A8",
+      "legacy_name": "结合部填筑止水质量",
+      "chapter6_role": "接触带证据",
+      "intended_use": "结合部缺陷或止水条件",
+      "required_native_evidence": "界面位置、缺陷、实测渗漏与复核",
+      "conversion_limit": "不能把定性分直接转换为接触冲刷抗力",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "A9",
+      "legacy_name": "跨堤交叉工程质量",
+      "chapter6_role": "适用性背景",
+      "intended_use": "交叉结构与潜在局部通道",
+      "required_native_evidence": "结构几何、扰动范围、空间关联",
+      "conversion_limit": "按实际结构选择机制，未涉及不填零模式",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "B1",
+      "legacy_name": "堤顶高程",
+      "chapter6_role": "计算背景",
+      "intended_use": "堤顶几何与水位关系",
+      "required_native_evidence": "堤顶高程、对应水位工况、基准",
+      "conversion_limit": "堤顶达标分不是渗流荷载时间序列",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "B2",
+      "legacy_name": "防洪标准符合性",
+      "chapter6_role": "工程分类背景",
+      "intended_use": "设计等级与规定工况",
+      "required_native_evidence": "审批依据、工程类别、设计等级",
+      "conversion_limit": "不作为重复渗流加权项",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "B3",
+      "legacy_name": "风浪爬高与越浪量复核",
+      "chapter6_role": "范围外或边界背景",
+      "intended_use": "外部水力条件说明",
+      "required_native_evidence": "风浪或越浪相关资料及适用性",
+      "conversion_limit": "一般漫顶评价不属于本章渗流主任务",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "B4",
+      "legacy_name": "穿堤建筑物防洪标准",
+      "chapter6_role": "结构背景",
+      "intended_use": "穿堤建筑物挡洪条件",
+      "required_native_evidence": "结构挡洪高程与工况",
+      "conversion_limit": "不直接替代周边渗流检查",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C1",
+      "legacy_name": "堤基比降",
+      "chapter6_role": "候选物理指标",
+      "intended_use": "适用出口区域的梯度比或其他堤基验算",
+      "required_native_evidence": "原场、材料、取值区域、方向、允许值及条文",
+      "conversion_limit": "旧i/i_cr不能直接作为exit_gradient_ratio；先确认判据与取值定义",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C2",
+      "legacy_name": "排水设施有效性",
+      "chapter6_role": "设施证据",
+      "intended_use": "排水设施状态及其影响",
+      "required_native_evidence": "设施位置、流量/堵塞记录、有效时间",
+      "conversion_limit": "排水设施状态不等于反滤缺陷，不能自动映射filter_deficiency",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C3",
+      "legacy_name": "管涌隐患",
+      "chapter6_role": "巡检事件",
+      "intended_use": "疑似/确认/解除及覆盖信息",
+      "required_native_evidence": "原图、定位、时间、事件ID、复核、覆盖",
+      "conversion_limit": "密度和预设UAV等级不能恢复事件历史；不把检测分当失事概率",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C4",
+      "legacy_name": "堤身渗流稳定系数",
+      "chapter6_role": "候选物理指标",
+      "intended_use": "堤身渗流场及适用出逸验算",
+      "required_native_evidence": "原场、材料、边界、指标区域和依据",
+      "conversion_limit": "先确认其是梯度、稳定系数还是其他量，禁止按名称直接等同",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C5",
+      "legacy_name": "堤基接触冲刷安全系数",
+      "chapter6_role": "待独立机制判据",
+      "intended_use": "接触带侵蚀相关验算",
+      "required_native_evidence": "接触带几何、两侧材料、级配/抗蚀依据",
+      "conversion_limit": "接触冲刷不是盖层抗隆起；不能映射uplift_demand_ratio",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "C6",
+      "legacy_name": "穿堤建筑物渗流稳定",
+      "chapter6_role": "结构局部渗流证据",
+      "intended_use": "穿堤建筑物周边异常",
+      "required_native_evidence": "结构位置、观测事实、时序和复核",
+      "conversion_limit": "定性分既不能提供局部水力场，也不能替代确认事件",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "D1",
+      "legacy_name": "背水坡抗滑稳定系数",
+      "chapter6_role": "有条件扩展",
+      "intended_use": "渗流诱发背水坡失稳",
+      "required_native_evidence": "强度参数、稳定计算与对应孔压场",
+      "conversion_limit": "需独立稳定验算；不默认纳入本章主评分",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "D2",
+      "legacy_name": "临水坡抗滑稳定系数",
+      "chapter6_role": "有条件扩展",
+      "intended_use": "临水坡稳定及水位变化影响",
+      "required_native_evidence": "明确稳态/非稳态、强度参数与计算",
+      "conversion_limit": "旧字段仅接收稳态FoS，不代表骤降过程已验证",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "D3",
+      "legacy_name": "堤岸冲刷稳定性",
+      "chapter6_role": "需拆分的背景与事件",
+      "intended_use": "岸坡冲刷与历史渗漏分别记录",
+      "required_native_evidence": "原始冲刷量和历史险情各自来源",
+      "conversion_limit": "旧分混合冲刷与管涌历史，不能作为独立渗流真值",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "D4",
+      "legacy_name": "穿堤结构安全系数",
+      "chapter6_role": "范围外或结构适用性",
+      "intended_use": "穿堤结构安全记录",
+      "required_native_evidence": "结构验算与关联对象",
+      "conversion_limit": "不将结构总分重复计入渗流证据",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "D5",
+      "legacy_name": "堤身不均匀沉降与裂缝",
+      "chapter6_role": "变形与缺陷证据",
+      "intended_use": "裂缝/沉降位置及变化",
+      "required_native_evidence": "定位、时间、尺度、复核依据",
+      "conversion_limit": "多帧或派生特征不能当独立险情重复累计",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "E1",
+      "legacy_name": "监测设施完备性",
+      "chapter6_role": "证据质量",
+      "intended_use": "监测可用性和覆盖",
+      "required_native_evidence": "仪器、量测、质量标识、覆盖",
+      "conversion_limit": "不直接增强土体物理抗力",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "E2",
+      "legacy_name": "管理制度健全性",
+      "chapter6_role": "管理背景",
+      "intended_use": "证据生产和复核流程",
+      "required_native_evidence": "制度及实际执行记录",
+      "conversion_limit": "制度分不能替代物理与观测证据",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "E3",
+      "legacy_name": "维护记录完整性",
+      "chapter6_role": "证据时效与版本",
+      "intended_use": "维护记录完整性",
+      "required_native_evidence": "维护时间、对象、结构变化、来源",
+      "conversion_limit": "缺记录不等于无异常；维护不自动解除险情",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "E4",
+      "legacy_name": "应急预案与物资储备",
+      "chapter6_role": "处置背景",
+      "intended_use": "预案与处置能力记录",
+      "required_native_evidence": "实际处置与工程变化证据",
+      "conversion_limit": "物资充足不抵消已确认异常",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    },
+    {
+      "legacy_code": "E5",
+      "legacy_name": "隐患巡查与处置率",
+      "chapter6_role": "事件闭环",
+      "intended_use": "复核与解除状态",
+      "required_native_evidence": "处理、复核、解除时间与依据",
+      "conversion_limit": "处置率不等于当前危险程度；解除必须关联原事件",
+      "automatic_conversion_ready": false,
+      "missing_policy": "保持缺失或未核验；不填0/满分；不适用需明确机制配置"
+    }
+  ],
+  "additional_inputs_without_legacy_equivalent": [
+    {
+      "name": "盖层抗隆起作用与抗力",
+      "target": "uplift_demand_ratio",
+      "status": "missing",
+      "required": "盖层结构、压力、荷载/抗力定义、适用验算与参数来源"
+    },
+    {
+      "name": "反滤条件",
+      "target": "filter_deficiency",
+      "status": "missing",
+      "required": "反滤结构及适用评价规则；C2排水分不能直接替代"
+    },
+    {
+      "name": "事件可获得历史",
+      "target": "events",
+      "status": "missing",
+      "required": "采集/入库/复核/解除时间、位置误差、原始证据与共同事件ID"
+    },
+    {
+      "name": "有效巡检覆盖",
+      "target": "inspection",
+      "status": "missing",
+      "required": "有效区域、时间窗、观测条件、未覆盖区"
+    },
+    {
+      "name": "独立参考结果",
+      "target": "reference",
+      "status": "missing",
+      "required": "来源、获得时间、与模型输入共享信息情况、独立分组"
+    }
+  ]
+}
