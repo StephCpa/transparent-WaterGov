@@ -88,6 +88,13 @@ and the absence of field labels.
 5. Synchronize the Chinese chapter through the same terminology ledger once the English
    argument is accepted.
 
+## Follow-up revision (2026-10-05)
+
+- Added a concise operational decision protocol that freezes the evaluation key, assigns evidence states, preserves model and gate traces, applies the ordinal floor, and separates review routing from grade publication.
+- Tightened the Pareto definition: macro-F1, balanced accuracy and critical-class recall are maximized while safety loss is minimized; escalation rate is reported as an operational resource coordinate.
+- Corrected the inspection statement to report the exact one-sided 95% upper bound of 0.28 for 0/9 confirmed candidates.
+- Recompiled the IEEE journal manuscript to 9 pages with no fatal, undefined-reference or overfull-box diagnostics in the final local build.
+
 ## Earlier version (V1)
 
 Internal V1 draft: rule baseline, grouped OOF tree and forest comparisons, Pareto threshold

@@ -17,8 +17,10 @@ Figures:
   `experiments/analysis/paper_revision/make_paper_figures.py`; the statistics they
   use come from `experiments/analysis/paper_revision/paper_statistics.py`.
 
-Status: internal working draft (revision of 2026-10-05). Author metadata, funding,
+Status: internal working draft (follow-up revision of 2026-10-05). Author metadata, funding,
 target journal and a final reference check remain open; see `VERSION_NOTES.md`.
+
+The follow-up revision adds an operational decision protocol and an explicit multi-objective Pareto definition.
 
 Evidence boundary: the 875-record benchmark and the five additional seed batches
 are controlled synthetic experiments from one generator; the nine field inspection
