@@ -91,9 +91,9 @@ and the absence of field labels.
 ## Follow-up revision (2026-10-05)
 
 - Added a concise operational decision protocol that freezes the evaluation key, assigns evidence states, preserves model and gate traces, applies the ordinal floor, and separates review routing from grade publication.
-- Tightened the Pareto definition: macro-F1, balanced accuracy and critical-class recall are maximized while safety loss is minimized; escalation rate is reported as an operational resource coordinate.
+- Tightened the Pareto definition with a strict-improvement clause; macro-F1, balanced accuracy and critical-class recall are maximized while safety loss is minimized. The pure-RF front is reported as having no quality--safety trade-off, and escalation rate remains an operational resource coordinate.
 - Corrected the inspection statement to report the exact one-sided 95% upper bound of 0.28 for 0/9 confirmed candidates.
-- Recompiled the IEEE journal manuscript to 9 pages with no fatal, undefined-reference or overfull-box diagnostics in the final local build.
+- Clarified that safety loss is an offline evaluation metric requiring a reference class, and removed the internal negative-spacing layout adjustment. Recompiled the IEEE journal manuscript to 9 pages with no fatal, undefined-reference or overfull-box diagnostics in the final local build.
 
 ## Earlier version (V1)
 
