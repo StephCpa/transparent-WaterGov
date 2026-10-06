@@ -4,9 +4,12 @@
 \usepackage{graphicx}
 \usepackage[table]{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.geometric}
 \usepackage[hidelinks]{hyperref}
 \usepackage{balance}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{算法}
 \usepackage{url}
 \usepackage{cite}
 \usepackage[a4paper,top=1.6cm,bottom=1.5cm,left=1.65cm,right=1.65cm,columnsep=0.62cm]{geometry}
@@ -149,6 +152,87 @@ S&=100(1-\rho),
 
 方法按版本化决策协议执行：冻结 $(s,w,t,v)$，标记证据状态并排除不可采纳值，独立计算规则链和学习层，应用序数下限并记录学习等级被提高的级数；安全损失只在存在参考等级的离线评价中计算；低置信度或巡检候选生成复核任务后再发布等级。输出保留等级、触发门控、证据状态、溯源记录、模型版本和复核状态。阈值扫描确定学习层工作点，下限、复核预算和可采纳性规则共同决定部署条件。
 
+
+\subsection{多目标策略空间与帕累托评价}
+为突出评价体系的决策作用，本文将策略表示为
+\(\pi=(\ell,\tau_C,\tau_B,\phi)\)，其中 \(\ell\) 为学习器，\((\tau_C,\tau_B)\) 为 C、B 等级阈值，\(\phi\) 为下限范围。学习器包括 RF、逻辑回归、序数逻辑回归、支持向量机、梯度提升树（GBDT）和以规则等级为第 15 个特征的堆叠 RF；阈值采用 0.20--0.90、步长 0.05 的网格，并考察无下限、C-only 下限和完整序数下限。因此每批次共评价 \(6\times225\times3+1=4051\) 个策略。
+
+策略评价采用相同的分组五折样本外概率，构造四维目标向量
+\begin{equation}
+\mathbf F(\pi)=(\mathrm{MacroF1},\mathrm{BA},R_C,1-\Lsafe/L_{\max}),
+\end{equation}
+其中前三项最大化，安全损失最小化，\(L_{\max}=2N_C\)。若另一策略在全部目标上不差且至少一项严格更优，则前者被支配。升级率、A 类过估计和复核率作为资源坐标报告，不参与支配。可行性约束预先固定为 \(N(C\to A)=0\)、\(R_C\geq0.95\)，并在物理约束方案中增加 \(\hat y\geq y_{rule}\)。可行策略先进行严格帕累托筛选，再按“最小安全损失—最大平衡准确率—最大宏平均 F1—最小升级率—最小 A 类过估计”的词典序选择运行点，同时记录前沿、超体积和每个被淘汰策略的约束原因。
+
+\begin{figure*}[t]
+\centering
+\resizebox{\textwidth}{!}{\input{figures/fig_evaluation_system_zh.tex}}
+\caption{多目标策略评价与帕累托选择流程。策略空间经过统一样本外评价后，依次执行硬约束、严格帕累托筛选和词典序选择；资源坐标单独报告，便于负责人在安全、质量和运行成本之间作出可审计决策。}
+\label{fig:pareto}
+\end{figure*}
+
+\begin{algorithm}[t]
+\caption{离线多目标策略选择}
+\label{alg:offlinezh}
+\begin{algorithmic}[1]
+\Require 参考样本、学习器集合、阈值网格、下限范围和约束集合
+\Ensure 运行策略及审计记录
+\State 将相同特征向量分组并分配至五折
+\State 对每个学习器生成统一分组样本外概率
+\For{每个策略 \(\pi\)}
+  \State 计算混淆矩阵、四维目标、资源坐标和下限触发次数
+\EndFor
+\State 删除违反硬约束的策略，保留可行策略的严格帕累托前沿
+\State 计算各学习器--下限组合的超体积
+\State 按词典序选择策略并记录前沿、超体积和淘汰原因
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{在线评价单元分级}
+\label{alg:onlinezh}
+\begin{algorithmic}[1]
+\Require 单元键、证据集、冻结策略和复核阈值
+\Ensure 等级、溯源和复核状态
+\State 冻结堤段、水力场景、时间和版本，计算各指标可采纳性
+\State 将不可采纳值保留在溯源记录中，并列出缺失指标
+\State 独立计算规则等级和学习等级，应用序数下限
+\If{最大类别概率低于复核阈值或存在巡检候选}
+  \State 生成复核任务并标记等级为暂定
+\EndIf
+\State 发布等级、触发门控、证据状态、版本和复核状态
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{对比基线与策略选择结果}
+除 RF 外，本文加入逻辑回归、序数逻辑回归、RBF-SVM、GBDT、代价敏感 RF、软投票、置信度切换和堆叠 RF。所有模型共享 14 个特征、分组划分和固定超参数；每个学习器再与序数下限组合。875 条记录上的结果见表~\ref{tab:baselineszh}。GBDT 是最强的独立学习器（准确率和宏平均 F1 均为 0.906），但仍产生 50 个直接 C\(\to\)A；堆叠 RF 达到 0.994 准确率，但依赖规则等级作为输入，不能等同于独立学习器。所有带序数下限的策略均消除了直接 C\(\to\)A；GBDT+下限在五个附加种子上的准确率为 \(0.935\pm0.003\)，RF+下限为 \(0.921\pm0.004\)。
+
+\begin{table*}[t]
+\caption{新增学习基线与序数下限组合（875 条记录，分组五折样本外评价）。}
+\label{tab:baselineszh}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+方法 & 准确率 & 宏F1 & 平衡准确率 & C\(\to\)A & 安全损失 & 五种子准确率\\
+\midrule
+规则链 & .845 & .827 & .847 & 0 & 57 & .847$\pm$.002\\
+逻辑回归 & .815 & .764 & .751 & 51 & 102 & .828$\pm$.006\\
+序数逻辑回归 & .819 & .773 & .759 & 51 & 102 & .823$\pm$.004\\
+SVM & .839 & .829 & .808 & 63 & 126 & .845$\pm$.004\\
+GBDT & .906 & .906 & .895 & 50 & 102 & .906$\pm$.004\\
+RF 阈值 & .873 & .858 & .836 & 50 & 100 & .875$\pm$.010\\
+堆叠 RF & .994 & .993 & .994 & 0 & 0 & .995$\pm$.001\\
+GBDT+序数下限 & .934 & .922 & .942 & 0 & 0 & .935$\pm$.003\\
+\rowcolor{floorc!10}RF+序数下限 & .926 & .912 & .928 & 0 & 0 & .921$\pm$.004\\
+堆叠 RF+序数下限 & .937 & .926 & .947 & 0 & 0 & .937$\pm$.001\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+在 4051 个策略中，1402--1527 个满足基准约束，795--825 个进一步满足物理下限约束。无下限的独立学习器没有可行策略；加入序数下限后，各学习器策略族的超体积提高到 0.73--0.88。仅施加基准约束时，帕累托选择在六个批次均选中堆叠 RF；再施加物理下限后，选择为堆叠 RF+序数下限，冻结原始批次策略在五种子上的准确率为 \(0.939\pm0.001\)、平衡准确率为 \(0.948\pm0.002\)，且无 C 类低估。声明的 RF+下限仅为 \(0.921\pm0.004\)，说明帕累托评价能够识别“规则等级作为输入”和“物理下限”带来的性能代价与收益。
+
+当前数据支持的是生成器内的相对比较和决策机制验证，而非现场最优性证明。安全损失的 2:1 权重、阈值约束和复核预算均为预先声明的工程设计，尚未用真实后果标定；因此图~\ref{fig:pareto}中的前沿应作为可审计的候选集，不能解释为真实堤防风险的最终最优解。
+
 \section{数据与验证协议}
 \subsection{受控基准}
 基准由冻结生成器产生，共包含 875 条记录：7 类目标模式（安全参考、漫顶、渗流、边坡、冲刷、穿结构和混合）$\times$5 个严重度$\times$25 条记录。参考等级遵循固定映射：安全和轻微对应 A（350 条），中等对应 B（175 条），严重和关键对应 C（350 条）。这是用于测试生成器内决策行为的封闭集合参考，不是现场安全标签。规则链最终等级依据交付的最终等级错误追踪重建，生成器回放与 5 个交付基准文件逐字节一致。
@@ -257,3 +341,5 @@ K45+500 交付案例给出 C 级、渗流主导、分数 24.35。该案例存在
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 \end{document}
+
+

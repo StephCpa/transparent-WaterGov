@@ -1,0 +1,66 @@
+% Schematic of the multi-objective 评价 system (Section IV).
+% Colours rulec, rfc, floorc, dangerc and neutc are defined in the main preamble;
+% requires the TikZ libraries arrows.meta, calc and shapes.geometric.
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=4pt]},
+  stage/.style={draw=#1, fill=#1!7, rounded corners=2pt, align=left, inner sep=3.5pt, line width=0.55pt, anchor=north west},
+  num/.style={circle, fill=#1, text=white, font=\scriptsize\bfseries, inner sep=1pt, minimum size=11pt},
+  hd/.style={font=\footnotesize\bfseries},
+  arr/.style={->, line width=0.6pt, draw=black!65},
+]
+% ---------------- row 1: generate and evaluate
+\node[stage=rfc, text width=4.25cm] (pi) at (0,2.75) {{\footnotesize\textbf{候选策略空间 $\Pi$}}\\[2pt]
+ 学习器 $\ell$: RF (default), LR, ordinal LR,\\ SVM, GBDT, stacked RF\\
+ 阈值 $(\tau_C,\tau_B)$: $15\times15$ grid\\
+ 下限范围 $\phi$: none, C-only, ordinal\\[1pt]
+ $6\times225\times3+1=4051$ 每批次策略数};
+\node[stage=neutc, text width=2.85cm] (oof) at (4.85,2.75) {{\footnotesize\textbf{分组样本外}}\\{\footnotesize\textbf{评价}}\\[2pt]
+ 相同的五折与随机种子\\ for every policy;\\ 固定超参数\\ $\rightarrow$ 每个策略一个混淆矩阵\\ per policy};
+\node[stage=floorc, text width=4.05cm] (obj) at (8.3,2.75) {{\footnotesize\textbf{目标向量 $\mathbf F(\pi)$}} (支配关系)\\[2pt]
+ 宏平均F1\,$\uparrow$, 平衡准确率\,$\uparrow$,\\ C类召回率\,$\uparrow$, 安全损失 $L_{\mathrm{safe}}\downarrow$\\[3pt]
+ {\footnotesize\textbf{资源坐标 $\mathbf R(\pi)$}}\\[2pt]
+ 升级率, A类过估计,\\ 复核率 (reported, not dominated)};
+\node[num=rfc] at (pi.north west) {1};
+\node[num=neutc] at (oof.north west) {2};
+\node[num=floorc] at (obj.north west) {3};
+\draw[arr] (pi.east |- oof.west) -- (oof.west);
+\draw[arr] (oof.east |- obj.west) -- (obj.west);
+% ---------------- row 2: filter and select
+\node[stage=dangerc, text width=2.62cm] (con) at (0,-0.6) {{\footnotesize\textbf{硬约束}}\\[2pt]
+ $N(\mathrm{C}\rightarrow\mathrm{A})=0$\\ C类召回率 $\geq0.95$\\ physical floor:\\ $\hat y\geq y_{\mathrm{rule}}$ on every unit\\[1pt] declared before\\ any 评价};
+\node[stage=floorc, text width=2.5cm] (par) at (3.1,-0.6) {{\footnotesize\textbf{严格帕累托筛选}}\\[2pt]
+ 非支配 on $\mathbf F$\\ 在可行集内;\\ 各策略族超体积\\ policy family};
+\node[stage=floorc, text width=2.75cm] (sel) at (6.2,-0.6) {{\footnotesize\textbf{声明的选择规则}}\\[2pt]
+ 1.\ 最小化 $L_{\mathrm{safe}}$\\ 2.\ 最大化 平衡准确率\\ 3.\ 最大化 宏平均F1\\ 4.\ 最小化 升级率\\ 5.\ 最小化 A overestimates\\[1pt]
+ 检查：到理想点距离};
+\node[stage=neutc, text width=2.7cm] (out) at (9.55,-0.6) {{\footnotesize\textbf{运行点}}\\{\footnotesize\textbf{与审计记录}}\\[2pt]
+ selected policy, front,\\ rejected policies and\\ reasons, hypervolume};
+\node[num=dangerc] at (con.north west) {4};
+\node[num=floorc] at (par.north west) {5};
+\node[num=floorc] at (sel.north west) {6};
+\node[num=neutc] at (out.north west) {7};
+\draw[arr] (obj.south) -- ++(0,-0.32) -| ($(con.north)+(0.4,0)$);
+\draw[arr] (con.east |- par.west) -- (par.west);
+\draw[arr] (par.east |- sel.west) -- (sel.west);
+\draw[arr] (sel.east |- out.west) -- (out.west);
+% ---------------- inset: geometry of the front (conceptual)
+\begin{scope}[shift={(13.25,-3.05)}]
+  \fill[floorc!12] (0,0) rectangle (0.55,5.0);
+  \draw[black!40, dashed, line width=0.4pt] (0,4.38) -- (4.4,4.38);
+  \draw[->, line width=0.5pt] (0,0) -- (4.6,0) node[below left, align=right] {安全损失 $L_{\mathrm{safe}}$};
+  \draw[->, line width=0.5pt] (0,0) -- (0,5.2) node[above right, xshift=-3pt] {质量 (e.g.\ 平衡准确率)};
+  \node[text=floorc, rotate=90, anchor=south] at (0.3,1.1) {可行域};
+  \foreach \x/\y in {2.6/3.25,2.3/2.9,2.3/2.45,2.5/3.1,2.7/2.6,2.9/2.85,3.1/2.15,3.4/2.4,3.7/1.85,4.0/1.55,2.3/1.95,2.6/1.65}
+    \draw[rfc, line width=0.5pt] (\x,\y) circle (2pt);
+  \node[text=rfc, align=center] at (3.25,0.95) {学习器-only policies\\ ($L_{\mathrm{safe}}\geq100$ here)};
+  \fill[rulec] (1.2,2.75) circle (2.2pt) node[right, text=rulec] {规则链};
+  \foreach \x/\y in {0.18/4.75,0.32/4.65}
+    \draw[black!80, line width=0.5pt] (\x,\y) circle (2pt);
+  \node[text=black!80, anchor=west, align=left] at (0.62,4.72) {降低 $y_{\mathrm{rule}}$: 被下限排除};
+  \foreach \x/\y in {0.18/3.6,0.32/3.35,0.4/3.05}
+    \fill[floorc!55] (\x,\y) circle (2pt);
+  \node[star, star points=5, star point ratio=2.3, fill=floorc, inner sep=1.5pt] at (0.18,4.0) {};
+  \node[text=floorc, anchor=west, align=left] at (0.62,4.0) {选中（满足下限）};
+  \node[text=floorc!80!black, anchor=west, align=left] at (0.62,3.35) {其他下限策略};
+\end{scope}
+\end{tikzpicture}

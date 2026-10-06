@@ -1,0 +1,66 @@
+% Schematic of the multi-objective evaluation system (Section IV).
+% Colours rulec, rfc, floorc, dangerc and neutc are defined in the main preamble;
+% requires the TikZ libraries arrows.meta, calc and shapes.geometric.
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=4pt]},
+  stage/.style={draw=#1, fill=#1!7, rounded corners=2pt, align=left, inner sep=3.5pt, line width=0.55pt, anchor=north west},
+  num/.style={circle, fill=#1, text=white, font=\scriptsize\bfseries, inner sep=1pt, minimum size=11pt},
+  hd/.style={font=\footnotesize\bfseries},
+  arr/.style={->, line width=0.6pt, draw=black!65},
+]
+% ---------------- row 1: generate and evaluate
+\node[stage=rfc, text width=4.25cm] (pi) at (0,2.75) {{\footnotesize\textbf{Candidate policy space $\Pi$}}\\[2pt]
+ learner $\ell$: RF (default), LR, ordinal LR,\\ SVM, GBDT, stacked RF\\
+ thresholds $(\tau_C,\tau_B)$: $15\times15$ grid\\
+ floor scope $\phi$: none, C-only, ordinal\\[1pt]
+ $6\times225\times3+1=4051$ policies per batch};
+\node[stage=neutc, text width=2.85cm] (oof) at (4.85,2.75) {{\footnotesize\textbf{Grouped OOF}}\\{\footnotesize\textbf{evaluation}}\\[2pt]
+ same 5 folds and seeds\\ for every policy;\\ fixed hyperparameters\\ $\rightarrow$ one confusion matrix\\ per policy};
+\node[stage=floorc, text width=4.05cm] (obj) at (8.3,2.75) {{\footnotesize\textbf{Objective vector $\mathbf F(\pi)$}} (dominance)\\[2pt]
+ macro-F1\,$\uparrow$, balanced accuracy\,$\uparrow$,\\ C recall\,$\uparrow$, safety loss $L_{\mathrm{safe}}\downarrow$\\[3pt]
+ {\footnotesize\textbf{Resource coordinates $\mathbf R(\pi)$}}\\[2pt]
+ escalation rate, A-class overestimates,\\ review rate (reported, not dominated)};
+\node[num=rfc] at (pi.north west) {1};
+\node[num=neutc] at (oof.north west) {2};
+\node[num=floorc] at (obj.north west) {3};
+\draw[arr] (pi.east |- oof.west) -- (oof.west);
+\draw[arr] (oof.east |- obj.west) -- (obj.west);
+% ---------------- row 2: filter and select
+\node[stage=dangerc, text width=2.62cm] (con) at (0,-0.6) {{\footnotesize\textbf{Hard constraints}}\\[2pt]
+ $N(\mathrm{C}\rightarrow\mathrm{A})=0$\\ C recall $\geq0.95$\\ physical floor:\\ $\hat y\geq y_{\mathrm{rule}}$ on every unit\\[1pt] declared before\\ any evaluation};
+\node[stage=floorc, text width=2.5cm] (par) at (3.1,-0.6) {{\footnotesize\textbf{Strict Pareto filter}}\\[2pt]
+ non-dominated on $\mathbf F$\\ within the feasible set;\\ hypervolume of each\\ policy family};
+\node[stage=floorc, text width=2.75cm] (sel) at (6.2,-0.6) {{\footnotesize\textbf{Declared selection}}\\[2pt]
+ 1.\ min $L_{\mathrm{safe}}$\\ 2.\ max balanced accuracy\\ 3.\ max macro-F1\\ 4.\ min escalation rate\\ 5.\ min A overestimates\\[1pt]
+ check: distance to ideal};
+\node[stage=neutc, text width=2.7cm] (out) at (9.55,-0.6) {{\footnotesize\textbf{Operating point}}\\{\footnotesize\textbf{and audit record}}\\[2pt]
+ selected policy, front,\\ rejected policies and\\ reasons, hypervolume};
+\node[num=dangerc] at (con.north west) {4};
+\node[num=floorc] at (par.north west) {5};
+\node[num=floorc] at (sel.north west) {6};
+\node[num=neutc] at (out.north west) {7};
+\draw[arr] (obj.south) -- ++(0,-0.32) -| ($(con.north)+(0.4,0)$);
+\draw[arr] (con.east |- par.west) -- (par.west);
+\draw[arr] (par.east |- sel.west) -- (sel.west);
+\draw[arr] (sel.east |- out.west) -- (out.west);
+% ---------------- inset: geometry of the front (conceptual)
+\begin{scope}[shift={(13.25,-3.05)}]
+  \fill[floorc!12] (0,0) rectangle (0.55,5.0);
+  \draw[black!40, dashed, line width=0.4pt] (0,4.38) -- (4.4,4.38);
+  \draw[->, line width=0.5pt] (0,0) -- (4.6,0) node[below left, align=right] {safety loss $L_{\mathrm{safe}}$};
+  \draw[->, line width=0.5pt] (0,0) -- (0,5.2) node[above right, xshift=-3pt] {quality (e.g.\ balanced accuracy)};
+  \node[text=floorc, rotate=90, anchor=south] at (0.3,1.1) {feasible};
+  \foreach \x/\y in {2.6/3.25,2.3/2.9,2.3/2.45,2.5/3.1,2.7/2.6,2.9/2.85,3.1/2.15,3.4/2.4,3.7/1.85,4.0/1.55,2.3/1.95,2.6/1.65}
+    \draw[rfc, line width=0.5pt] (\x,\y) circle (2pt);
+  \node[text=rfc, align=center] at (3.25,0.95) {learner-only policies\\ ($L_{\mathrm{safe}}\geq100$ here)};
+  \fill[rulec] (1.2,2.75) circle (2.2pt) node[right, text=rulec] {rule chain};
+  \foreach \x/\y in {0.18/4.75,0.32/4.65}
+    \draw[black!80, line width=0.5pt] (\x,\y) circle (2pt);
+  \node[text=black!80, anchor=west, align=left] at (0.62,4.72) {lowers $y_{\mathrm{rule}}$: excluded by the floor};
+  \foreach \x/\y in {0.18/3.6,0.32/3.35,0.4/3.05}
+    \fill[floorc!55] (\x,\y) circle (2pt);
+  \node[star, star points=5, star point ratio=2.3, fill=floorc, inner sep=1.5pt] at (0.18,4.0) {};
+  \node[text=floorc, anchor=west, align=left] at (0.62,4.0) {selected (floor-admissible)};
+  \node[text=floorc!80!black, anchor=west, align=left] at (0.62,3.35) {other floor policies};
+\end{scope}
+\end{tikzpicture}
