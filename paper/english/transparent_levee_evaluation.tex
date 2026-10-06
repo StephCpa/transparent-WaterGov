@@ -7,9 +7,11 @@
 \usepackage{url}
 \usepackage[table]{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.geometric}
 \usepackage[hidelinks]{hyperref}
 \usepackage{balance}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \graphicspath{{figures/}}
 
 % Palette shared with the data figures (experiments/analysis/paper_revision/make_paper_figures.py)
@@ -38,11 +40,11 @@
 \maketitle
 
 \begin{abstract}
-Levee seepage assessments increasingly combine physics-based rule chains, data-driven classifiers and unmanned aerial vehicle (UAV) inspection, yet a single safety grade hides whether a learned model has lowered a physically identified risk or whether an inspection candidate was ever confirmed. We formulate transparent evaluation as an auditable decision chain with explicit evidence states, and we test one safety constraint: an ordinal physical floor that lets a random forest (RF) raise, but never lower, the grade of the rule chain. On a controlled benchmark of 875 synthetic scenarios evaluated with grouped five-fold out-of-fold prediction, a threshold-tuned RF raised accuracy from 0.845 to 0.873, but every critical-class record it missed became a direct C$\rightarrow$A downgrade. No pair among 10{,}000 threshold pairs eliminated these errors, because the learned features assign the through-structure scenarios one identical vector at every severity. The floor hybrid reached 0.926 accuracy and 0.912 macro-F1, corrected 71 of the rule chain's 136 errors without introducing any, and removed all critical-class underestimates. Across five additional generator seeds it retained $0.921\pm0.004$ accuracy and $0.998\pm0.004$ critical-class recall. The mechanism is algebraic: the hybrid underestimates only where both components underestimate and inherits the union of their overestimates. In the field data, all nine reviewed infrared piping candidates were false positives, giving an exact one-sided 95\% upper bound of 0.28 for candidate precision; unreviewed detections must therefore not enter a grade as confirmed events. These results hold within one synthetic generator; independent field labels are required before any claim of field accuracy.
+Levee seepage assessments increasingly combine physics-based rule chains, data-driven classifiers and unmanned aerial vehicle (UAV) inspection, yet a single safety grade hides whether a learned model has lowered a physically identified risk or whether an inspection candidate was ever confirmed. We formulate transparent evaluation as an auditable decision chain with explicit evidence states, an ordinal physical floor that lets a random forest (RF) raise but never lower the rule-chain grade, and a multi-objective evaluation system that selects decision policies under declared safety constraints. On 875 controlled synthetic scenarios with grouped out-of-fold validation, every learner without rule input issued at least 50 direct C$\rightarrow$A downgrades, because the learned features assign the through-structure scenarios one identical vector at every severity. The floor removed these downgrades for every learner; with the RF it corrected 71 of the rule chain's 136 errors without introducing any and kept $0.921\pm0.004$ accuracy across five additional generator seeds. Among 4051 policies per batch, the evaluation system selected a stacked RF that takes the rule grade as input and reached 0.995 accuracy only by lowering 50 rule grades in seepage-gated scenarios. Adding the physical-floor constraint selected the stacked RF with the ordinal floor, which transferred to the five seeds at $0.939\pm0.001$ accuracy without a critical-class underestimate. All nine reviewed infrared piping candidates were false positives (exact one-sided 95\% upper bound of 0.28 on candidate precision). The results hold within one synthetic generator; field labels are required before claiming field accuracy or the safety of learned downward overrides.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Levee seepage, piping, transparent evaluation, physics-guided machine learning, random forest, ordinal safety grade, reject option, UAV infrared inspection, evidence provenance.
+Levee seepage, piping, transparent evaluation, physics-guided machine learning, random forest, multi-objective decision, Pareto analysis, ordinal safety grade, UAV infrared inspection, evidence provenance.
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -52,11 +54,12 @@ Two developments make that compression harder to audit. First, levee digital twi
 
 Existing work addresses parts of this problem. Reliability methods update piping probabilities with field performance observations~\cite{Schweckendiek,Roscoe,Baecher2003}; evidence theory combines partial support and ignorance~\cite{Shafer1976,Chen}; theory-guided and interpretable machine learning argue that scientific knowledge should constrain learned models in high-stakes settings~\cite{Karpatne2017,Rudin2019}; and cost-sensitive learning and reject options trade errors against costs or abstention~\cite{Elkan2001,Chow1970,Geifman2017}. What remains unresolved is how a learned grade should be \emph{composed} with a physics-based grade so that the composition cannot produce a false-safe downgrade, what structural property determines whether the composition helps, and how unconfirmed inspection evidence should enter that composition.
 
-This paper asks three questions. (Q1) Under leakage-controlled validation, does a nonlinear learned comparator, here a random forest (RF), improve on a physics-based rule chain, and in which direction do its errors move? (Q2) Can a monotone physical lower bound remove false-safe errors while retaining the learned improvements, and when does that guarantee hold? (Q3) How should algorithmic inspection candidates and incomplete engineering evidence be represented so that they cannot silently change a grade? Our contributions are as follows.
+This paper asks three questions. (Q1) Under leakage-controlled validation, does a nonlinear learned comparator, here a random forest (RF), improve on a physics-based rule chain, and in which direction do its errors move? (Q2) Can a monotone physical lower bound remove false-safe errors while retaining the learned improvements, and when does that guarantee hold? (Q3) How should a decision policy be selected among learners, thresholds and floor scopes when quality, critical-class recall, safety loss and escalation burden conflict? (Q4) How should algorithmic inspection candidates and incomplete engineering evidence be represented so that they cannot silently change a grade? Our contributions are as follows.
 \begin{itemize}
-\item An evidence-state and admissibility model, together with a versioned operational decision protocol, that separates missing, inapplicable, candidate, reviewed and admissible evidence and records the provenance of every value that reaches a grade (Section~\ref{sec:framework}).
+\item An evidence-state and admissibility model that separates missing, inapplicable, candidate, reviewed and admissible evidence and records the provenance of every value that reaches a grade (Section~\ref{sec:framework}).
 \item A leakage-controlled benchmark protocol with error-direction metrics, and an analysis showing that the false-safe errors of the learned layer arise from a feature-set blind spot that no threshold choice can remove (Sections~\ref{sec:protocol} and \ref{sec:res-learned}).
 \item An ordinal physical floor, a proposition that characterizes its error sets, and its evaluation on the original batch, five additional generator seeds, a floor-scope ablation and a review-budget sweep (Sections~\ref{sec:floor}, \ref{sec:res-floor} and \ref{sec:res-robust}).
+\item A multi-objective evaluation system with offline and online decision algorithms, declared constraints and a hypervolume comparison of policy families, evaluated against eight comparison baselines that include learned-only, cost-sensitive and rule-aware fusion methods (Sections~\ref{sec:moes}, \ref{sec:res-baselines} and \ref{sec:res-moes}).
 \item A field audit that treats unmanned aerial vehicle (UAV) infrared detections and a delivered engineering case as evidence-state and provenance tests rather than as accuracy tests (Sections~\ref{sec:res-inspection} and \ref{sec:res-case}).
 \end{itemize}
 The controlled benchmark and the additional seeds come from one synthetic generator. The results therefore establish the behaviour and the failure conditions of the decision protocol, not field-wide predictive accuracy.
@@ -160,28 +163,11 @@ S&=100(1-\rho), \label{eq:score}
 \end{align}
 with $\alpha=0.45$. The score grade is A for $S\geq80$, B for $40\leq S<80$ and C for $S<40$. An observation cap and physical hard gates are then applied in sequence; the gates cover overtopping, the seepage indicators C1, C4 and C5 (foundation, embankment and contact zone), slope factors of safety, scour, structures and settlement. Each stage may keep the grade or move it towards higher risk, never towards lower risk. The dominant failure mode is the largest internal response and is not a calibrated failure probability.
 
-\subsection{Learned comparator}
+\subsection{Random-forest decision layer}
 \label{sec:learner}
 The learned layer uses 14 features from the physical and inspection channels: crest elevation; foundation, embankment and contact-zone gradients; downstream and upstream slope factors of safety; scour depth; inspection anomaly density and evidence level; the three gradients divided by 0.25; the inverse downstream factor of safety; and the scour depth divided by a 1.0~m reference, which duplicates the raw depth. It never sees target mode, target severity, any delivered grade, the composite score, the risk measure or the dominant mode. The 14 features contain no structure-condition indicator; Section~\ref{sec:res-learned} shows the consequence.
 
-Both learners are deterministic NumPy implementations of classification and regression trees (CART) with Gini impurity~\cite{Quinlan,Hastie2009}. Candidate split thresholds are the midpoints between consecutive distinct feature values; when a node holds more than 30 distinct values, the midpoints are taken between 19 quantiles from the 5th to the 95th percentile. The decision tree uses maximum depth 5 and minimum leaf size 5 with all features. The random forest~\cite{Breiman} uses 120 bootstrap trees, maximum depth 7, minimum leaf size 3 and four randomly drawn features per split; its class probability is the fraction of trees voting for the class. Cost-weighted variants draw bootstrap samples with probability proportional to a class weight $w_C\in\{1.5,2,3,4,6\}$ for class C~\cite{Elkan2001}. All hyperparameters were fixed before the additional seeds were generated and were not retuned. The probability vector $\mathbf p=(p_A,p_B,p_C)$ is a decision-support score under the controlled target construction, not a calibrated field failure probability.
-
-\subsection{Threshold policy, safety loss and Pareto comparison}
-For thresholds $(\tau_C,\tau_B)$ the learned policy is
-\begin{equation}
-\hat y_{\mathrm{RF}}=\begin{cases}
-C,&p_C\geq\tau_C,\\
-B,&p_C<\tau_C\ \text{and}\ p_B\geq\tau_B,\\
-A,&\text{otherwise}.
-\end{cases}
-\label{eq:threshold}
-\end{equation}
-Because accuracy alone is uninformative when classes are imbalanced and errors are asymmetric~\cite{Saito2015}, policies are compared on accuracy, macro-F1, balanced accuracy, recall for C, the number of C-class underestimates split into \CtoA{} and \CtoB, the number of A-class overestimates, and the escalation rate (fraction of records assigned C). To make the asymmetry explicit we use
-\begin{equation}
-\Lsafe=2N(\mathrm{C}\rightarrow\mathrm{A})+N(\mathrm{C}\rightarrow\mathrm{B}),
-\label{eq:safeloss}
-\end{equation}
-which weights a direct two-level downgrade twice as heavily as a one-level downgrade. A policy is non-dominated when no other threshold pair has at least as high macro-F1, balanced accuracy and critical-class recall and no larger $\Lsafe$, while being strictly better in at least one of these objectives; escalation rate is reported separately as an operational resource coordinate. Under this definition, the pure-RF front reduces to a single objective vector on both grids, because every threshold pair has $\Lsafe\geq100$: thresholds alone offer no quality--safety trade-off. The representative operating point $(\tau_C,\tau_B)=(0.35,0.20)$ was chosen on a 0.05 grid from 0.20 to 0.90 as the highest macro-F1 point with zero A-class overestimates and C recall of at least 0.85. It is a declared operating point, not an engineering optimum. A 0.01 grid of 10{,}000 pairs tests whether any threshold alone avoids \CtoA{} errors.
+Both learners are deterministic NumPy implementations of classification and regression trees (CART) with Gini impurity~\cite{Quinlan,Hastie2009}. Candidate split thresholds are the midpoints between consecutive distinct feature values; when a node holds more than 30 distinct values, the midpoints are taken between 19 quantiles from the 5th to the 95th percentile. The decision tree uses maximum depth 5 and minimum leaf size 5 with all features. The random forest~\cite{Breiman} uses 120 bootstrap trees, maximum depth 7, minimum leaf size 3 and four randomly drawn features per split; its class probability is the fraction of trees voting for the class. Cost-weighted variants draw bootstrap samples with probability proportional to a class weight $w_C\in\{1.5,2,3,4,6\}$ for class C~\cite{Elkan2001}. All hyperparameters were fixed before the additional seeds were generated and were not retuned. The probability vector $\mathbf p=(p_A,p_B,p_C)$ is a decision-support score under the controlled target construction, not a calibrated field failure probability. The RF is the default learner of the decision layer; Section~\ref{sec:baselines} adds four further learners, an expected-cost decision rule and three fusion rules for comparison.
 
 \subsection{Ordinal physical floor}
 \label{sec:floor}
@@ -200,12 +186,150 @@ For a record with reference class $y$, (i) $\hat y_{\mathrm{H}}<y$ if and only i
 For integers $a,b,y$: $\max(a,b)<y\Leftrightarrow a<y\wedge b<y$; $\max(a,b)>y\Leftrightarrow a>y\vee b>y$; and $\max(a,b)=0\Leftrightarrow a=b=0$ for $a,b\geq0$.
 \end{IEEEproof}
 
-Proposition~\ref{prop:floor} states when the floor helps and when it fails. The hybrid gains when the two components err on different records and the learned layer rarely overestimates; it inherits every conservative error of the rule chain; and its protection against \CtoA{} decisions is exactly as good as the rule chain's. It is not a statement about the accuracy of either component. We also evaluate a \emph{C-only floor} (RF + C-only floor), $\hat y=2$ if $y_{\mathrm{rule}}=2$ and $\hat y=\hat y_{\mathrm{RF}}$ otherwise, which removes the rule chain's influence below C. As an operational variant, records with $\max_c p_c<u$ are routed to review. Offline, no reviewer decision exists, so the rule grade is substituted as a proxy; review-rate and fallback metrics are reported separately from the closed-set metrics.
+Proposition~\ref{prop:floor} states when the floor helps and when it fails. The hybrid gains when the two components err on different records and the learned layer rarely overestimates; it inherits every conservative error of the rule chain; and its protection against \CtoA{} decisions is exactly as good as the rule chain's. It is not a statement about the accuracy of either component. We also evaluate a \emph{C-only floor} (RF + C-only floor), $\hat y=2$ if $y_{\mathrm{rule}}=2$ and $\hat y=\hat y_{\mathrm{RF}}$ otherwise, which removes the rule chain's influence below C.
 
 
-\subsection{Operational decision protocol}
-\label{sec:decision-protocol}
-The method is executed as a versioned decision protocol. For each evaluation unit, it (i) freezes $(s,w,t,v)$; (ii) assigns evidence states and excludes inadmissible values; (iii) evaluates the rule chain and learned layer independently; (iv) applies the ordinal floor and records the level of any escalation, with safety loss computed only offline against a reference class; and (v) creates review tasks before publishing the grade. The output retains the grade, triggered gates, evidence state, provenance record, model version and review status. The threshold sweep fixes the learned operating point; the floor, review budget and admissibility rules determine deployability.
+\section{Decision Algorithm and Multi-Objective Evaluation System}
+\label{sec:moes}
+A single declared operating point answers whether the floor works; it does not show how the decision layer should be configured when quality, critical-class recall, safety loss and escalation burden conflict, or whether another learner or fusion rule would serve better. This section defines the policy space, the objectives and constraints, the selection rule and the decision algorithms, and the comparison baselines. Fig.~\ref{fig:moes} summarizes the evaluation system.
+
+\begin{figure*}[t]
+\centering
+\input{figures/fig_evaluation_system.tex}
+\caption{Multi-objective evaluation system. (1) Candidate policies combine a learner, a threshold pair and a floor scope. (2) Every policy is scored on the same grouped OOF predictions. (3) Four objectives define dominance; resource coordinates are reported but not traded against safety. (4) Hard constraints, including the optional physical-floor constraint, are declared before evaluation. (5) The strict Pareto filter retains the non-dominated feasible policies, and hypervolume summarizes each policy family. (6) A declared lexicographic rule selects one operating point, with a distance-to-ideal rule as a sensitivity check. (7) The selected point is released with its audit record. The inset sketches the geometry found in Section~\ref{sec:res-moes}: learner-only policies sit at high safety loss, and the best benchmark policies lower the rule grade and are excluded by the physical floor.}
+\label{fig:moes}
+\end{figure*}
+
+\subsection{Decision policies}
+\label{sec:policies}
+A decision policy is a tuple $\pi=(\ell,\tau_C,\tau_B,\phi)$ of a learner $\ell$, a threshold pair and a floor scope $\phi\in\{\text{none},\text{C-only},\text{ordinal}\}$. The learner returns OOF class probabilities $\mathbf p^{\ell}=(p_A,p_B,p_C)$, which the thresholds map to a learned grade
+\begin{equation}
+\hat y_{\ell}=\begin{cases}
+C,&p_C\geq\tau_C,\\
+B,&p_C<\tau_C\ \text{and}\ p_B\geq\tau_B,\\
+A,&\text{otherwise},
+\end{cases}
+\label{eq:threshold}
+\end{equation}
+and the floor scope combines it with the rule grade:
+\begin{equation}
+\hat y_\pi=\begin{cases}
+\hat y_{\ell},&\phi=\text{none},\\
+\mathrm{C}\ \text{if}\ y_{\mathrm{rule}}=\mathrm{C},\ \text{else}\ \hat y_{\ell},&\phi=\text{C-only},\\
+\max(\hat y_{\ell},y_{\mathrm{rule}}),&\phi=\text{ordinal}.
+\end{cases}
+\label{eq:scope}
+\end{equation}
+The ordinal scope is the floor of Eq.~(\ref{eq:veto}), and Proposition~\ref{prop:floor} applies to it for any learner. The thresholds range over the 0.05 grid $G=\{0.20,0.25,\ldots,0.90\}^2$ (225 pairs), so each batch contains $6\times225\times3$ learned policies and the rule chain itself, 4051 in total. The representative RF operating point $(\tau_C,\tau_B)=(0.35,0.20)$ used in Sections~\ref{sec:res-rule}--\ref{sec:res-review} was declared on this grid as the highest macro-F1 point with zero A-class overestimates and C recall of at least 0.85; it is a declared reference, not an optimum. A 0.01 grid of 10{,}000 RF pairs tests whether any threshold alone avoids \CtoA{} errors. A review gate with threshold $u$ can be attached to any policy (Algorithm~\ref{alg:online}); because no reviewer decisions exist offline, review is evaluated separately with the rule grade as a proxy (Section~\ref{sec:res-review}).
+
+\subsection{Objectives, resources and constraints}
+\label{sec:objectives}
+Because accuracy alone is uninformative when classes are imbalanced and errors are asymmetric~\cite{Saito2015}, each policy is described by four objectives,
+\begin{equation}
+\mathbf F(\pi)=\Bigl(\mathrm{mF1},\ \mathrm{BA},\ R_C,\ 1-\frac{\Lsafe}{L_{\max}}\Bigr)\in[0,1]^4,
+\label{eq:objectives}
+\end{equation}
+all to be maximized: macro-F1, balanced accuracy, C recall, and the normalized safety loss
+\begin{equation}
+\Lsafe=2N(\mathrm{C}\rightarrow\mathrm{A})+N(\mathrm{C}\rightarrow\mathrm{B}),\qquad L_{\max}=2N_C,
+\label{eq:safeloss}
+\end{equation}
+which weights a direct two-level downgrade twice as heavily as a one-level downgrade. Policy $\pi$ dominates $\pi'$ when it is at least as good in every objective and strictly better in at least one,
+\begin{equation}
+\pi\succ\pi'\iff\mathbf F(\pi)\geq\mathbf F(\pi')\ \wedge\ \mathbf F(\pi)\neq\mathbf F(\pi'),
+\label{eq:dominance}
+\end{equation}
+and the Pareto set contains the non-dominated policies~\cite{Deb}. Three resource coordinates are reported but kept out of the dominance relation: the escalation rate (fraction of units assigned C), the number of A-class overestimates, and the review rate. Treating them as objectives would let a policy appear efficient by escalating less while missing more critical cases.
+
+Two constraint sets are declared before evaluation. The benchmark constraints admit policies with $N(\mathrm{C}\rightarrow\mathrm{A})=0$ and $R_C\geq0.95$. The physical-floor constraint additionally requires $\hat y_\pi\geq y_{\mathrm{rule}}$ on every unit, that is, no learned decision may lower a physics-based grade. The benchmark can measure whether a downward override is correct under its own reference labels, but not whether it is safe on a real levee, so the second constraint encodes the design principle of Section~\ref{sec:floor} rather than a measured cost.
+
+\subsection{Selection rule and hypervolume}
+\label{sec:selection}
+Within the feasible Pareto set, the operating point is selected by a declared safety-first lexicographic order: minimum $\Lsafe$, then maximum balanced accuracy, then maximum macro-F1, then minimum escalation rate, then minimum A-class overestimates. As a sensitivity check, the policy with the smallest equal-weight Euclidean distance to the ideal point of the min--max normalized objectives is also reported. Each policy family $\mathcal F=(\ell,\phi)$ is summarized by the hypervolume of its non-dominated set~\cite{Zitzler1999,Zitzler2003},
+\begin{equation}
+\mathrm{HV}(\mathcal F)=\lambda\Bigl(\textstyle\bigcup_{\pi\in\mathcal F}\,[\mathbf 0,\mathbf F(\pi)]\Bigr),
+\label{eq:hv}
+\end{equation}
+where $\lambda$ is the Lebesgue measure on $[0,1]^4$ and the reference point is the origin. A larger hypervolume means that the family reaches a larger part of the objective space; the rule chain's own hypervolume serves as the physics-only reference. Because selection and evaluation on the same batch are optimistic, the policy selected on the original batch is also frozen and evaluated unchanged on the five additional seeds (transfer test).
+
+\subsection{Decision algorithms}
+\label{sec:algorithms}
+Algorithm~\ref{alg:offline} calibrates the decision layer offline on a reference batch and records the evidence for the chosen operating point. Algorithm~\ref{alg:online} grades a new evaluation unit with the frozen policy. The online procedure never computes the safety loss, which requires a reference class, and records instead whether and by how many levels the floor raised the learned grade.
+
+\begin{algorithm}[t]
+\caption{Offline calibration and policy selection}
+\label{alg:offline}
+\begin{algorithmic}[1]
+\Require reference batch $\{(\mathbf x_i,y_i,y_{\mathrm{rule},i})\}$; learners $\mathcal L$; grid $G$; scopes $\Phi$; constraint set $\mathcal C$
+\Ensure operating point $\pi^\star$ and audit record
+\State group identical feature vectors; assign groups to $K=5$ folds
+\For{each $\ell\in\mathcal L$ and fold $k$}
+  \State fit $\ell$ on folds $\neq k$; store $\mathbf p^{\ell}_i$ for $i$ in fold $k$
+\EndFor
+\For{each $\pi=(\ell,\tau_C,\tau_B,\phi)$ with $(\tau_C,\tau_B)\in G$, $\phi\in\Phi$}
+  \State $\hat y_{\pi,i}\gets$ Eqs.~(\ref{eq:threshold})--(\ref{eq:scope}); compute $\mathbf F(\pi)$, resources, $N(\mathrm{C}\rightarrow\mathrm{A})$, downward overrides
+\EndFor
+\State $\Pi_{\mathcal C}\gets\{\pi:\pi\ \text{satisfies}\ \mathcal C\}$; $P\gets$ non-dominated set of $\Pi_{\mathcal C}$ (Eq.~\ref{eq:dominance})
+\State $\mathrm{HV}(\ell,\phi)\gets$ Eq.~(\ref{eq:hv}) for every family
+\State $\pi^\star\gets$ first element of $P$ under the lexicographic order
+\State \Return $\pi^\star$; record $P$, HV, $\pi^\star$, rejected policies and the violated constraint
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{Online grading of an evaluation unit}
+\label{alg:online}
+\begin{algorithmic}[1]
+\Require unit key $(s,w,t,v)$; evidence set $E$; frozen $\pi^\star=(\ell,\tau_C,\tau_B,\phi)$; review threshold $u$
+\Ensure grade, trace and review status
+\State freeze $(s,w,t,v)$; for each indicator $j$ compute $a_j$ (Eq.~\ref{eq:admissibility}) and its evidence state
+\State keep inadmissible values in the trace only; list missing indicators
+\State $y_{\mathrm{rule}}$, triggered gates $\gets$ rule chain on admissible evidence (Eqs.~\ref{eq:risk}--\ref{eq:score})
+\State $\mathbf p\gets\ell(\mathbf x)$; $\hat y_\ell\gets$ Eq.~(\ref{eq:threshold}); $\hat y\gets$ Eq.~(\ref{eq:scope}); record $\hat y-\hat y_\ell$
+\If{$\max_c p_c<u$ \textbf{or} a candidate inspection state touches the unit}
+  \State create a review task; mark the grade provisional
+\EndIf
+\State publish $\hat y$ with gates, evidence states, provenance, versions and review status
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Comparison baselines}
+\label{sec:baselines}
+All baselines use the same 14 features, folds and reference labels as the RF, and none was tuned; library defaults or the fixed settings below were set before any result was seen. \emph{Learned-only} baselines are multinomial logistic regression (LR) on standardized features ($C=1$); an ordinal LR that decomposes the grade into $P(y>\mathrm{A})$ and $P(y>\mathrm{B})$~\cite{FrankHall2001}; a radial-basis support-vector machine (SVM, $C=1$) with sigmoid-calibrated probabilities~\cite{Cortes1995}; gradient-boosted trees (GBDT, 200 iterations, learning rate 0.1)~\cite{Friedman2001}; and the RF with an expected-cost decision $\arg\min_k\sum_c p_c\,\kappa_{ck}$, whose cost matrix $\kappa$ charges 10 for \CtoA, 5 for \CtoB, 2 for \BtoA{} and 1 or 2 for overestimates~\cite{Elkan2001}. The sklearn implementations~\cite{Pedregosa2011} (version 1.9.1) were used for LR, SVM and GBDT. \emph{Rule-aware fusion} baselines use the rule grade at decision time: a soft vote that averages $\mathbf p^{\mathrm{RF}}$ with the one-hot rule grade and resolves ties towards higher risk; a confidence switch that uses the RF threshold decision when $\max_c p_c\geq0.60$ and the rule grade otherwise; and a stacked RF that receives the rule grade as a fifteenth feature~\cite{Wolpert1992}. Every learned-only baseline and the stacked RF are also evaluated with the ordinal floor. Unless stated otherwise, learned-only baselines use the argmax decision.
+
+\subsection{Validation status of the decision layer}
+\label{sec:status}
+Table~\ref{tab:status} separates what the present data establish from what still requires field evidence. Components marked as declared are design choices that were fixed before evaluation but have not been calibrated against consequences, costs or field outcomes.
+
+\begin{table}[t]
+\caption{Validation status of the decision-layer components.}
+\label{tab:status}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.30\columnwidth}>{\raggedright\arraybackslash}p{0.34\columnwidth}>{\raggedright\arraybackslash}p{0.30\columnwidth}@{}}
+\toprule
+Component & Evidence in this paper & Status \\
+\midrule
+Ordinal floor, Eq.~(\ref{eq:veto}) & Proposition~\ref{prop:floor}; six controlled batches & guarantee proven, conditional on the rule chain \\
+\addlinespace[0.5pt]
+RF and baseline learners & grouped OOF, six batches & within-generator only \\
+\addlinespace[0.5pt]
+Objectives, Eq.~(\ref{eq:objectives}); 2:1 weight in $\Lsafe$ & declared & not calibrated to consequences \\
+\addlinespace[0.5pt]
+Constraints: $N(\mathrm{C}\rightarrow\mathrm{A})=0$, $R_C\geq0.95$, physical floor & declared; selection reported with and without the floor & thresholds need field calibration \\
+\addlinespace[0.5pt]
+Lexicographic selection & distance-to-ideal check; transfer to five seeds & within-generator only \\
+\addlinespace[0.5pt]
+Review gate, $u$ and 5\% budget & rule-grade proxy & no reviewer decisions \\
+\addlinespace[0.5pt]
+Evidence states, Eq.~(\ref{eq:admissibility}) & inspection package; K45+500 trace & interface tested, not outcome-validated \\
+\addlinespace[0.5pt]
+Learned downward overrides & correct on benchmark labels & untested on field labels \\
+\addlinespace[0.5pt]
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Data and Validation Protocol}
 \label{sec:protocol}
@@ -257,7 +381,7 @@ The inspection package contains 114 field thermal infrared images with GPS and c
 The delivered K45+500 case, a representative section of a reach with a recorded 2017 piping event, is used only to test provenance and interface fields. Its values are delivery excerpts rather than an independent physical re-run, and its input includes the historical piping information, so it is not a blind test.
 
 \subsection{Reproducibility}
-All analyses use fixed seeds and write their feature manifests, fold assignments, threshold grids, per-record predictions and summary metrics. The supplementary statistics and all data figures in this paper are regenerated by two scripts that read only repository files and reuse the unchanged model code (Section~\ref{sec:availability}).
+All analyses use fixed seeds and write their feature manifests, fold assignments, threshold grids, per-record predictions and summary metrics. The supplementary statistics, the comparison baselines, the policy-space evaluation and all data figures are regenerated by three scripts that read only repository files and reuse the unchanged model code (NumPy 2.4.6 and scikit-learn 1.9.1; Section~\ref{sec:availability}).
 
 \section{Results}
 \label{sec:results}
@@ -328,6 +452,95 @@ The pattern held in each of the five additional batches (Table~\ref{tab:seeds}, 
 \label{sec:res-review}
 Routing low-confidence records to review had a cost that grew with the review rate (Fig.~\ref{fig:seeds}c). At $u=0.50$, $1.5\pm0.7\%$ of records were routed, C recall was $0.990\pm0.008$ and $\Lsafe$ was $3.4\pm2.8$ (range 0 to 6); this point met the exploratory budget of at most 5\% review and $\Lsafe\leq6$ in every seed. At $u=0.60$ the review rate rose to $6.6\pm0.9\%$ and $\Lsafe$ to $10.8\pm2.8$; at $u=0.70$, to $16.0\pm1.4\%$ and $37.4\pm8.6$. On the original batch, $u=0.50$ routed 7 records and changed no metric, and $u=0.60$ routed 62 records (7.1\%) and produced 12 \CtoB{} errors (Table~\ref{tab:main}). These costs measure the proxy, not review: the rule grade substitutes for an engineer, so the sweep quantifies the upward corrections that a reviewer would have to recover. A reviewer who returned the reference grade on every routed record would remove these proxy errors; the sweep therefore measures the cost of substituting the rule grade for an unavailable reviewer. The thresholds were selected post hoc within the same generator family and must be fixed before an external evaluation.
 
+\subsection{Comparison with additional baselines}
+\label{sec:res-baselines}
+\begin{table*}[t]
+\caption{Comparison baselines under the grouped five-fold OOF protocol. Columns up to ``New err.'' refer to the original 875 records; the last two columns give mean $\pm$ SD over the five additional seeds. ``Below rule'' counts decisions that lower the rule grade; ``New err.'' counts errors on records that the rule chain grades correctly. Learned-only baselines use the argmax decision unless a threshold is given. The declared floor hybrid is shaded.}
+\label{tab:baselines}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}llccccrrrrcc@{}}
+\toprule
+ & & \multicolumn{8}{c}{Original batch} & \multicolumn{2}{c}{Five additional seeds} \\
+\cmidrule(lr){3-10}\cmidrule(l){11-12}
+ & Method & Accuracy & Macro-F1 & Bal.\ acc. & C$\rightarrow$A & $\Lsafe$ & A$\uparrow$ & Below rule & New err. & Accuracy & C$\rightarrow$A \\
+\midrule
+ Physics & Rule chain & .845 & .827 & .847 & 0 & 57 & 54 & 0 & -- & $.847\pm.002$ & 0 \\
+\midrule
+ \multirow{7}{*}{Learned only} & LR & .815 & .764 & .751 & 51 & 102 & 12 & 128 & 128 & $.828\pm.006$ & $50.8\pm0.8$ \\
+  & Ordinal LR & .819 & .773 & .759 & 51 & 102 & 12 & 127 & 124 & $.823\pm.004$ & $52.8\pm1.3$ \\
+  & SVM & .839 & .829 & .808 & 63 & 126 & 17 & 142 & 109 & $.845\pm.004$ & $56.0\pm2.2$ \\
+  & GBDT & .906 & .906 & .895 & 50 & 102 & 2 & 130 & 78 & $.906\pm.004$ & $50.6\pm0.9$ \\
+  & RF, majority vote & .829 & .784 & .763 & 51 & 102 & 0 & 179 & 124 & $.827\pm.008$ & $57.0\pm4.5$ \\
+  & RF, threshold $(0.35,0.20)$ & .873 & .858 & .836 & 50 & 100 & 0 & 154 & 100 & $.875\pm.010$ & $50.6\pm1.3$ \\
+  & RF, expected cost & .842 & .827 & .808 & 50 & 100 & 24 & 154 & 124 & $.836\pm.008$ & $50.0\pm0.0$ \\
+\midrule
+ \multirow{3}{*}{Rule-aware fusion} & Soft vote & .845 & .827 & .847 & 0 & 57 & 54 & 0 & 0 & $.848\pm.002$ & 0 \\
+  & Confidence switch, $u=0.60$ & .858 & .839 & .823 & 50 & 112 & 0 & 154 & 100 & $.862\pm.009$ & $50.0\pm0.0$ \\
+  & Stacked RF & .994 & .993 & .994 & 0 & 0 & 4 & 50 & 0 & $.995\pm.001$ & 0 \\
+\midrule
+ \multirow{7}{*}{With ordinal floor} & LR + floor & .855 & .815 & .814 & 0 & 1 & 58 & 0 & 47 & $.858\pm.002$ & 0 \\
+  & Ordinal LR + floor & .858 & .820 & .820 & 0 & 1 & 58 & 0 & 44 & $.859\pm.003$ & 0 \\
+  & SVM + floor & .870 & .849 & .857 & 0 & 7 & 71 & 0 & 28 & $.871\pm.005$ & 0 \\
+  & GBDT + floor & .934 & .922 & .942 & 0 & 0 & 55 & 0 & 1 & $.935\pm.003$ & 0 \\
+  & RF, expected cost + floor & .895 & .881 & .899 & 0 & 0 & 78 & 0 & 24 & $.890\pm.007$ & 0 \\
+  & \cellcolor{floorc!10}RF, threshold + floor & \cellcolor{floorc!10}.926 & \cellcolor{floorc!10}.912 & \cellcolor{floorc!10}.928 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}54 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}0 & \cellcolor{floorc!10}$.921\pm.004$ & \cellcolor{floorc!10}0 \\
+  & Stacked RF + floor & .937 & .926 & .947 & 0 & 0 & 54 & 0 & 0 & $.937\pm.001$ & 0 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The feature blind spot is not a property of the random forest (Table~\ref{tab:baselines}). Every learned-only baseline issued at least 50 direct \CtoA{} decisions on the original batch and between $50.0$ and $57.0$ on average across the seeds. GBDT was the strongest learned-only model (0.906 accuracy and macro-F1) and still issued 50. The forest assigned $p_C=0$, and GBDT $p_C\leq1.1\times10^{-6}$, to every through-structure record, so no threshold and no expected-cost rule on these probabilities can recover them: the expected-cost RF, which charges a \CtoA{} decision five times an A$\rightarrow$C overestimate, kept all 50. Each learned-only baseline lowered the rule grade on 127 to 179 records, and at most 54 of those overrides were correct.
+
+Two fusion rules that use the rule grade without a floor did not help. The soft vote reproduced the rule chain on the original batch and in four of five seeds (it corrected two rule errors in the fifth), because the one-hot rule grade carries half of the fused probability and prevails unless the forest is certain of a different class. The confidence switch kept all 50 \CtoA{} errors, because the forest is confident on the blind-spot records. The stacked RF, which receives the rule grade as an input, was the only baseline that outperformed the floor hybrid: 0.994 accuracy, 0.993 macro-F1 and no C-class underestimate. It did so by lowering the rule grade on exactly 50 records, the 25 seepage-mode and 25 mixed-mode A records that the rule chain had escalated to B. All 50 overrides were correct under the benchmark labels.
+
+The floor transferred to every learner. With it, all learners reached zero \CtoA{} decisions in all six batches. Proposition~\ref{prop:floor}(ii) predicts the price, because the floor inherits each learner's overestimates: LR + floor and ordinal LR + floor added 47 and 44 errors that the rule chain did not make, SVM + floor 28, expected-cost RF + floor 24 and GBDT + floor one, whereas RF + floor and stacked RF + floor added none in any batch. GBDT + floor was 1.4 percentage points more accurate than RF + floor across the seeds ($0.935\pm0.003$ against $0.921\pm0.004$) at the cost of $1.8\pm1.3$ new errors per seed. Stacked RF + floor combined both properties ($0.937\pm0.001$ accuracy, no new error).
+
+\subsection{Multi-objective evaluation of the policy space}
+\label{sec:res-moes}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_policy_evaluation.pdf}
+\caption{Multi-objective evaluation of the 4051 candidate policies. (a) Balanced accuracy against safety loss for all policies on the original batch; colour gives the floor scope, and stacked RF policies without a floor are shown separately because they use the rule grade as an input. (b) Policies that satisfy the benchmark constraints ($N(\mathrm{C}\rightarrow\mathrm{A})=0$, $R_C\geq0.95$), plotted against the A-class overestimate burden; marker gives the floor scope and colour the learner; policies with balanced accuracy below 0.78 lie outside the panel. Stars mark the policies selected without and with the physical-floor constraint; the open diamond marks the declared RF + ordinal floor. (c) Hypervolume of each learner and floor scope, Eq.~(\ref{eq:hv}), mean $\pm$ SD over the original batch and five seeds; the dashed line is the rule chain.}
+\label{fig:policy}
+\end{figure*}
+
+\begin{table}[t]
+\caption{Policies selected by the evaluation system. The same family was selected in all six batches, and the lexicographic and distance-to-ideal rules agreed in every batch. Transfer: the policy selected on the original batch, frozen and evaluated on the five additional seeds (mean $\pm$ SD).}
+\label{tab:selection}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\columnwidth}ccc@{}}
+\toprule
+ & \multicolumn{2}{c}{Selected under} & Declared \\
+\cmidrule(lr){2-3}
+ & benchmark & + physical & reference \\
+ & constraints & floor & \\
+\midrule
+Policy family & stacked RF & stacked RF & RF \\
+Floor scope & none & ordinal & ordinal \\
+$(\tau_C,\tau_B)$ & \multicolumn{2}{c}{0.50--0.55, 0.35--0.50} & $(0.35,0.20)$ \\
+Accuracy, in batch & .995--.998 & .938--.941 & .915--.927 \\
+\midrule
+Accuracy, transfer & $.996\pm.001$ & $.939\pm.001$ & $.921\pm.004$ \\
+Bal.\ acc., transfer & $.996\pm.002$ & $.948\pm.002$ & $.920\pm.006$ \\
+Macro-F1, transfer & $.995\pm.002$ & $.928\pm.001$ & $.906\pm.005$ \\
+C$\rightarrow$A, transfer & 0 & 0 & 0 \\
+$\Lsafe$, transfer & 0 & 0 & $0.6\pm1.3$ \\
+A$\uparrow$, transfer & $3.2\pm1.1$ & $53.2\pm1.1$ & $53.2\pm1.1$ \\
+Below rule, transfer & $50.0\pm0.0$ & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Of the 4051 policies per batch, 1402 to 1527 satisfied the benchmark constraints and 795 to 825 also satisfied the physical-floor constraint. No learned-only family contained a feasible policy in any batch, and none dominated the rule chain: their hypervolumes ranged from 0.42 to 0.59 against $0.545\pm0.004$ for the rule chain (Fig.~\ref{fig:policy}c). With the ordinal floor, the hypervolume rose to between 0.73 and 0.88 for every learner, and every ordinal family contained a policy that dominates the rule chain (SVM in five of six batches). For the RF, the hypervolume rose from $0.532\pm0.018$ without a floor to $0.804\pm0.026$ with the C-only floor and $0.836\pm0.010$ with the ordinal floor.
+
+Under the benchmark constraints alone, the Pareto front consisted entirely of stacked RF policies without a floor or with the C-only floor, and the selection rule chose a stacked RF without a floor in all six batches ($\tau_C=0.50$--$0.55$, $\tau_B=0.35$--$0.50$; Table~\ref{tab:selection}). Frozen and transferred to the five seeds, the original-batch selection reached $0.996\pm0.001$ accuracy with no C-class underestimate and lowered the rule grade on 50 records in every seed. With the physical-floor constraint, the front consisted entirely of stacked RF + ordinal floor policies, and the selection kept the thresholds of the unconstrained choice in every batch. The transferred policy reached $0.939\pm0.001$ accuracy, $0.948\pm0.002$ balanced accuracy and no C-class underestimate, 1.8 percentage points above the declared RF + floor. The declared RF + floor was not on the floor-constrained front in any batch: it is dominated by the variant that uses the rule grade both as an input and as a floor.
+
+The difference between the two selected policies is the measured price of the physical-floor constraint within the generator: 5.7 percentage points of accuracy and 50 additional A-class overestimates. Those 50 decisions are the rule chain's seepage-gate escalations in the seepage and mixed scenarios. Under the benchmark labels they were all unnecessary. Whether lowering a seepage-gate grade is also safe on a real levee cannot be decided with the present data, and the evaluation system therefore reports the price instead of absorbing it into a single score.
+
 \subsection{Inspection candidates as evaluation states}
 \label{sec:res-inspection}
 All nine field candidates that entered manual review were rejected as piping (Fig.~\ref{fig:inspection}). Their detector confidences ranged from 0.466 to 0.777. The reviewer attributed five to the thermal contrast at water--land boundaries, two to vegetation and shadow, one to the thermal inertia and shadow of a building edge, and one to wet ground or lens-edge vignetting. With 0 confirmations in 9 reviews, the exact one-sided 95\% upper bound on candidate precision is 0.28: the data exclude a high-precision detector, but they do not show that the detector never finds piping. The 14 boxes on the 13 artificial-piping images had higher confidences (0.670 to 0.930), but without missed-detection records they establish no recall or field transfer.
@@ -373,20 +586,22 @@ The safety gain in this paper comes from the composition, not from the learner. 
 
 This positions the floor between two existing strategies. Theory-guided learning places physical knowledge in the learner's inputs, loss or architecture~\cite{Karpatne2017}, and interpretable models make the learner itself auditable~\cite{Rudin2019}. The floor instead places physical knowledge in the \emph{decision layer} as an ordinal constraint, which leaves the learner unrestricted but bounds the direction of its influence. It is simpler than Bayesian updating of failure probabilities~\cite{Schweckendiek,Roscoe} and does not replace it; the two answer different questions. Unlike a reject option~\cite{Chow1970,Geifman2017}, the floor never abstains; in our sweep, abstention with a rule-based fallback only removed upward corrections, so the value of review lies in information that the offline proxy cannot represent.
 
-Two rival explanations bound the size of the gain. First, the rule chain's hard gates are aligned with the generator's severity construction, so the reference labels partly encode the rule logic; part of the hybrid's advantage over a pure learner is therefore built into the benchmark. Second, the forest's \CtoA{} errors stem from a feature set that omits structure indicators. Adding those indicators would likely shrink the learner's blind spot and narrow the hybrid's margin. Neither explanation removes the protective role of the floor, which does not depend on knowing where the learner's blind spots are. That property matters for field deployment, where blind spots are unknown in advance.
+Two rival explanations bound the size of the gain. First, the rule chain's hard gates are aligned with the generator's severity construction, so the reference labels partly encode the rule logic; part of the hybrid's advantage over a pure learner is therefore built into the benchmark. Second, the forest's \CtoA{} errors stem from a feature set that omits structure indicators. The stacked RF confirms this reading: given the rule grade, which encodes the structure gates, the forest recovered every through-structure critical case. Neither explanation removes the protective role of the floor, which does not depend on knowing where the learner's blind spots are. That property matters for field deployment, where blind spots are unknown in advance.
+
+The baselines and the policy-space evaluation sharpen the role of the floor. The blind spot belongs to the features, not to the forest: logistic, ordinal, support-vector and boosted models missed the same critical cases, and neither soft voting nor confidence switching removed the misses. The only composition that outperformed the floor, the stacked RF, did so by lowering 50 rule grades. Within the generator those overrides were correct; on a levee they would overrule seepage gates on the strength of regularities learned from synthetic labels. The evaluation system therefore reports two operating points instead of one: a floor-admissible policy that is deployable under the present evidence, and a benchmark-optimal policy whose additional 5.7 points depend on field confirmation of learned downward overrides. Among the floor-admissible learners the forest had a specific advantage, because it never overestimated and therefore added no error to the rule chain; supplying the rule grade as an input kept that property and raised accuracy to $0.939\pm0.001$. Making the constraints, the selection rule and the price of each constraint explicit is the practical contribution of the Pareto layer: it replaces a trade-off hidden in a single score with a declared and auditable choice.
 
 The inspection results lead to the same design principle at the evidence layer. A detector can be optimized for candidate generation, but the evaluation should consume reviewed event objects with a location, a time window, a confidence and a status. Retaining rejected candidates is useful for retraining and flight planning~\cite{Kumar2025}; promoting them to confirmed piping would have raised the grade of a reach on the basis of water edges and vegetation. The provenance graph keeps that distinction in the data model rather than in the visualization layer.
 
-The claims are bounded in four ways. (i) All quantitative comparisons use one synthetic generator; the five additional seeds test realization variability, not transfer, and the reference labels share the rule logic. (ii) The \CtoA{} guarantee is conditional on the rule chain: in the field, a rule chain that misses a critical case entirely would pass that error through the floor, and the hybrid inherits every rule overestimate, which in the benchmark meant 54 unnecessary escalations. (iii) The review fallback is a proxy, so the reported review costs are not measurements of engineering review. (iv) The field evidence consists of nine reviewed candidates and one non-blind engineering trace; it supports the evidence-state design but no detection or prediction metric.
+The claims are bounded in five ways. (i) All quantitative comparisons use one synthetic generator; the five additional seeds test realization variability, not transfer, and the reference labels share the rule logic. (ii) The \CtoA{} guarantee is conditional on the rule chain: in the field, a rule chain that misses a critical case entirely would pass that error through the floor, and the hybrid inherits every rule overestimate, which in the benchmark meant 54 unnecessary escalations. (iii) The review fallback is a proxy, so the reported review costs are not measurements of engineering review. (iv) The field evidence consists of nine reviewed candidates and one non-blind engineering trace; it supports the evidence-state design but no detection or prediction metric. (v) The objectives, the 2:1 weighting in $\Lsafe$, the constraint thresholds and the lexicographic order are declared rather than calibrated (Table~\ref{tab:status}); the transfer test guards against selecting on one batch, not against selecting within one generator.
 
-Each boundary points to a discriminating test. Independent field labels, timed and registered against inspection and water-level records, would test whether the components remain complementary outside the generator, which Proposition~\ref{prop:floor} identifies as the condition that matters. Retraining the learner with structure indicators would separate the feature blind spot from the protective effect of the floor. Calibrating the forest's probabilities and recording actual reviewer decisions would turn the review gate from a proxy into a measured operating point.
+Each boundary points to a discriminating test. Independent field labels, timed and registered against inspection and water-level records, would test whether the components remain complementary outside the generator, which Proposition~\ref{prop:floor} identifies as the condition that matters. Retraining the learner with structure indicators would separate the feature blind spot from the protective effect of the floor. Field labels on units where the stacked RF would lower a seepage-gate grade would decide whether the physical-floor constraint can be relaxed. Calibrating the forest's probabilities and recording actual reviewer decisions would turn the review gate from a proxy into a measured operating point.
 
 \section{Conclusion}
-An ordinal physical floor that lets a learned layer raise but never lower a physics-based grade improved a levee seepage rule chain without adding a single error relative to that chain in six controlled batches, and removed the direct critical-to-safe downgrades that no threshold or moderate cost weighting of a random forest could avoid. The gain follows from a simple property: the composition underestimates only where both components underestimate, so it helps when their errors are complementary and protects against direct downgrades only to the extent that the rule chain does. Treating inspection detections as candidates until reviewed, and engineering deliveries as provenance traces, kept unconfirmed and inconsistent evidence out of the grade. Field labels with independent timing and registration are the next requirement for testing whether the complementarity, and hence the gain, survives outside the synthetic generator.
+An ordinal physical floor that lets a learned layer raise but never lower a physics-based grade improved a levee seepage rule chain without adding a single error relative to that chain in six controlled batches, and removed the direct critical-to-safe downgrades that no threshold or moderate cost weighting of a random forest could avoid. The gain follows from a simple property: the composition underestimates only where both components underestimate, so it helps when their errors are complementary and protects against direct downgrades only to the extent that the rule chain does. A multi-objective evaluation of 4051 policies per batch made the remaining trade-off explicit: the benchmark-optimal stacked RF gained 5.7 points of accuracy only by lowering 50 rule grades, whereas the best floor-admissible policy, the same forest with the ordinal floor, transferred across five generator seeds at 0.939 accuracy without a critical-class underestimate. Treating inspection detections as candidates until reviewed, and engineering deliveries as provenance traces, kept unconfirmed and inconsistent evidence out of the grade. Field labels with independent timing and registration are the next requirement for testing whether the complementarity, and hence the gain, survives outside the synthetic generator.
 
 \section*{Data and Code Availability}
 \label{sec:availability}
-The de-identified repository contains the controlled benchmark and its generator (\url{data/875_benchmark}), the multi-seed batches and analysis scripts (\url{experiments/analysis}), the inspection audit tables (\url{inspection/audit}) and this manuscript. The statistics and figures specific to this revision, including per-record predictions for the 875 records, are produced by \url{experiments/analysis/paper_revision/paper_statistics.py} and \url{make_paper_figures.py}, which reuse the unchanged model code. Raw field images were released with metadata removed where possible; locations are not reported in this paper.
+The de-identified repository contains the benchmark and its generator (\url{data/875_benchmark}), the multi-seed batches and analysis scripts (\url{experiments/analysis}), the inspection audit tables (\url{inspection/audit}) and this manuscript. The statistics, baselines, policy-space evaluation and figures of this paper, including per-record predictions and the cloud of 4051 policies, are produced by the scripts in \url{experiments/analysis/paper_revision}, which reuse the unchanged model code. Raw field images were released with metadata removed where possible; locations are not reported.
 
 \section*{Acknowledgment}
 The authors acknowledge the project team for providing the controlled evaluation package, engineering-case materials and UAV inspection records. Author list and funding information will be completed after internal review.

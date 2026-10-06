@@ -1,0 +1,144 @@
+{
+  "pdf": "paper/english/figures/fig_policy_evaluation.pdf",
+  "auditable": true,
+  "verdict": "REVIEW REQUIRED",
+  "page_count": 1,
+  "visible_text_box_count": 69,
+  "text_trace_count": 75,
+  "stroke_path_count": 1243,
+  "filled_region_count": 1129,
+  "image_region_count": 2,
+  "summary": {
+    "fail": 0,
+    "warn": 5,
+    "contained_fill_overlays": 7,
+    "contained_image_overlays": 1
+  },
+  "thresholds": {
+    "text_inset_pt": 0.6,
+    "min_overlap_ratio": 0.05,
+    "clipping_tolerance_pt": 0.5
+  },
+  "findings": [
+    {
+      "severity": "WARN",
+      "kind": "text-fill-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 filled region(s)",
+      "text": "selected: with physical-",
+      "text_bbox": [
+        294.8149108886719,
+        22.977758407592773,
+        356.5556640625,
+        28.977758407592773
+      ],
+      "other_text": null,
+      "other_bbox": [
+        207.9609832763672,
+        11.114288330078125,
+        338.2418518066406,
+        119.43829345703125
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        19000
+      ]
+    },
+    {
+      "severity": "WARN",
+      "kind": "text-fill-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 filled region(s)",
+      "text": "RF + ordinal floor,",
+      "text_bbox": [
+        294.8149108886719,
+        41.415897369384766,
+        342.3836364746094,
+        47.415897369384766
+      ],
+      "other_text": null,
+      "other_bbox": [
+        207.9609832763672,
+        11.114288330078125,
+        338.2418518066406,
+        119.43829345703125
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        19000
+      ]
+    },
+    {
+      "severity": "WARN",
+      "kind": "text-fill-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 filled region(s)",
+      "text": "declared (0.35, 0.20)",
+      "text_bbox": [
+        294.8149108886719,
+        47.946170806884766,
+        350.27557373046875,
+        53.946170806884766
+      ],
+      "other_text": null,
+      "other_bbox": [
+        207.9609832763672,
+        11.114288330078125,
+        338.2418518066406,
+        119.43829345703125
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        19000
+      ]
+    },
+    {
+      "severity": "WARN",
+      "kind": "text-image-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 raster image(s)",
+      "text": "rule chain",
+      "text_bbox": [
+        82.23995208740234,
+        15.85585880279541,
+        109.10547637939453,
+        22.055858612060547
+      ],
+      "other_text": null,
+      "other_bbox": [
+        36.0,
+        15.119998931884766,
+        105.12000274658203,
+        67.68000030517578
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        1
+      ]
+    },
+    {
+      "severity": "WARN",
+      "kind": "text-image-edge",
+      "page": 1,
+      "message": "Text partially overlaps the edge of 1 raster image(s)",
+      "text": "learner-only policies",
+      "text_bbox": [
+        99.97636413574219,
+        94.43160247802734,
+        155.07472229003906,
+        100.63160705566406
+      ],
+      "other_text": null,
+      "other_bbox": [
+        36.0,
+        15.120002746582031,
+        164.16000366210938,
+        100.08000183105469
+      ],
+      "object_count": 1,
+      "object_indexes": [
+        0
+      ]
+    }
+  ]
+}

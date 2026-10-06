@@ -5,7 +5,9 @@ Inputs are repository files only:
     written by paper_statistics.py);
   * ml_baseline与多目标/cost_sensitive_results.json;
   * 875多种子稳健性/review_budget_sweep.csv;
-  * inspection/audit/检测标签逐条记录.csv and 可疑点复核记录_非空行.csv.
+  * inspection/audit/检测标签逐条记录.csv and 可疑点复核记录_非空行.csv;
+  * baselines_and_pareto.json and policy_cloud_875.csv (this folder, written by
+    baselines_and_pareto.py) for the policy-space evaluation figure.
 
 Outputs (vector PDF, editable TrueType text) are written to
 paper/english/figures/.  If the environment variable NATURE_FIGURE_SCRIPTS
@@ -346,6 +348,115 @@ def fig_inspection() -> None:
     save(fig, "fig_inspection_status")
 
 
+# --------------------------------------------------------------------- Fig. 7
+LEARNER_STYLE = {  # display name, colour
+    "lr": ("LR", "#9A9A9A"), "olr": ("ordinal LR", "#B8A23A"), "svm": ("SVM", "#A0527A"),
+    "gbdt": ("GBDT", "#D08C2E"), "rf": ("RF", RF), "rf_rule": ("stacked RF", "#17375E"),
+}
+SCOPE_STYLE = {"none": ("no floor", RF_LIGHT, "o"), "c_only": ("C-only floor", CONLY, "^"), "ordinal": ("ordinal floor", FLOOR, "D")}
+
+
+def fig_policy_evaluation() -> None:
+    res = json.loads((HERE / "baselines_and_pareto.json").read_text(encoding="utf-8"))
+    with (HERE / "policy_cloud_875.csv").open(encoding="utf-8") as f:
+        cloud = list(csv.DictReader(f))
+    for c in cloud:
+        for k in ("macro_f1", "balanced_accuracy", "c_recall", "escalation"):
+            c[k] = float(c[k])
+        for k in ("safe_loss", "c_to_a", "a_over", "below_rule"):
+            c[k] = int(c[k])
+        for k in ("on_front", "feasible", "floor_feasible", "on_floor_front"):
+            c[k] = c[k] == "True"
+    po = res["original"]["pareto"]
+    sel_u, sel_f = po["selected_lexicographic"], po["selected_floor_constrained"]
+    rule = next(c for c in cloud if c["learner"] == "rule")
+    declared = next(c for c in cloud if c["learner"] == "rf" and c["scope"] == "ordinal"
+                    and float(c["t_c"]) == 0.35 and float(c["t_b"]) == 0.2)
+    stacked_col = LEARNER_STYLE["rf_rule"][1]
+
+    fig = plt.figure(figsize=(DBL_W, 2.55))
+    gs = fig.add_gridspec(1, 3, wspace=0.34, left=0.06, right=0.99, bottom=0.36, top=0.95)
+    rng = np.random.default_rng(11)  # display jitter only; all plotted values are recorded results
+
+    # (a) whole policy space; stacked RF (rule grade as input) shown separately from learner-only policies
+    ax = fig.add_subplot(gs[0, 0])
+    groups = [("none", False, RF_LIGHT), ("c_only", False, CONLY), ("ordinal", False, FLOOR), ("none", True, stacked_col)]
+    for s, stacked, col in groups:
+        pts = [c for c in cloud if c["learner"] != "rule" and c["scope"] == s and (c["learner"] == "rf_rule") == stacked]
+        if not stacked and s != "none":
+            pts += [c for c in cloud if c["learner"] == "rf_rule" and c["scope"] == s]
+        ax.scatter([c["safe_loss"] + rng.uniform(-2, 2) for c in pts], [c["balanced_accuracy"] for c in pts],
+                   s=3, color=col, alpha=0.55, linewidths=0, rasterized=True, zorder=2 if stacked else 1)
+    ax.plot(rule["safe_loss"], rule["balanced_accuracy"], "s", color=RULE, markersize=4.5,
+            markeredgecolor="white", markeredgewidth=0.6, zorder=4)
+    ax.annotate("rule chain", (rule["safe_loss"], rule["balanced_accuracy"]), xytext=(150, 0.975),
+                fontsize=6.2, color=RULE, va="center",
+                arrowprops=dict(arrowstyle="-", color=RULE, linewidth=0.5, shrinkA=1, shrinkB=3))
+    ax.text(300, 0.40, "learner-only policies\n(no rule input):\nsafety loss \u2265 100", fontsize=6.2,
+            color=RF, ha="center", va="center")
+    ax.set_xlim(-12, 420); ax.set_ylim(0.3, 1.03)
+    ax.set_xlabel("Safety loss (2 C\u2192A + C\u2192B)")
+    ax.set_ylabel("Balanced accuracy")
+    panel_label(ax, "(a)", x=-0.17)
+
+    # (b) feasible policies: quality against the conservative-escalation burden
+    ax = fig.add_subplot(gs[0, 1])
+    feas = [c for c in cloud if c["feasible"] and c["learner"] != "rule" and c["balanced_accuracy"] >= 0.78]
+    for n, (lab, col) in LEARNER_STYLE.items():
+        for s, (_, _, mk) in SCOPE_STYLE.items():
+            pts = [c for c in feas if c["learner"] == n and c["scope"] == s]
+            if pts:
+                ax.scatter([c["a_over"] for c in pts], [c["balanced_accuracy"] for c in pts], s=7, marker=mk,
+                           facecolors="none" if s == "none" else col, edgecolors=col, linewidths=0.5, alpha=0.8, zorder=2)
+    marks = [(sel_u, "*", "white", "black", 10, "selected: benchmark\nconstraints only", (32, 0.995)),
+             (sel_f, "*", FLOOR, "black", 10, "selected: with physical-\nfloor constraint", (84, 0.975)),
+             (declared, "D", "white", FLOOR, 4.5, "RF + ordinal floor,\ndeclared (0.35, 0.20)", (84, 0.935))]
+    for c, mk, face, edge, size, txt, xy in marks:
+        ax.plot(c["a_over"], c["balanced_accuracy"], marker=mk, markersize=size, markerfacecolor=face,
+                markeredgecolor=edge, markeredgewidth=0.8, linestyle="none", zorder=5)
+        ax.annotate(txt, (c["a_over"], c["balanced_accuracy"]), xytext=xy, fontsize=6.0, va="center",
+                    color=FLOOR if mk == "D" else "black",
+                    arrowprops=dict(arrowstyle="-", color="#555555", linewidth=0.5, shrinkA=1, shrinkB=4))
+    ax.set_xlim(-8, 130); ax.set_ylim(0.78, 1.015)
+    ax.set_xlabel("A-class overestimates (of 350)")
+    ax.set_ylabel("Balanced accuracy")
+    panel_label(ax, "(b)", x=-0.2)
+
+    # (c) hypervolume by learner and floor scope over the original batch and five seeds
+    ax = fig.add_subplot(gs[0, 2])
+    batches = [res["original"]] + [res["seeds"][k] for k in sorted(res["seeds"])]
+    order = ["lr", "olr", "svm", "gbdt", "rf", "rf_rule"]
+    width = 0.26
+    for j, (s, (lab, col, _)) in enumerate(SCOPE_STYLE.items()):
+        for i, n in enumerate(order):
+            v = np.array([b["pareto"]["families"][f"{n}|{s}"]["hypervolume"] for b in batches])
+            x = i + (j - 1) * width
+            ax.bar(x, v.mean(), width=width * 0.92, color=col, edgecolor="none", zorder=2)
+            ax.errorbar(x, v.mean(), yerr=v.std(ddof=1), color="black", linewidth=0.5, capsize=1.2, zorder=3)
+    hv_rule = np.array([b["pareto"]["hv_rule_chain"] for b in batches])
+    ax.axhline(hv_rule.mean(), color=RULE, linestyle=(0, (3, 2)), linewidth=0.8, zorder=1)
+    ticks = {"lr": "LR", "olr": "ordinal\nLR", "svm": "SVM", "gbdt": "GBDT", "rf": "RF", "rf_rule": "stacked\nRF"}
+    ax.set_xticks(range(len(order)), [ticks[n] for n in order])
+    ax.tick_params(axis="x", length=0, labelsize=6.2)
+    ax.set_xlim(-0.55, 5.55); ax.set_ylim(0, 1.03)
+    ax.set_ylabel("Hypervolume")
+    panel_label(ax, "(c)", x=-0.18)
+
+    scope_handles = [Line2D([], [], marker=mk, color=col, linestyle="none", markersize=4, label=lab)
+                     for lab, col, mk in SCOPE_STYLE.values()]
+    scope_handles += [Line2D([], [], marker="o", color=stacked_col, linestyle="none", markersize=4, label="stacked RF, no floor (a)"),
+                      Line2D([], [], marker="s", color=RULE, linestyle=(0, (3, 2)), linewidth=0.8, markersize=4, label="rule chain")]
+    learner_handles = [Line2D([], [], marker="o", color=col, linestyle="none", markersize=4, label=lab)
+                       for lab, col in LEARNER_STYLE.values()]
+    fig.legend(handles=scope_handles, loc="lower left", bbox_to_anchor=(0.045, 0.065), ncol=5,
+                      handletextpad=0.25, columnspacing=1.1, fontsize=6.2, title="Floor scope: marker in (b), colour in (a) and (c)",
+                      title_fontsize=6.2, alignment="left")
+    fig.legend(handles=learner_handles, loc="lower left", bbox_to_anchor=(0.045, -0.035), ncol=6,
+               handletextpad=0.25, columnspacing=1.1, fontsize=6.2, title="Learner: colour in (b)", title_fontsize=6.2,
+               alignment="left")
+    save(fig, "fig_policy_evaluation")
+
+
 def main() -> None:
     (HERE / "figure_qa").mkdir(exist_ok=True)
     stats = json.loads((HERE / "paper_statistics.json").read_text(encoding="utf-8"))
@@ -354,6 +465,8 @@ def main() -> None:
     fig_tradeoff(rows, stats)
     fig_seeds(stats)
     fig_inspection()
+    if (HERE / "baselines_and_pareto.json").exists():
+        fig_policy_evaluation()
 
 
 if __name__ == "__main__":

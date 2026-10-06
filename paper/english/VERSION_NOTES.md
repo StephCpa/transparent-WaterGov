@@ -95,6 +95,53 @@ and the absence of field labels.
 - Corrected the inspection statement to report the exact one-sided 95% upper bound of 0.28 for 0/9 confirmed candidates.
 - Clarified that safety loss is an offline evaluation metric requiring a reference class, and removed the internal negative-spacing layout adjustment. Recompiled the IEEE journal manuscript to 9 pages with no fatal, undefined-reference or overfull-box diagnostics in the final local build.
 
+## Decision-algorithm and evaluation-system revision (2026-10-06, V3)
+
+Requested additions: a schematic of the multi-objective evaluation system, sections on the decision
+algorithm and the evaluation system with an explicit statement of what lacks validation, and
+comparison baselines. The manuscript grew from 9 to 13 pages.
+
+### Added
+
+- New Section IV, "Decision Algorithm and Multi-Objective Evaluation System": policy space
+  (learner x threshold pair x floor scope, Eq. 6), four-objective vector and strict dominance
+  (Eqs. 7-9), resource coordinates kept out of dominance, two declared constraint sets (benchmark
+  constraints; physical-floor constraint), lexicographic safety-first selection with a
+  distance-to-ideal check, family hypervolume (Eq. 10), transfer test, Algorithm 1 (offline
+  calibration and selection), Algorithm 2 (online grading; replaces the former operational
+  protocol paragraph), baseline definitions, and Table II (validation status of every component).
+- Fig. 2: TikZ schematic of the evaluation system (`figures/fig_evaluation_system.tex`).
+- Fig. 6: policy-space evaluation (all 4051 policies; feasible set; hypervolume by learner and floor).
+- Table V: eight new baselines (LR, ordinal LR, SVM, GBDT, expected-cost RF, soft vote, confidence
+  switch, stacked RF) plus every learned-only baseline with the ordinal floor, on the original batch
+  and five seeds, with downward-override and new-error counts.
+- Table VI: policies selected by the evaluation system, in batch and in transfer.
+- Seven verified references (stacking, ordinal classification, gradient boosting, SVM, scikit-learn,
+  two hypervolume/performance-assessment papers).
+
+### Findings reported (all reproducible with `experiments/analysis/paper_revision/baselines_and_pareto.py`)
+
+- Every learned-only baseline issued at least 50 direct C->A decisions; RF and GBDT assign
+  p_C = 0 and <= 1.1e-6 to all through-structure records, so no threshold or expected-cost rule helps.
+- The ordinal floor removed C->A for every learner in all six batches; it inherits each learner's
+  overestimates (new errors relative to the rule chain: LR 47, SVM 28, GBDT 1, RF 0, stacked RF 0).
+- The stacked RF (rule grade as input) reached 0.994 accuracy only by lowering 50 rule grades, all
+  seepage- and mixed-mode A records that the rule chain escalated; correct on benchmark labels,
+  untested on field labels.
+- Evaluation system: under benchmark constraints the selected policy is the stacked RF without a
+  floor (transfer accuracy 0.996 +/- 0.001, 50 downward overrides per seed); with the physical-floor
+  constraint it is the stacked RF with the ordinal floor (transfer 0.939 +/- 0.001, no C-class
+  underestimate), 1.8 points above the declared RF + floor. Both selection rules agree in all six
+  batches. The price of the physical-floor constraint within the generator is 5.7 points of accuracy.
+- Learned-only families never dominate the rule chain (hypervolume 0.42-0.59 vs 0.545); with the
+  ordinal floor, hypervolume is 0.73-0.88 for every learner.
+
+### Still unvalidated (stated in Table II and the Discussion)
+
+Objective set and the 2:1 weight in L_safe, constraint thresholds, the lexicographic order, the
+review gate, and above all the safety of learned downward overrides, which only field labels can
+test. The Chinese manuscript (`paper/chinese/`) has not yet been synchronized with this revision.
+
 ## Earlier version (V1)
 
 Internal V1 draft: rule baseline, grouped OOF tree and forest comparisons, Pareto threshold
