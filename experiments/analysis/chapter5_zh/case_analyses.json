@@ -1,0 +1,262 @@
+{
+ "typical_records": [
+  {
+   "sample_id": "0+326",
+   "target_mode": "seepage",
+   "severity": "severe",
+   "records_in_cell": 25,
+   "inputs": {
+    "seepage_i": 0.9102,
+    "body_i": 0.7873,
+    "contact_i": 0.8678,
+    "fos_back": 1.62,
+    "fos_front": 1.48,
+    "scour_depth_m": 0.2,
+    "uav_density": 3.0
+   },
+   "score": 43.8752,
+   "raw_grade": "B",
+   "uav_cap": "B级_基本安全",
+   "gate_reasons": [
+    "C1堤基渗透比降: i/i_cr=0.94接近临界",
+    "C4堤身渗流稳定: i/i_cr=0.81接近临界",
+    "C5接触冲刷稳定: i/i_cr=0.89接近临界",
+    "C6穿堤建筑物渗流稳定为失效状态",
+    "A5软基沉降超限: 15.7cm/5.3cm"
+   ],
+   "rule_grade": "C",
+   "dominant_mode": "渗流破坏",
+   "mode_responses": {
+    "漫顶失效": 0.070327,
+    "渗流破坏": 0.724046,
+    "边坡失稳": 0.211484,
+    "冲刷破坏": 0.340964,
+    "穿堤建筑物失效": 0.412221
+   },
+   "rf_probabilities": {
+    "A": 0.0,
+    "B": 0.0,
+    "C": 1.0
+   },
+   "rf_threshold_grade": "C",
+   "ordinal_floor_grade": "C",
+   "reference": "C"
+  },
+  {
+   "sample_id": "0+726",
+   "target_mode": "building",
+   "severity": "critical",
+   "records_in_cell": 25,
+   "inputs": {
+    "seepage_i": 0.1,
+    "body_i": 0.08,
+    "contact_i": 0.09,
+    "fos_back": 1.62,
+    "fos_front": 1.48,
+    "scour_depth_m": 0.2,
+    "uav_density": 0.0
+   },
+   "score": 54.1632,
+   "raw_grade": "B",
+   "uav_cap": null,
+   "gate_reasons": [
+    "A3穿堤建筑物完好性为失效状态",
+    "B4穿堤建筑物防洪标准为失效状态",
+    "C6穿堤建筑物渗流稳定为失效状态",
+    "D4穿堤建筑物结构安全为失效状态",
+    "A5软基沉降严重超限: 25.2cm/9.7cm"
+   ],
+   "rule_grade": "C",
+   "dominant_mode": "穿堤建筑物失效",
+   "mode_responses": {
+    "漫顶失效": 0.129855,
+    "渗流破坏": 0.160224,
+    "边坡失稳": 0.111486,
+    "冲刷破坏": 0.003667,
+    "穿堤建筑物失效": 0.775643
+   },
+   "rf_probabilities": {
+    "A": 1.0,
+    "B": 0.0,
+    "C": 0.0
+   },
+   "rf_threshold_grade": "A",
+   "ordinal_floor_grade": "C",
+   "reference": "C"
+  },
+  {
+   "sample_id": "0+076",
+   "target_mode": "safe_reference",
+   "severity": "severe",
+   "records_in_cell": 25,
+   "inputs": {
+    "seepage_i": 0.1926,
+    "body_i": 0.08,
+    "contact_i": 0.09,
+    "fos_back": 1.4567,
+    "fos_front": 1.3335,
+    "scour_depth_m": 0.2,
+    "uav_density": 0.0
+   },
+   "score": 80.1072,
+   "raw_grade": "A",
+   "uav_cap": null,
+   "gate_reasons": [
+    "A5软基沉降超限: 15.9cm/6.4cm"
+   ],
+   "rule_grade": "B",
+   "dominant_mode": "边坡失稳",
+   "mode_responses": {
+    "漫顶失效": 0.070327,
+    "渗流破坏": 0.191506,
+    "边坡失稳": 0.244217,
+    "冲刷破坏": 0.059936,
+    "穿堤建筑物失效": 0.088341
+   },
+   "rf_probabilities": {
+    "A": 0.375,
+    "B": 0.0,
+    "C": 0.625
+   },
+   "rf_threshold_grade": "C",
+   "ordinal_floor_grade": "C",
+   "reference": "C"
+  },
+  {
+   "sample_id": "0+276",
+   "target_mode": "seepage",
+   "severity": "slight",
+   "records_in_cell": 25,
+   "inputs": {
+    "seepage_i": 0.5296,
+    "body_i": 0.4654,
+    "contact_i": 0.5092,
+    "fos_back": 1.62,
+    "fos_front": 1.48,
+    "scour_depth_m": 0.2,
+    "uav_density": 0.6
+   },
+   "score": 75.8359,
+   "raw_grade": "B",
+   "uav_cap": null,
+   "gate_reasons": [],
+   "rule_grade": "B",
+   "dominant_mode": "渗流破坏",
+   "mode_responses": {
+    "漫顶失效": 0.0,
+    "渗流破坏": 0.344673,
+    "边坡失稳": 0.032966,
+    "冲刷破坏": 0.117394,
+    "穿堤建筑物失效": 0.0
+   },
+   "rf_probabilities": {
+    "A": 1.0,
+    "B": 0.0,
+    "C": 0.0
+   },
+   "rf_threshold_grade": "A",
+   "ordinal_floor_grade": "B",
+   "reference": "A"
+  }
+ ],
+ "k45500": {
+  "ratios": {
+   "C1_control_layer": 1.0448426308562853,
+   "C1_exit_zone": 0.40991705808088924,
+   "C4": 0.5595876660464649,
+   "C5": 0.6466326380427656
+  },
+  "delivered_score": 24.3481,
+  "variants": {
+   "delivered": {
+    "score": 24.3481,
+    "raw_grade": "C",
+    "final_grade": "C",
+    "gates": [
+     "C1:C",
+     "D1:B",
+     "D3:B"
+    ],
+    "dominant_mode": "渗流破坏",
+    "mode_responses": {
+     "漫顶失效": 0.1257,
+     "渗流破坏": 1.0,
+     "边坡失稳": 0.4221,
+     "冲刷破坏": 0.3725,
+     "穿堤建筑物失效": 0.0
+    }
+   },
+   "c3_missing": {
+    "score": 24.3481,
+    "raw_grade": "C",
+    "final_grade": "C",
+    "gates": [
+     "C1:C",
+     "D1:B",
+     "D3:B"
+    ],
+    "dominant_mode": "渗流破坏",
+    "mode_responses": {
+     "漫顶失效": 0.1257,
+     "渗流破坏": 1.0,
+     "边坡失稳": 0.4221,
+     "冲刷破坏": 0.3725,
+     "穿堤建筑物失效": 0.0
+    }
+   },
+   "c1_exit_zone": {
+    "score": 53.5089,
+    "raw_grade": "B",
+    "final_grade": "B",
+    "gates": [
+     "D1:B",
+     "D3:B"
+    ],
+    "dominant_mode": "渗流破坏",
+    "mode_responses": {
+     "漫顶失效": 0.1257,
+     "渗流破坏": 0.5678,
+     "边坡失稳": 0.4221,
+     "冲刷破坏": 0.3725,
+     "穿堤建筑物失效": 0.0
+    }
+   },
+   "c1_exit_zone_current_evidence_only": {
+    "score": 55.2586,
+    "raw_grade": "B",
+    "final_grade": "B",
+    "gates": [
+     "D1:B"
+    ],
+    "dominant_mode": "渗流破坏",
+    "mode_responses": {
+     "漫顶失效": 0.1257,
+     "渗流破坏": 0.5489,
+     "边坡失稳": 0.4221,
+     "冲刷破坏": 0.2565,
+     "穿堤建筑物失效": 0.0
+    }
+   }
+  }
+ },
+ "inspection_injection": {
+  "record": "0+001",
+  "confidences": [
+   0.579956,
+   0.495841
+  ],
+  "without_candidates": {
+   "score": 96.0493,
+   "grade": "A",
+   "C3": 100.0
+  },
+  "delivered_rules_with_unreviewed_candidates": {
+   "weighted_density_per_100m": 1.075797,
+   "uav_cap": "B级_基本安全",
+   "score": 95.1257,
+   "grade": "B",
+   "C3": 60.0
+  },
+  "evidence_state_rules": "one candidate event (two frames, same position) -> one review task; reviewed false positive -> no change to C3 or grade"
+ }
+}

@@ -6,7 +6,7 @@ fig_error_structure, fig_tradeoff, fig_inspection and fig_policy_evaluation).
 The data logic and assertions are copied unchanged, so every plotted number is
 identical to the English manuscript figures; only wording, fonts, sizes and
 layout differ.  One panel is new: the acquisition time of day of the 114 field
-infrared images (Fig. 5.2b), parsed from the image file names.
+infrared images (Fig. 5.4b), parsed from the image file names.
 
 Inputs (repository files only):
   * experiments/analysis/paper_revision/paper_statistics.json,
@@ -16,7 +16,8 @@ Inputs (repository files only):
   * inspection/audit/检测标签逐条记录.csv and 可疑点复核记录_非空行.csv;
   * inspection/raw/第一批优先资料/01_原始图像及视频/01_levee_infrared_images/ (file names only).
 
-Outputs: paper/chinese/chapters/figures_ch5/fig5_{2,4,5,6}_*.png (300 dpi) and .pdf.
+Outputs: paper/chinese/chapters/figures_ch5/fig5_{4,7}_* and the supplementary
+fig5_supp_{safety_tradeoff,policy_evaluation} (300 dpi .png and .pdf).
 
 Typography: Chinese glyphs in Noto Serif CJK SC (stand-in for SimSun), Latin
 letters and digits in Liberation Serif (Times New Roman metrics), via
@@ -125,7 +126,7 @@ CONLY = "#8E6BB0"       # C-only floor ablation
 DANGER = "#C0392B"      # direct C->A errors only
 OVER = "#E8B64C"        # conservative overestimates
 UNDER = "#F0A39A"       # one-level underestimates
-NIGHT = "#E3EEF8"       # night-time band (Fig. 5.2b)
+NIGHT = "#E3EEF8"       # night-time band (Fig. 5.4b)
 BAR = "#9A9A9A"         # neutral histogram bars
 GRADES = "ABC"
 FIG_W = 6.3             # 16 cm text width
@@ -156,7 +157,7 @@ def confusion(rows, key) -> np.ndarray:
     return cm
 
 
-# ------------------------------------------------------------- Fig. 5-5
+# ------------------------------------------------------------- Fig. 5.7
 def fig_error_structure(rows, stats) -> None:
     # Explicit geometry (inches): three square matrices and one dot plot share top and bottom edges.
     fig_h, h, bottom = 2.6, 1.10, 0.62
@@ -241,10 +242,10 @@ def fig_error_structure(rows, stats) -> None:
                    Patch(facecolor=DANGER, label="直接低估（C→A）")]
     fig.legend(handles=key_handles, loc="lower left", bbox_to_anchor=(0.05 / FIG_W, 0.0), ncol=3,
                handlelength=1.1, handleheight=0.8, columnspacing=1.4, handletextpad=0.4, borderaxespad=0.1)
-    save(fig, "fig5_4_error_structure")
+    save(fig, "fig5_7_error_structure")
 
 
-# ------------------------------------------------------------- Fig. 5-6
+# ------------------------------------------------------------- supplementary (not in the chapter; its assertion backs Sec. 5.7.2)
 def fine_grid(rows) -> list[tuple[float, float, int]]:
     p = np.array([[float(r["p_A"]), float(r["p_B"]), float(r["p_C"])] for r in rows])
     y = np.array([GRADES.index(r["reference"]) for r in rows])
@@ -305,10 +306,10 @@ def fig_tradeoff(rows, stats) -> None:
     ax.set_xlim(-9, 300); ax.set_ylim(0.4, 0.95)
     ax.set_xlabel("直接C→A低估数（350条C级记录中）")
     ax.set_ylabel("宏平均F1")
-    save(fig, "fig5_5_safety_tradeoff")
+    save(fig, "fig5_supp_safety_tradeoff")
 
 
-# ------------------------------------------------------------- Fig. 5-2
+# ------------------------------------------------------------- Fig. 5.4
 def ir_acquisition_times() -> list[tuple[str, float]]:
     """(file stem, hour of day) for every image in the field infrared folder.
 
@@ -360,7 +361,7 @@ def fig_inspection() -> None:
     times = ir_acquisition_times()
     assert len(times) == 114, len(times)
     per_hour = Counter(int(t) for _, t in times)
-    print("Fig. 5.2b images per hour:", ", ".join(f"{h:02d}h: {per_hour[h]}" for h in sorted(per_hour)))
+    print("Fig. 5.4b images per hour:", ", ".join(f"{h:02d}h: {per_hour[h]}" for h in sorted(per_hour)))
     assert sum(per_hour.values()) == 114
     tmap = dict(times)
     cand = sorted(tmap[Path(n).stem.upper()] for n in review)
@@ -401,7 +402,7 @@ def fig_inspection() -> None:
     # times (09:51-11:13) lie less than one marker width apart at this scale, so they are binned like the bars.
     step, base = 6.0, 5.5  # in images
     cand_hours = Counter(int(t) for t in cand)
-    print("Fig. 5.2b reviewed candidates per hour:", ", ".join(f"{h:02d}h: {n}" for h, n in sorted(cand_hours.items())),
+    print("Fig. 5.4b reviewed candidates per hour:", ", ".join(f"{h:02d}h: {n}" for h, n in sorted(cand_hours.items())),
           "| times:", ", ".join(f"{int(t):02d}:{int(round(t % 1 * 3600)) // 60:02d}" for t in cand))
     px = [h + 0.5 for h, n in sorted(cand_hours.items()) for _ in range(n)]
     py = [per_hour[h] + base + k * step for h, n in sorted(cand_hours.items()) for k in range(n)]
@@ -417,10 +418,10 @@ def fig_inspection() -> None:
     ax.set_xlabel("采集时刻（h）")
     ax.set_ylabel("图像数（张）")
     panel_label(fig, ax, "(b)", b_l - 0.50, fig_h - 0.01)
-    save(fig, "fig5_2_inspection_status")
+    save(fig, "fig5_4_inspection_status")
 
 
-# ------------------------------------------------------------- Fig. 5-7
+# ------------------------------------------------------------- supplementary (not in the chapter; its numbers back Sec. 5.7.4)
 LEARNER_STYLE = {  # display name, colour
     "lr": ("LR", "#9A9A9A"), "olr": ("序数LR", "#B8A23A"), "svm": ("SVM", "#A0527A"),
     "gbdt": ("GBDT", "#D08C2E"), "rf": ("RF", RF), "rf_rule": ("堆叠RF", "#17375E"),
@@ -533,7 +534,7 @@ def fig_policy_evaluation() -> None:
     fig.legend(handles=learner_handles, loc="lower left", bbox_to_anchor=(0.02 / FIG_W, 0.0), ncol=6,
                handletextpad=0.25, columnspacing=1.3, title="学习器：(b)中为颜色", alignment="left",
                borderaxespad=0.0)
-    save(fig, "fig5_6_policy_evaluation")
+    save(fig, "fig5_supp_policy_evaluation")
 
 
 def main() -> None:
@@ -543,7 +544,7 @@ def main() -> None:
     fig_tradeoff(rows, stats)
     fig_inspection()
     fig_policy_evaluation()
-    for name in ("fig5_4_error_structure", "fig5_5_safety_tradeoff", "fig5_2_inspection_status", "fig5_6_policy_evaluation"):
+    for name in ("fig5_7_error_structure", "fig5_supp_safety_tradeoff", "fig5_4_inspection_status", "fig5_supp_policy_evaluation"):
         print("wrote", OUT / f"{name}.png", "and .pdf")
 
 

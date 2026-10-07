@@ -46,6 +46,12 @@ REFS = {
     "Foster": "FOSTER M, FELL R, SPANNAGLE M. The statistics of embankment dam failures and accidents[J]. Canadian Geotechnical Journal, 2000, 37(5): 1000-1024.",
     "vanBeek": "VAN BEEK V M, VAN ESSEN H M, VANDENBOER K, et al. Developments in modelling of backward erosion piping[J]. Géotechnique, 2015, 65(9): 740-754.",
     "CRITIC": "DIAKOULAKI D, MAVROTAS G, PAPAYANNAKIS L. Determining objective weights in multiple criteria problems: the CRITIC method[J]. Computers & Operations Research, 1995, 22(7): 763-770.",
+    "Vollmer": "VOLLMER M, MÖLLMANN K P. Infrared thermal imaging: fundamentals, research and applications[M]. Weinheim: Wiley-VCH, 2010.",
+    "FPN": "LIN T Y, DOLLÁR P, GIRSHICK R, et al. Feature pyramid networks for object detection[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. Honolulu: IEEE, 2017: 2117-2125.",
+    "EIoU": "ZHANG Y F, REN W, ZHANG Z, et al. Focal and efficient IOU loss for accurate bounding box regression[J]. Neurocomputing, 2022, 506: 146-157.",
+    "SimAM": "YANG L, ZHANG R Y, LI L, et al. SimAM: a simple, parameter-free attention module for convolutional neural networks[C]//Proceedings of the 38th International Conference on Machine Learning. PMLR, 2021, 139: 11863-11874.",
+    "NMS": "NEUBECK A, VAN GOOL L. Efficient non-maximum suppression[C]//Proceedings of the 18th International Conference on Pattern Recognition. Hong Kong: IEEE, 2006, 3: 850-855.",
+    "VOC": "EVERINGHAM M, VAN GOOL L, WILLIAMS C K I, et al. The PASCAL visual object classes (VOC) challenge[J]. International Journal of Computer Vision, 2010, 88(2): 303-338.",
     "PROV": "MOREAU L, MISSIER P. PROV-DM: the PROV data model[EB/OL]. W3C Recommendation, 2013-04-30[2026-10-07]. https://www.w3.org/TR/2013/REC-prov-dm-20130430/.",
     "Clopper": "CLOPPER C J, PEARSON E S. The use of confidence or fiducial limits illustrated in the case of the binomial[J]. Biometrika, 1934, 26(4): 404-413.",
     "Terzaghi": "TERZAGHI K. Theoretical soil mechanics[M]. New York: John Wiley & Sons, 1943.",
@@ -334,9 +340,16 @@ def table(caption, widths, aligns, rows):
             borders = '<w:tcBorders><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/></w:tcBorders>' if header else ""
             jc = "center" if header or aligns[c_i] == "C" else "left"
             keep = "<w:keepNext/>" if header else ""
+            text = cell.strip()
+            # "^^" continues a vertical merge from the cell above
+            below = rows[r_i + 1][c_i].strip() if r_i + 1 < len(rows) else ""
+            merge = ('<w:vMerge/>' if text == "^^" else
+                     '<w:vMerge w:val="restart"/>' if below == "^^" and not header else "")
+            if text == "^^":
+                text = ""
             p = para(f'{keep}<w:spacing w:before="20" w:after="20" w:line="240" w:lineRule="auto"/><w:jc w:val="{jc}"/>',
-                     inline(cell.strip(), size=21, bold=header))
-            tr.append(f'<w:tc><w:tcPr><w:tcW w:w="{w}" w:type="dxa"/>{borders}<w:vAlign w:val="center"/></w:tcPr>{p}</w:tc>')
+                     inline(text, size=21, bold=header))
+            tr.append(f'<w:tc><w:tcPr><w:tcW w:w="{w}" w:type="dxa"/>{merge}{borders}<w:vAlign w:val="center"/></w:tcPr>{p}</w:tc>')
         tr.append("</w:tr>")
         out.append("".join(tr))
     out.append("</w:tbl>")
