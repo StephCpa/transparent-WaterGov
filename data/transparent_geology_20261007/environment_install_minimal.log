@@ -1,0 +1,58 @@
+Collecting gempy
+  Using cached gempy-2026.0.3-py3-none-any.whl (140 kB)
+Collecting matplotlib
+  Downloading matplotlib-3.10.9-cp310-cp310-win_amd64.whl (8.2 MB)
+     ---------------------------------------- 8.2/8.2 MB 50.9 kB/s eta 0:00:00
+Collecting pandas
+  Using cached pandas-2.3.3-cp310-cp310-win_amd64.whl (11.3 MB)
+Collecting scipy
+  Using cached scipy-1.15.3-cp310-cp310-win_amd64.whl (41.3 MB)
+Collecting gempy_engine>=2026.0.3
+  Downloading gempy_engine-2026.0.3.post1-py3-none-any.whl (290 kB)
+     ------------------------------------- 290.6/290.6 kB 56.6 kB/s eta 0:00:00
+Collecting kiwisolver>=1.3.1
+  Downloading kiwisolver-1.5.1-cp310-cp310-win_amd64.whl (70 kB)
+     --------------------------------------- 70.6/70.6 kB 39.0 kB/s eta 0:00:00
+Collecting python-dateutil>=2.7
+  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Collecting packaging>=20.0
+  Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Collecting numpy>=1.23
+  Using cached numpy-2.2.6-cp310-cp310-win_amd64.whl (12.9 MB)
+Collecting pyparsing>=3
+  Downloading pyparsing-3.3.3-py3-none-any.whl (126 kB)
+     ------------------------------------- 126.4/126.4 kB 60.9 kB/s eta 0:00:00
+Collecting pillow>=8
+  Using cached pillow-12.3.0-cp310-cp310-win_amd64.whl (7.2 MB)
+Collecting cycler>=0.10
+  Using cached cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Collecting fonttools>=4.22.0
+  Downloading fonttools-4.65.0-cp310-cp310-win_amd64.whl (1.6 MB)
+     ---------------------------------------- 1.6/1.6 MB 50.1 kB/s eta 0:00:00
+Collecting contourpy>=1.0.1
+  Using cached contourpy-1.3.2-cp310-cp310-win_amd64.whl (221 kB)
+Collecting tzdata>=2022.7
+  Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+     ------------------------------------- 348.0/348.0 kB 55.1 kB/s eta 0:00:00
+Collecting pytz>=2020.1
+  Downloading pytz-2026.5-py2.py3-none-any.whl (506 kB)
+     ------------------------------------- 506.3/506.3 kB 68.1 kB/s eta 0:00:00
+Collecting python-dotenv
+  Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+Collecting pydantic
+  Using cached pydantic-2.13.5-py3-none-any.whl (472 kB)
+Collecting six>=1.5
+  Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting pydantic-core==2.46.5
+  Using cached pydantic_core-2.46.5-cp310-cp310-win_amd64.whl (2.0 MB)
+Collecting annotated-types>=0.6.0
+  Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Collecting typing-extensions>=4.14.1
+  Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Collecting typing-inspection>=0.4.2
+  Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Installing collected packages: pytz, tzdata, typing-extensions, six, python-dotenv, pyparsing, pillow, packaging, numpy, kiwisolver, fonttools, cycler, annotated-types, typing-inspection, scipy, python-dateutil, pydantic-core, contourpy, pydantic, pandas, matplotlib, gempy_engine, gempy
+Successfully installed annotated-types-0.8.0 contourpy-1.3.2 cycler-0.12.1 fonttools-4.65.0 gempy-2026.0.3 gempy_engine-2026.0.3.post1 kiwisolver-1.5.1 matplotlib-3.10.9 numpy-2.2.6 packaging-26.3 pandas-2.3.3 pillow-12.3.0 pydantic-2.13.5 pydantic-core-2.46.5 pyparsing-3.3.3 python-dateutil-2.9.0.post0 python-dotenv-1.2.4 pytz-2026.5 scipy-1.15.3 six-1.17.0 typing-extensions-4.16.0 typing-inspection-0.4.4 tzdata-2026.5
+
+[notice] A new release of pip is available: 23.0.1 -> 26.2.1
+[notice] To update, run: C:\work\��������\͸���̷�����\�о�׼��\͸����������_20261007\.venv\Scripts\python.exe -m pip install --upgrade pip

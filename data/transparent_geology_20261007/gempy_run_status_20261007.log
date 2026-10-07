@@ -1,0 +1,4 @@
+python=C:\Users\76790\AppData\Local\Programs\Python\Python310\python.exe
+data_dir=C:\work\长理工作\透明堤防论文\研究准备\透明地质输入_20261007
+missing=gempy,gempy_viewer,gempy_engine
+status=NOT_RUN

@@ -1,0 +1,5 @@
+Collecting gempy
+  Downloading gempy-2026.0.3-py3-none-any.whl (140 kB)
+     ------------------------------------ 140.4/140.4 kB 132.1 kB/s eta 0:00:00
+Collecting rasterio
+  Downloading rasterio-1.4.4-cp310-cp310-win_amd64.whl (25.7 MB)
