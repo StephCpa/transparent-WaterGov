@@ -161,8 +161,8 @@ def fig_framework():
         ax.add_patch(FancyBboxPatch((0.04, top - h), 0.62, h, boxstyle="round,pad=0,rounding_size=0.04",
                                     facecolor=tint(col, 0.22), edgecolor=col, linewidth=0.8))
         c.line(0.35, top - h / 2, lab, size=FT, weight="bold", ha="center", color=col)
-    src = [("透明地质（第3章）", "地层与土性参数"), ("透明计算（第4章）", "坡降比、安全系数"), ("透明巡检（5.4节）", "候选、复核、覆盖"),
-           ("工程台账", "设计、检测、险情"), ("运行管理", "监测、制度、应急")]
+    src = [("透明地质（第3章）", "地层与土性参数"), ("透明计算（第4章）", "水头场、出逸梯度"), ("透明巡检（5.4节）", "候选、复核、覆盖"),
+           ("工程台账", "设计、复核、险情"), ("运行管理", "监测、制度、应急")]
     x, w = 0.78, 1.04
     for t, sub in src:
         c.box(x, 4.26, w, 0.52, EV, t, [sub], align="center", title_size=8.2, fill_alpha=0.06, pad=0.05)
@@ -228,7 +228,7 @@ def fig_indicator_system():
             y -= 0.205
     c.line(0.04, 0.47, "准则层权重为AHP常权；指标经关联矩阵映射到漫顶、渗流破坏、边坡失稳、冲刷、穿堤建筑物失效5类失效模式，运行管理作为安全屏障修正",
            size=7.3, color=NEUT)
-    c.line(0.04, 0.30, "*  由透明计算（第4章）提供的物理计算指标；†  由透明巡检（5.4节）提供的观测证据指标", size=7.3, color=NEUT)
+    c.line(0.04, 0.30, "*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由透明巡检（5.4节）提供的观测证据指标", size=7.3, color=NEUT)
     c.crop(0.18, 3.62)
     c.save("fig5_2_indicator_system")
 

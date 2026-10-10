@@ -16,8 +16,8 @@ Inputs (repository files only):
   * inspection/audit/检测标签逐条记录.csv and 可疑点复核记录_非空行.csv;
   * inspection/raw/第一批优先资料/01_原始图像及视频/01_levee_infrared_images/ (file names only).
 
-Outputs: paper/chinese/chapters/figures_ch5/fig5_{4,7}_* and the supplementary
-fig5_supp_{safety_tradeoff,policy_evaluation} (300 dpi .png and .pdf).
+Outputs: paper/chinese/chapters/figures_ch5/fig5_4_* and the supplementary
+fig5_supp_{error_structure,safety_tradeoff,policy_evaluation} (300 dpi .png and .pdf).
 
 Typography: Chinese glyphs in Noto Serif CJK SC (stand-in for SimSun), Latin
 letters and digits in Liberation Serif (Times New Roman metrics), via
@@ -157,7 +157,7 @@ def confusion(rows, key) -> np.ndarray:
     return cm
 
 
-# ------------------------------------------------------------- Fig. 5.7
+# ------------------------------------------------------------- supplementary (not in the chapter; backs Sec. 5.7.2 and Table 5.12)
 def fig_error_structure(rows, stats) -> None:
     # Explicit geometry (inches): three square matrices and one dot plot share top and bottom edges.
     fig_h, h, bottom = 2.6, 1.10, 0.62
@@ -242,7 +242,7 @@ def fig_error_structure(rows, stats) -> None:
                    Patch(facecolor=DANGER, label="直接低估（C→A）")]
     fig.legend(handles=key_handles, loc="lower left", bbox_to_anchor=(0.05 / FIG_W, 0.0), ncol=3,
                handlelength=1.1, handleheight=0.8, columnspacing=1.4, handletextpad=0.4, borderaxespad=0.1)
-    save(fig, "fig5_7_error_structure")
+    save(fig, "fig5_supp_error_structure")
 
 
 # ------------------------------------------------------------- supplementary (not in the chapter; its assertion backs Sec. 5.7.2)
@@ -544,7 +544,7 @@ def main() -> None:
     fig_tradeoff(rows, stats)
     fig_inspection()
     fig_policy_evaluation()
-    for name in ("fig5_7_error_structure", "fig5_supp_safety_tradeoff", "fig5_4_inspection_status", "fig5_supp_policy_evaluation"):
+    for name in ("fig5_supp_error_structure", "fig5_supp_safety_tradeoff", "fig5_4_inspection_status", "fig5_supp_policy_evaluation"):
         print("wrote", OUT / f"{name}.png", "and .pdf")
 
 
