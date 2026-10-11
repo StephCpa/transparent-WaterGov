@@ -17,6 +17,8 @@ Inline: $...$ math (_{} subscript, ^{} superscript, \\up{} upright), **bold**,
 other keys are numbered from FIRST_NEW_REF in order of first citation).
 
 Usage: python3 build_chapter5_docx.py [output.docx]
+Thesis-style copy (2026-10-11): add --source chapter5_thesis_source.txt --figdir <figures_ch5_thesis>
+--local-refs; that source also uses #4 paragraph headings and Chapter 4 numbering (图5-1, （5-1）).
 """
 
 from __future__ import annotations
@@ -33,11 +35,36 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 CHAPTERS = REPO / "paper" / "chinese" / "chapters"
 TEMPLATE = CHAPTERS / "chapter2_theory_framework.docx"
-FIGDIR = CHAPTERS / "figures_ch5"
-SOURCE = HERE / "chapter5_source.txt"
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else CHAPTERS / "chapter5_transparent_evaluation.docx"
+CH1 = CHAPTERS / "chapter1_introduction_optimized.docx"
 
-FIRST_NEW_REF = 192          # Chapter 2 ends at [191]; renumber when the thesis is compiled
+
+def _options(argv: list[str]) -> dict:
+    """[output.docx] [--source F] [--figdir D] [--local-refs]; defaults build the current chapter version."""
+    opts = {"out": None, "source": HERE / "chapter5_source.txt", "figdir": CHAPTERS / "figures_ch5", "local_refs": False}
+    it = iter(argv)
+    for a in it:
+        if a == "--source":
+            opts["source"] = Path(next(it))
+        elif a == "--figdir":
+            opts["figdir"] = Path(next(it))
+        elif a == "--local-refs":
+            opts["local_refs"] = True
+        else:
+            opts["out"] = Path(a)
+    if opts["out"] is None:
+        opts["out"] = CHAPTERS / "chapter5_transparent_evaluation.docx"
+    return opts
+
+
+OPTS = _options(sys.argv[1:])
+FIGDIR = OPTS["figdir"]
+SOURCE = OPTS["source"]
+OUT = OPTS["out"]
+# --local-refs numbers every reference of the chapter from [1] in order of first citation, as in the
+# Chapter 4 draft, and lists the cited Chapter 1 entries ([@1:n]) in the chapter reference list.
+LOCAL_REFS = OPTS["local_refs"]
+
+FIRST_NEW_REF = 1 if LOCAL_REFS else 192   # Chapter 2 ends at [191]; renumber when the thesis is compiled
 TEXT_W = 9406                # text width in twips (12240 - 2 x 1417)
 EMU_PER_IN = 914400
 
@@ -92,9 +119,9 @@ class Citations:
         self.order: list[str] = []
 
     def number(self, key: str) -> int:
-        if key.startswith("1:"):
+        if key.startswith("1:") and not LOCAL_REFS:
             return int(key[2:])
-        if key not in REFS:
+        if key not in REFS and not (key.startswith("1:") and int(key[2:]) in ch1_refs()):
             raise KeyError(f"unknown reference key {key}")
         if key not in self.order:
             self.order.append(key)
@@ -266,6 +293,12 @@ def heading(t, level):
     return para("<w:keepNext/>" + sp, inline(t, size=24, bold=True, east="SimHei"))
 
 
+def heading4(t):
+    """Paragraph heading such as "（1）巡检设备", bold body type as in the level-4 headings of Chapter 4."""
+    return para('<w:keepNext/><w:spacing w:before="60" w:after="0" w:line="360" w:lineRule="auto"/><w:ind w:firstLine="480"/>',
+                inline(t, size=24, bold=True))
+
+
 def body(t):
     return para('<w:spacing w:after="0" w:line="360" w:lineRule="auto"/><w:ind w:firstLine="480"/><w:jc w:val="both"/>',
                 inline(t))
@@ -364,6 +397,25 @@ def ref_heading(t):
     return para('<w:keepNext/><w:spacing w:before="360"/>', run(t, size=24, bold=True, east="SimHei"))
 
 
+_CH1_REFS: dict[int, str] = {}
+
+
+def ch1_refs() -> dict[int, str]:
+    """Reference entries "[n] text" of the Chapter 1 list (used only with --local-refs)."""
+    if not _CH1_REFS:
+        xml = zipfile.ZipFile(CH1).read("word/document.xml").decode("utf-8")
+        for p in re.findall(r"<w:p[ >].*?</w:p>", xml, re.S):
+            t = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", p))
+            m = re.match(r"\[(\d+)\]\s*(.+)", t.strip())
+            if m:
+                _CH1_REFS.setdefault(int(m.group(1)), m.group(2).strip())
+    return _CH1_REFS
+
+
+def ref_text(key: str) -> str:
+    return ch1_refs()[int(key[2:])] if key.startswith("1:") else REFS[key]
+
+
 def ref_entry(n, text):
     return para('<w:spacing w:after="0" w:line="360" w:lineRule="auto"/><w:ind w:left="420" w:hanging="420"/><w:jc w:val="both"/>',
                 run(f"[{n}] {text}", size=21))
@@ -385,6 +437,8 @@ def build_body() -> str:
             parts.append(heading(ln[3:], 2))
         elif ln.startswith("#3 "):
             parts.append(heading(ln[3:], 3))
+        elif ln.startswith("#4 "):
+            parts.append(heading4(ln[3:]))
         elif ln.startswith("EQ "):
             expr, num = [x.strip() for x in ln[3:].split("||")]
             parts.append(equation(expr, num))
@@ -410,9 +464,9 @@ def build_body() -> str:
     if ref_head:
         parts.append(ref_heading(ref_head))
         for k, key in enumerate(CITE.order):
-            parts.append(ref_entry(FIRST_NEW_REF + k, REFS[key]))
+            parts.append(ref_entry(FIRST_NEW_REF + k, ref_text(key)))
     unused = sorted(set(REFS) - set(CITE.order))
-    if unused:
+    if unused and not LOCAL_REFS:  # the thesis copy cites a subset of the shared list
         raise SystemExit(f"references defined but never cited: {unused}")
     return "".join(parts)
 

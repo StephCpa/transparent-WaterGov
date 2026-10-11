@@ -30,7 +30,10 @@ from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
-OUT = REPO / "paper" / "chinese" / "chapters" / "figures_ch5"
+# CH5_THESIS=1 writes the copies used by the thesis-style version of the chapter (figures_ch5_thesis), whose
+# figures carry no section cross-references; the default output is unchanged.
+THESIS = os.environ.get("CH5_THESIS") == "1"
+OUT = REPO / "paper" / "chinese" / "chapters" / ("figures_ch5_thesis" if THESIS else "figures_ch5")
 OUT.mkdir(parents=True, exist_ok=True)
 
 FONT_DIR = Path(os.environ.get("CH5_CJK_FONT_DIR", Path.home() / ".cache" / "ch5_cjk_fonts"))
@@ -161,7 +164,7 @@ def fig_framework():
         ax.add_patch(FancyBboxPatch((0.04, top - h), 0.62, h, boxstyle="round,pad=0,rounding_size=0.04",
                                     facecolor=tint(col, 0.22), edgecolor=col, linewidth=0.8))
         c.line(0.35, top - h / 2, lab, size=FT, weight="bold", ha="center", color=col)
-    src = [("透明地质（第3章）", "地层与土性参数"), ("透明计算（第4章）", "水头场、出逸梯度"), ("透明巡检（5.4节）", "候选、复核、覆盖"),
+    src = [("透明地质（第3章）", "地层与土性参数"), ("透明计算（第4章）", "水头场、出逸梯度"), ("无人机巡检" if THESIS else "透明巡检（5.4节）", "候选、复核、覆盖"),
            ("工程台账", "设计、复核、险情"), ("运行管理", "监测、制度、应急")]
     x, w = 0.78, 1.04
     for t, sub in src:
@@ -228,7 +231,8 @@ def fig_indicator_system():
             y -= 0.205
     c.line(0.04, 0.47, "准则层权重为AHP常权；指标经关联矩阵映射到漫顶、渗流破坏、边坡失稳、冲刷、穿堤建筑物失效5类失效模式，运行管理作为安全屏障修正",
            size=7.3, color=NEUT)
-    c.line(0.04, 0.30, "*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由透明巡检（5.4节）提供的观测证据指标", size=7.3, color=NEUT)
+    c.line(0.04, 0.30, ("*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由无人机巡检提供的观测证据指标" if THESIS else
+            "*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由透明巡检（5.4节）提供的观测证据指标"), size=7.3, color=NEUT)
     c.crop(0.18, 3.62)
     c.save("fig5_2_indicator_system")
 
@@ -283,7 +287,7 @@ def fig_decision_chain():
     c.box(2.97, 1.92, 1.38, 0.98, RF, "随机森林决策层", ["14项特征 → $(p_A,p_B,p_C)$", "阈值 $(\\tau_C,\\tau_B)$", "输出 $\\hat{y}_{RF}$"])
     c.arrow((2.74, 2.68), (2.97, 2.68)); c.arrow((2.74, 1.43), (2.97, 1.43))
     # offline policy evaluation feeding the learned layer
-    c.box(2.97, 0.80, 1.38, 0.50, RF, None, ["多目标策略评价（离线）", "冻结策略 $\\pi^*$，见图5.6"], fill_alpha=0.03, lw=0.6)
+    c.box(2.97, 0.80, 1.38, 0.50, RF, None, ["多目标策略评价（离线）", "冻结策略 $\\pi^*$" if THESIS else "冻结策略 $\\pi^*$，见图5.6"], fill_alpha=0.03, lw=0.6)
     c.arrow((3.66, 0.80), (3.66, 0.94), color=RF, ls=(0, (3, 2)))
     # column 4: ordinal physical floor
     c.box(4.57, 2.36, 0.98, 1.24, FLOOR, "序数物理下限", ["$\\hat{y}=\\max(\\hat{y}_{RF},y_{rule})$", None, "可提高风险等级，", "不低于物理等级"], lw=1.3)
@@ -330,12 +334,58 @@ def fig_evaluation_system():
     c.save("fig5_6_evaluation_system")
 
 
+# --------------------------------------------------------------------- thesis copy: P2ES-YOLO structure
+def fig_p2es_yolo():
+    """Simplified structure of the improved detector (YOLOv8n + P2 layer, SimAM, EIoU), thesis copy only."""
+    c = Canvas(3.30)
+    cols = [(0.04, 0.70, "输入", EV), (0.92, 1.30, "骨干网络（CSPDarknet）", RULE), (2.42, 1.30, "颈部网络（PAN-FPN）", RF),
+            (3.92, 1.20, "检测头", FLOOR), (5.30, 0.96, "输出", NEUT)]
+    for x, w, t, col in cols:
+        c.line(x + w / 2, 3.18, t, size=FT, weight="bold", ha="center", color=col)
+    c.box(0.04, 2.95, 0.70, 2.24, EV, None, ["红外图像", "640×640", None, "数据增强", "翻转", "亮度对比度", "噪声注入", "多图拼接"],
+          align="center", fill_alpha=0.06, vcenter=True)
+    rows = [("P2", "1/4", "160×160"), ("P3", "1/8", "80×80"), ("P4", "1/16", "40×40"), ("P5", "1/32", "20×20")]
+    tops = [2.95, 2.35, 1.75, 1.15]
+    h = 0.44
+    for (lvl, stride, size), top in zip(rows, tops):
+        new = lvl == "P2"
+        c.box(0.92, top, 1.30, h, RULE, None, [f"C2f  {lvl}  {stride}", size], align="center", fill_alpha=0.06,
+              vcenter=True)
+        c.box(2.42, top, 1.30, h, DANGER if new else RF, None,
+              ["融合特征 " + lvl + ("（新增）" if new else ""), "SimAM 注意力"], align="center",
+              fill_alpha=0.07 if new else 0.06, vcenter=True, lw=1.0 if new else 0.8)
+        c.box(3.92, top, 1.20, h, DANGER if new else FLOOR, None,
+              [f"检测头 {lvl}", "小目标" if new else ("中小目标" if lvl == "P3" else ("中目标" if lvl == "P4" else "大目标"))],
+              align="center", fill_alpha=0.07 if new else 0.06, vcenter=True, lw=1.0 if new else 0.8)
+        y = top - h / 2
+        c.arrow((2.22, y), (2.42, y))
+        c.arrow((3.72, y), (3.92, y))
+        c.poly([(5.12, y), (5.21, y), (5.21, 1.83), (5.30, 1.83)], head=False)
+    for k in range(3):                      # backbone downsampling
+        c.arrow((1.57, tops[k] - h), (1.57, tops[k + 1]))
+    for k in range(3):                      # top-down and bottom-up paths of the neck
+        c.arrow((2.80, tops[k + 1]), (2.80, tops[k] - h), color=RF)
+        c.arrow((3.34, tops[k] - h), (3.34, tops[k + 1]), color=RF)
+    c.box(0.92, 0.62, 1.30, 0.30, RULE, None, ["SPPF 多尺度池化"], align="center", fill_alpha=0.05, vcenter=True)
+    c.arrow((1.57, tops[3] - h), (1.57, 0.62))
+    c.box(2.42, 0.62, 2.70, 0.30, FLOOR, None, ["损失函数：EIoU 定位损失 + 分类损失 + DFL"], align="center",
+          fill_alpha=0.05, vcenter=True)
+    c.box(5.30, 2.08, 0.96, 0.50, NEUT, None, ["置信度阈值", "非极大值抑制"], align="center", fill_alpha=0.06, vcenter=True)
+    c.arrow((5.78, 1.58), (5.78, 1.42))
+    c.box(5.30, 1.42, 0.96, 0.50, NEUT, None, ["检测框、类别", "置信度（候选）"], align="center", fill_alpha=0.06, vcenter=True)
+    c.arrow((0.74, 2.73), (0.92, 2.73))
+    c.crop(0.24, 3.32)
+    c.save("fig5_p2es_yolo")
+
+
 def main():
     fig_framework()
     fig_indicator_system()
     fig_inspection_workflow()
     fig_decision_chain()
     fig_evaluation_system()
+    if THESIS:
+        fig_p2es_yolo()
 
 
 if __name__ == "__main__":

@@ -51,7 +51,10 @@ from matplotlib.patches import Patch, Rectangle
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 SRC = REPO / "experiments" / "analysis" / "paper_revision"
-OUT = REPO / "paper" / "chinese" / "chapters" / "figures_ch5"
+# CH5_THESIS=1 writes the copies used by the thesis-style version of the chapter (figures_ch5_thesis,
+# panel labels "a b c" as in Chapter 4); the default output is unchanged.
+THESIS = os.environ.get("CH5_THESIS") == "1"
+OUT = REPO / "paper" / "chinese" / "chapters" / ("figures_ch5_thesis" if THESIS else "figures_ch5")
 IR_DIR = REPO / "inspection" / "raw" / "第一批优先资料" / "01_原始图像及视频" / "01_levee_infrared_images"
 
 # ------------------------------------------------------------------ fonts
@@ -142,6 +145,8 @@ def save(fig, name: str) -> None:
 def panel_label(fig, ax, text: str, x_in: float, top_in: float) -> None:
     """Bold panel label; x_in is the left edge and top_in the top edge, both in inches from the figure origin."""
     w, h = fig.get_size_inches()
+    if THESIS:
+        text = text.strip("()")
     fig.text(x_in / w, top_in / h, text, fontsize=FS_PANEL, fontweight="bold", ha="left", va="top")
 
 

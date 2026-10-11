@@ -1,0 +1,1352 @@
+{
+ "inspection": {
+  "note": "metres relative to the first image of each site; no absolute coordinates",
+  "images_in_report": 113,
+  "images_with_unambiguous_temperature": 58,
+  "sites": [
+   {
+    "site": "A",
+    "images": 87,
+    "start": "09:41",
+    "end": "10:02",
+    "path_length_m": 1388,
+    "extent_m": [
+     228,
+     588
+    ],
+    "points": [
+     {
+      "file": "DJI_20250828094102_0001_T.JPG",
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "time": "09:41:02",
+      "reviewed_candidate": false,
+      "t_max": 42.2,
+      "t_min": 24.4
+     },
+     {
+      "file": "DJI_20250828094140_0002_T.JPG",
+      "x_m": 0.5,
+      "y_m": 3.8,
+      "time": "09:41:40",
+      "reviewed_candidate": false,
+      "t_max": 44.4,
+      "t_min": 25.5
+     },
+     {
+      "file": "DJI_20250828094205_0003_T.JPG",
+      "x_m": -0.4,
+      "y_m": 4.1,
+      "time": "09:42:05",
+      "reviewed_candidate": false,
+      "t_max": 45.4,
+      "t_min": 26.4
+     },
+     {
+      "file": "DJI_20250828094211_0004_T.JPG",
+      "x_m": -5.9,
+      "y_m": 6.0,
+      "time": "09:42:11",
+      "reviewed_candidate": false,
+      "t_max": 45.0,
+      "t_min": 26.6
+     },
+     {
+      "file": "DJI_20250828094214_0005_T.JPG",
+      "x_m": -16.8,
+      "y_m": 9.7,
+      "time": "09:42:14",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094219_0006_T.JPG",
+      "x_m": -23.5,
+      "y_m": 11.6,
+      "time": "09:42:19",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094335_0007_T.JPG",
+      "x_m": -24.8,
+      "y_m": 11.7,
+      "time": "09:43:35",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094339_0008_T.JPG",
+      "x_m": -27.2,
+      "y_m": 12.7,
+      "time": "09:43:39",
+      "reviewed_candidate": false,
+      "t_max": 40.7,
+      "t_min": 24.8
+     },
+     {
+      "file": "DJI_20250828094527_0009_T.JPG",
+      "x_m": -26.9,
+      "y_m": 10.8,
+      "time": "09:45:27",
+      "reviewed_candidate": false,
+      "t_max": 42.2,
+      "t_min": 26.9
+     },
+     {
+      "file": "DJI_20250828094535_0010_T.JPG",
+      "x_m": -29.5,
+      "y_m": 12.0,
+      "time": "09:45:35",
+      "reviewed_candidate": false,
+      "t_max": 40.5,
+      "t_min": 25.0
+     },
+     {
+      "file": "DJI_20250828094537_0011_T.JPG",
+      "x_m": -35.3,
+      "y_m": 14.9,
+      "time": "09:45:37",
+      "reviewed_candidate": false,
+      "t_max": 40.2,
+      "t_min": 25.3
+     },
+     {
+      "file": "DJI_20250828094539_0012_T.JPG",
+      "x_m": -40.7,
+      "y_m": 17.7,
+      "time": "09:45:39",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094541_0013_T.JPG",
+      "x_m": -45.3,
+      "y_m": 20.0,
+      "time": "09:45:41",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094543_0014_T.JPG",
+      "x_m": -49.2,
+      "y_m": 21.8,
+      "time": "09:45:43",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094547_0015_T.JPG",
+      "x_m": -54.4,
+      "y_m": 24.2,
+      "time": "09:45:47",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094550_0016_T.JPG",
+      "x_m": -56.9,
+      "y_m": 25.3,
+      "time": "09:45:50",
+      "reviewed_candidate": false,
+      "t_max": 41.3,
+      "t_min": 25.9
+     },
+     {
+      "file": "DJI_20250828094554_0017_T.JPG",
+      "x_m": -60.9,
+      "y_m": 26.9,
+      "time": "09:45:54",
+      "reviewed_candidate": false,
+      "t_max": 41.5,
+      "t_min": 25.8
+     },
+     {
+      "file": "DJI_20250828094556_0018_T.JPG",
+      "x_m": -66.7,
+      "y_m": 29.1,
+      "time": "09:45:56",
+      "reviewed_candidate": false,
+      "t_max": 42.1,
+      "t_min": 26.1
+     },
+     {
+      "file": "DJI_20250828094558_0019_T.JPG",
+      "x_m": -70.2,
+      "y_m": 30.3,
+      "time": "09:45:58",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094600_0020_T.JPG",
+      "x_m": -73.1,
+      "y_m": 31.3,
+      "time": "09:46:00",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094602_0021_T.JPG",
+      "x_m": -75.9,
+      "y_m": 32.3,
+      "time": "09:46:02",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094605_0022_T.JPG",
+      "x_m": -77.5,
+      "y_m": 33.1,
+      "time": "09:46:05",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094607_0023_T.JPG",
+      "x_m": -78.5,
+      "y_m": 33.6,
+      "time": "09:46:07",
+      "reviewed_candidate": false,
+      "t_max": 42.3,
+      "t_min": 26.3
+     },
+     {
+      "file": "DJI_20250828094610_0024_T.JPG",
+      "x_m": -80.5,
+      "y_m": 34.5,
+      "time": "09:46:10",
+      "reviewed_candidate": false,
+      "t_max": 42.2,
+      "t_min": 26.2
+     },
+     {
+      "file": "DJI_20250828094849_0025_T.JPG",
+      "x_m": -89.2,
+      "y_m": 38.7,
+      "time": "09:48:49",
+      "reviewed_candidate": false,
+      "t_max": 43.4,
+      "t_min": 28.4
+     },
+     {
+      "file": "DJI_20250828094851_0026_T.JPG",
+      "x_m": -91.9,
+      "y_m": 40.0,
+      "time": "09:48:51",
+      "reviewed_candidate": false,
+      "t_max": 42.8,
+      "t_min": 28.4
+     },
+     {
+      "file": "DJI_20250828094854_0027_T.JPG",
+      "x_m": -96.3,
+      "y_m": 42.2,
+      "time": "09:48:54",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094859_0028_T.JPG",
+      "x_m": -101.8,
+      "y_m": 45.2,
+      "time": "09:48:59",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094903_0029_T.JPG",
+      "x_m": -106.2,
+      "y_m": 47.9,
+      "time": "09:49:03",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094905_0030_T.JPG",
+      "x_m": -108.6,
+      "y_m": 49.4,
+      "time": "09:49:05",
+      "reviewed_candidate": false,
+      "t_max": 41.5,
+      "t_min": 27.6
+     },
+     {
+      "file": "DJI_20250828094908_0031_T.JPG",
+      "x_m": -110.9,
+      "y_m": 50.8,
+      "time": "09:49:08",
+      "reviewed_candidate": false,
+      "t_max": 41.4,
+      "t_min": 27.6
+     },
+     {
+      "file": "DJI_20250828094912_0032_T.JPG",
+      "x_m": -114.5,
+      "y_m": 52.9,
+      "time": "09:49:12",
+      "reviewed_candidate": false,
+      "t_max": 41.4,
+      "t_min": 27.5
+     },
+     {
+      "file": "DJI_20250828094919_0033_T.JPG",
+      "x_m": -118.2,
+      "y_m": 55.4,
+      "time": "09:49:19",
+      "reviewed_candidate": false,
+      "t_max": 41.0,
+      "t_min": 27.8
+     },
+     {
+      "file": "DJI_20250828094921_0034_T.JPG",
+      "x_m": -123.0,
+      "y_m": 58.7,
+      "time": "09:49:21",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094924_0035_T.JPG",
+      "x_m": -129.2,
+      "y_m": 63.1,
+      "time": "09:49:24",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094926_0036_T.JPG",
+      "x_m": -135.1,
+      "y_m": 66.8,
+      "time": "09:49:26",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094930_0037_T.JPG",
+      "x_m": -140.4,
+      "y_m": 70.2,
+      "time": "09:49:30",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094933_0038_T.JPG",
+      "x_m": -147.0,
+      "y_m": 74.7,
+      "time": "09:49:33",
+      "reviewed_candidate": false,
+      "t_max": 42.4,
+      "t_min": 28.0
+     },
+     {
+      "file": "DJI_20250828094935_0039_T.JPG",
+      "x_m": -152.5,
+      "y_m": 79.3,
+      "time": "09:49:35",
+      "reviewed_candidate": false,
+      "t_max": 43.0,
+      "t_min": 28.4
+     },
+     {
+      "file": "DJI_20250828094937_0040_T.JPG",
+      "x_m": -158.4,
+      "y_m": 84.2,
+      "time": "09:49:37",
+      "reviewed_candidate": false,
+      "t_max": 44.0,
+      "t_min": 28.4
+     },
+     {
+      "file": "DJI_20250828094939_0041_T.JPG",
+      "x_m": -164.6,
+      "y_m": 89.3,
+      "time": "09:49:39",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094941_0042_T.JPG",
+      "x_m": -171.4,
+      "y_m": 95.0,
+      "time": "09:49:41",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828094943_0043_T.JPG",
+      "x_m": -178.0,
+      "y_m": 100.1,
+      "time": "09:49:43",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095100_0044_T.JPG",
+      "x_m": -198.0,
+      "y_m": 122.5,
+      "time": "09:51:00",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095136_0045_T.JPG",
+      "x_m": -201.8,
+      "y_m": 128.2,
+      "time": "09:51:36",
+      "reviewed_candidate": false,
+      "t_max": 39.8,
+      "t_min": 22.1
+     },
+     {
+      "file": "DJI_20250828095141_0046_T.JPG",
+      "x_m": -198.6,
+      "y_m": 124.7,
+      "time": "09:51:41",
+      "reviewed_candidate": false,
+      "t_max": 39.4,
+      "t_min": 22.5
+     },
+     {
+      "file": "DJI_20250828095143_0047_T.JPG",
+      "x_m": -195.3,
+      "y_m": 120.9,
+      "time": "09:51:43",
+      "reviewed_candidate": false,
+      "t_max": 39.7,
+      "t_min": 22.4
+     },
+     {
+      "file": "DJI_20250828095144_0048_T.JPG",
+      "x_m": -192.8,
+      "y_m": 117.9,
+      "time": "09:51:44",
+      "reviewed_candidate": false,
+      "t_max": 40.3,
+      "t_min": 22.8
+     },
+     {
+      "file": "DJI_20250828095146_0049_T.JPG",
+      "x_m": -189.9,
+      "y_m": 114.5,
+      "time": "09:51:46",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095148_0050_T.JPG",
+      "x_m": -187.1,
+      "y_m": 111.1,
+      "time": "09:51:48",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095151_0051_T.JPG",
+      "x_m": -181.7,
+      "y_m": 105.3,
+      "time": "09:51:51",
+      "reviewed_candidate": true,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095153_0052_T.JPG",
+      "x_m": -176.0,
+      "y_m": 99.3,
+      "time": "09:51:53",
+      "reviewed_candidate": false,
+      "t_max": 39.9,
+      "t_min": 25.4
+     },
+     {
+      "file": "DJI_20250828095155_0053_T.JPG",
+      "x_m": -167.9,
+      "y_m": 90.6,
+      "time": "09:51:55",
+      "reviewed_candidate": false,
+      "t_max": 41.5,
+      "t_min": 25.4
+     },
+     {
+      "file": "DJI_20250828095158_0054_T.JPG",
+      "x_m": -155.8,
+      "y_m": 78.6,
+      "time": "09:51:58",
+      "reviewed_candidate": false,
+      "t_max": 42.1,
+      "t_min": 26.9
+     },
+     {
+      "file": "DJI_20250828095200_0055_T.JPG",
+      "x_m": -143.2,
+      "y_m": 68.3,
+      "time": "09:52:00",
+      "reviewed_candidate": false,
+      "t_max": 41.5,
+      "t_min": 26.1
+     },
+     {
+      "file": "DJI_20250828095202_0056_T.JPG",
+      "x_m": -130.9,
+      "y_m": 59.8,
+      "time": "09:52:02",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095205_0057_T.JPG",
+      "x_m": -117.3,
+      "y_m": 50.4,
+      "time": "09:52:05",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095207_0058_T.JPG",
+      "x_m": -105.4,
+      "y_m": 42.3,
+      "time": "09:52:07",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095214_0059_T.JPG",
+      "x_m": -59.7,
+      "y_m": 18.7,
+      "time": "09:52:14",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095221_0060_T.JPG",
+      "x_m": -40.2,
+      "y_m": 11.4,
+      "time": "09:52:21",
+      "reviewed_candidate": false,
+      "t_max": 42.7,
+      "t_min": 26.9
+     },
+     {
+      "file": "DJI_20250828095314_0061_T.JPG",
+      "x_m": -24.2,
+      "y_m": 3.1,
+      "time": "09:53:14",
+      "reviewed_candidate": false,
+      "t_max": 42.8,
+      "t_min": 26.2
+     },
+     {
+      "file": "DJI_20250828095320_0062_T.JPG",
+      "x_m": -20.6,
+      "y_m": 1.5,
+      "time": "09:53:20",
+      "reviewed_candidate": false,
+      "t_max": 43.0,
+      "t_min": 26.1
+     },
+     {
+      "file": "DJI_20250828095346_0063_T.JPG",
+      "x_m": -13.2,
+      "y_m": 13.6,
+      "time": "09:53:46",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095357_0064_T.JPG",
+      "x_m": -3.7,
+      "y_m": 9.9,
+      "time": "09:53:57",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095359_0065_T.JPG",
+      "x_m": 3.5,
+      "y_m": 7.4,
+      "time": "09:53:59",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095402_0066_T.JPG",
+      "x_m": 11.2,
+      "y_m": 3.8,
+      "time": "09:54:02",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095406_0067_T.JPG",
+      "x_m": 17.2,
+      "y_m": 1.4,
+      "time": "09:54:06",
+      "reviewed_candidate": false,
+      "t_max": 44.3,
+      "t_min": 25.7
+     },
+     {
+      "file": "DJI_20250828095419_0068_T.JPG",
+      "x_m": 14.0,
+      "y_m": 1.8,
+      "time": "09:54:19",
+      "reviewed_candidate": false,
+      "t_max": 43.8,
+      "t_min": 25.9
+     },
+     {
+      "file": "DJI_20250828095427_0069_T.JPG",
+      "x_m": -26.6,
+      "y_m": 16.0,
+      "time": "09:54:27",
+      "reviewed_candidate": false,
+      "t_max": 43.7,
+      "t_min": 26.9
+     },
+     {
+      "file": "DJI_20250828095430_0070_T.JPG",
+      "x_m": -43.8,
+      "y_m": 24.4,
+      "time": "09:54:30",
+      "reviewed_candidate": false,
+      "t_max": 43.4,
+      "t_min": 26.5
+     },
+     {
+      "file": "DJI_20250828095434_0071_T.JPG",
+      "x_m": -58.7,
+      "y_m": 32.2,
+      "time": "09:54:34",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095626_0072_T.JPG",
+      "x_m": -78.9,
+      "y_m": -200.9,
+      "time": "09:56:26",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095659_0073_T.JPG",
+      "x_m": -71.0,
+      "y_m": -203.6,
+      "time": "09:56:59",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095702_0074_T.JPG",
+      "x_m": -61.4,
+      "y_m": -207.0,
+      "time": "09:57:02",
+      "reviewed_candidate": false,
+      "t_max": 39.5,
+      "t_min": 27.2
+     },
+     {
+      "file": "DJI_20250828095733_0075_T.JPG",
+      "x_m": -64.8,
+      "y_m": -240.0,
+      "time": "09:57:33",
+      "reviewed_candidate": false,
+      "t_max": 39.6,
+      "t_min": 27.3
+     },
+     {
+      "file": "DJI_20250828095745_0076_T.JPG",
+      "x_m": -53.4,
+      "y_m": -204.1,
+      "time": "09:57:45",
+      "reviewed_candidate": false,
+      "t_max": 39.6,
+      "t_min": 27.3
+     },
+     {
+      "file": "DJI_20250828095754_0077_T.JPG",
+      "x_m": -41.1,
+      "y_m": -212.1,
+      "time": "09:57:54",
+      "reviewed_candidate": false,
+      "t_max": 39.2,
+      "t_min": 27.2
+     },
+     {
+      "file": "DJI_20250828095848_0078_T.JPG",
+      "x_m": -24.9,
+      "y_m": -382.6,
+      "time": "09:58:48",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095908_0079_T.JPG",
+      "x_m": -22.2,
+      "y_m": -383.9,
+      "time": "09:59:08",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095911_0080_T.JPG",
+      "x_m": -28.4,
+      "y_m": -373.6,
+      "time": "09:59:11",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095914_0081_T.JPG",
+      "x_m": -36.0,
+      "y_m": -362.4,
+      "time": "09:59:14",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828095916_0082_T.JPG",
+      "x_m": -43.4,
+      "y_m": -352.1,
+      "time": "09:59:16",
+      "reviewed_candidate": false,
+      "t_max": 59.1,
+      "t_min": 22.2
+     },
+     {
+      "file": "DJI_20250828095940_0083_T.JPG",
+      "x_m": -43.8,
+      "y_m": -347.8,
+      "time": "09:59:40",
+      "reviewed_candidate": false,
+      "t_max": 45.2,
+      "t_min": 21.9
+     },
+     {
+      "file": "DJI_20250828100004_0084_T.JPG",
+      "x_m": -13.1,
+      "y_m": -387.1,
+      "time": "10:00:04",
+      "reviewed_candidate": false,
+      "t_max": 44.0,
+      "t_min": 25.0
+     },
+     {
+      "file": "DJI_20250828100053_0085_T.JPG",
+      "x_m": 26.3,
+      "y_m": -460.2,
+      "time": "10:00:53",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828100114_0086_T.JPG",
+      "x_m": 24.9,
+      "y_m": -456.5,
+      "time": "10:01:14",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828100204_0087_T.JPG",
+      "x_m": -15.3,
+      "y_m": -370.9,
+      "time": "10:02:04",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     }
+    ]
+   },
+   {
+    "site": "B",
+    "images": 24,
+    "start": "10:38",
+    "end": "11:15",
+    "path_length_m": 1756,
+    "extent_m": [
+     314,
+     301
+    ],
+    "points": [
+     {
+      "file": "DJI_20250828103837_0001_T.JPG",
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "time": "10:38:37",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828103905_0002_T.JPG",
+      "x_m": -23.9,
+      "y_m": -26.9,
+      "time": "10:39:05",
+      "reviewed_candidate": true,
+      "t_max": 41.5,
+      "t_min": 22.3
+     },
+     {
+      "file": "DJI_20250828104036_0004_T.JPG",
+      "x_m": -266.1,
+      "y_m": -218.8,
+      "time": "10:40:36",
+      "reviewed_candidate": true,
+      "t_max": 41.2,
+      "t_min": 22.8
+     },
+     {
+      "file": "DJI_20250828104041_0005_T.JPG",
+      "x_m": -263.8,
+      "y_m": -217.9,
+      "time": "10:40:41",
+      "reviewed_candidate": false,
+      "t_max": 41.2,
+      "t_min": 22.8
+     },
+     {
+      "file": "DJI_20250828104333_0006_T.JPG",
+      "x_m": -310.6,
+      "y_m": -140.7,
+      "time": "10:43:33",
+      "reviewed_candidate": true,
+      "t_max": 53.7,
+      "t_min": 21.5
+     },
+     {
+      "file": "DJI_20250828104817_0010_T.JPG",
+      "x_m": -91.6,
+      "y_m": 67.7,
+      "time": "10:48:17",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828105118_0011_T.JPG",
+      "x_m": -268.2,
+      "y_m": -17.4,
+      "time": "10:51:18",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828105123_0012_T.JPG",
+      "x_m": -268.2,
+      "y_m": -17.2,
+      "time": "10:51:23",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828105139_0013_T.JPG",
+      "x_m": -268.3,
+      "y_m": -17.1,
+      "time": "10:51:39",
+      "reviewed_candidate": true,
+      "t_max": 55.4,
+      "t_min": 22.2
+     },
+     {
+      "file": "DJI_20250828105159_0014_T.JPG",
+      "x_m": -268.2,
+      "y_m": -17.1,
+      "time": "10:51:59",
+      "reviewed_candidate": false,
+      "t_max": 54.0,
+      "t_min": 23.0
+     },
+     {
+      "file": "DJI_20250828105229_0015_T.JPG",
+      "x_m": -268.2,
+      "y_m": -17.1,
+      "time": "10:52:29",
+      "reviewed_candidate": false,
+      "t_max": 50.5,
+      "t_min": 22.3
+     },
+     {
+      "file": "DJI_20250828105239_0016_T.JPG",
+      "x_m": -268.2,
+      "y_m": -17.2,
+      "time": "10:52:39",
+      "reviewed_candidate": false,
+      "t_max": 50.3,
+      "t_min": 22.0
+     },
+     {
+      "file": "DJI_20250828105853_0020_T.JPG",
+      "x_m": -278.8,
+      "y_m": -36.9,
+      "time": "10:58:53",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828105859_0021_T.JPG",
+      "x_m": -278.8,
+      "y_m": -36.9,
+      "time": "10:58:59",
+      "reviewed_candidate": true,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828110128_0023_T.JPG",
+      "x_m": -54.9,
+      "y_m": 81.8,
+      "time": "11:01:28",
+      "reviewed_candidate": true,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828110229_0024_T.JPG",
+      "x_m": -50.3,
+      "y_m": 77.2,
+      "time": "11:02:29",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828110510_0026_T.JPG",
+      "x_m": -184.7,
+      "y_m": -115.5,
+      "time": "11:05:10",
+      "reviewed_candidate": false,
+      "t_max": 42.1,
+      "t_min": 21.8
+     },
+     {
+      "file": "DJI_20250828111341_0029_T.JPG",
+      "x_m": 3.8,
+      "y_m": 34.9,
+      "time": "11:13:41",
+      "reviewed_candidate": true,
+      "t_max": 46.1,
+      "t_min": 20.3
+     },
+     {
+      "file": "DJI_20250828111347_0030_T.JPG",
+      "x_m": 3.8,
+      "y_m": 34.9,
+      "time": "11:13:47",
+      "reviewed_candidate": true,
+      "t_max": 45.0,
+      "t_min": 20.4
+     },
+     {
+      "file": "DJI_20250828111402_0031_T.JPG",
+      "x_m": -21.2,
+      "y_m": 67.7,
+      "time": "11:14:02",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828111520_0032_T.JPG",
+      "x_m": -20.9,
+      "y_m": 68.3,
+      "time": "11:15:20",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828111533_0033_T.JPG",
+      "x_m": -20.2,
+      "y_m": 67.5,
+      "time": "11:15:33",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828111545_0034_T.JPG",
+      "x_m": -11.8,
+      "y_m": 58.9,
+      "time": "11:15:45",
+      "reviewed_candidate": false,
+      "t_max": null,
+      "t_min": null
+     },
+     {
+      "file": "DJI_20250828111554_0035_T.JPG",
+      "x_m": -7.8,
+      "y_m": 54.6,
+      "time": "11:15:54",
+      "reviewed_candidate": false,
+      "t_max": 46.6,
+      "t_min": 23.3
+     }
+    ]
+   },
+   {
+    "site": "C",
+    "images": 2,
+    "start": "15:02",
+    "end": "15:03",
+    "path_length_m": 5,
+    "extent_m": [
+     1,
+     5
+    ],
+    "points": [
+     {
+      "file": "DJI_20250828150201_0002_T.JPG",
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "time": "15:02:01",
+      "reviewed_candidate": false,
+      "t_max": 35.2,
+      "t_min": 23.1
+     },
+     {
+      "file": "DJI_20250828150304_0004_T.JPG",
+      "x_m": -0.7,
+      "y_m": 4.5,
+      "time": "15:03:04",
+      "reviewed_candidate": false,
+      "t_max": 30.9,
+      "t_min": 27.7
+     }
+    ]
+   }
+  ]
+ },
+ "rf_importance": {
+  "baseline": {
+   "accuracy": 0.8731428571428571,
+   "macro_f1": 0.8583787315328962
+  },
+  "repeats": 10,
+  "groups": [
+   {
+    "group": "堤顶高程",
+    "columns": [
+     "top_elevation_m"
+    ],
+    "d_accuracy_mean": 0.07657142857142854,
+    "d_accuracy_sd": 0.004665694748158424,
+    "d_macro_f1_mean": 0.06670965320207325,
+    "d_macro_f1_sd": 0.0037050251278390794
+   },
+   {
+    "group": "堤基坡降",
+    "columns": [
+     "seepage_i",
+     "seepage_ratio"
+    ],
+    "d_accuracy_mean": 0.08308571428571425,
+    "d_accuracy_sd": 0.007789521422457834,
+    "d_macro_f1_mean": 0.07988751433071192,
+    "d_macro_f1_sd": 0.007908088747280072
+   },
+   {
+    "group": "堤身坡降",
+    "columns": [
+     "body_i",
+     "body_ratio"
+    ],
+    "d_accuracy_mean": 0.03097142857142854,
+    "d_accuracy_sd": 0.006176834786673441,
+    "d_macro_f1_mean": 0.0339242829004591,
+    "d_macro_f1_sd": 0.007912070881846046
+   },
+   {
+    "group": "接触带坡降",
+    "columns": [
+     "contact_i",
+     "contact_ratio"
+    ],
+    "d_accuracy_mean": 0.03165714285714283,
+    "d_accuracy_sd": 0.008721230643984725,
+    "d_macro_f1_mean": 0.03447391744059207,
+    "d_macro_f1_sd": 0.010825724030165363
+   },
+   {
+    "group": "背水坡安全系数",
+    "columns": [
+     "fos_back",
+     "inv_fos_back"
+    ],
+    "d_accuracy_mean": 0.13119999999999993,
+    "d_accuracy_sd": 0.00893087589308502,
+    "d_macro_f1_mean": 0.13345115479714742,
+    "d_macro_f1_sd": 0.00991870680350858
+   },
+   {
+    "group": "临水坡安全系数",
+    "columns": [
+     "fos_front"
+    ],
+    "d_accuracy_mean": 0.01908571428571426,
+    "d_accuracy_sd": 0.005469022223545334,
+    "d_macro_f1_mean": 0.022545502342914792,
+    "d_macro_f1_sd": 0.006521683135805436
+   },
+   {
+    "group": "冲刷深度",
+    "columns": [
+     "scour_depth_m",
+     "scour_ratio"
+    ],
+    "d_accuracy_mean": 0.14537142857142854,
+    "d_accuracy_sd": 0.00981349896340556,
+    "d_macro_f1_mean": 0.15660448866897209,
+    "d_macro_f1_sd": 0.008707338275652341
+   },
+   {
+    "group": "巡检异常密度",
+    "columns": [
+     "uav_density"
+    ],
+    "d_accuracy_mean": 0.0015999999999999682,
+    "d_accuracy_sd": 0.002360675563402628,
+    "d_macro_f1_mean": 0.00016133742904745897,
+    "d_macro_f1_sd": 0.003001013875570551
+   },
+   {
+    "group": "巡检证据等级",
+    "columns": [
+     "uav_level"
+    ],
+    "d_accuracy_mean": -0.003200000000000036,
+    "d_accuracy_sd": 0.00409590249317048,
+    "d_macro_f1_mean": -0.00648519441927905,
+    "d_macro_f1_sd": 0.005814910145086861
+   }
+  ]
+ },
+ "rf_tuning": {
+  "n_estimators": [
+   {
+    "value": 10,
+    "train_macro_f1": 0.7709418486731843,
+    "oof_macro_f1": 0.7656463877430606,
+    "oof_macro_f1_threshold": 0.8765806037380627,
+    "oof_c_to_a_threshold": 51
+   },
+   {
+    "value": 20,
+    "train_macro_f1": 0.7655872208301223,
+    "oof_macro_f1": 0.7583251092328241,
+    "oof_macro_f1_threshold": 0.8576856616489046,
+    "oof_c_to_a_threshold": 51
+   },
+   {
+    "value": 40,
+    "train_macro_f1": 0.7939136550498246,
+    "oof_macro_f1": 0.7920972379087395,
+    "oof_macro_f1_threshold": 0.87288397663579,
+    "oof_c_to_a_threshold": 51
+   },
+   {
+    "value": 60,
+    "train_macro_f1": 0.7827028186711142,
+    "oof_macro_f1": 0.776920100897899,
+    "oof_macro_f1_threshold": 0.8626843962322787,
+    "oof_c_to_a_threshold": 51
+   },
+   {
+    "value": 80,
+    "train_macro_f1": 0.7956992735328746,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8477069840413279,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 120,
+    "train_macro_f1": 0.7956992735328746,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8583787315328962,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 160,
+    "train_macro_f1": 0.7956992735328746,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8583787315328962,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 200,
+    "train_macro_f1": 0.7959141794680742,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8583787315328962,
+    "oof_c_to_a_threshold": 50
+   }
+  ],
+  "max_depth": [
+   {
+    "value": 2,
+    "train_macro_f1": 0.4774088024757329,
+    "oof_macro_f1": 0.4537513287103871,
+    "oof_macro_f1_threshold": 0.576433697159742,
+    "oof_c_to_a_threshold": 210
+   },
+   {
+    "value": 3,
+    "train_macro_f1": 0.5771193344771042,
+    "oof_macro_f1": 0.55023849945117,
+    "oof_macro_f1_threshold": 0.6870073360250287,
+    "oof_c_to_a_threshold": 144
+   },
+   {
+    "value": 4,
+    "train_macro_f1": 0.5764552574820996,
+    "oof_macro_f1": 0.5617459237317771,
+    "oof_macro_f1_threshold": 0.7181828186454564,
+    "oof_c_to_a_threshold": 122
+   },
+   {
+    "value": 5,
+    "train_macro_f1": 0.6615134338149875,
+    "oof_macro_f1": 0.6628404720775983,
+    "oof_macro_f1_threshold": 0.7530738369163722,
+    "oof_c_to_a_threshold": 85
+   },
+   {
+    "value": 6,
+    "train_macro_f1": 0.7351363005593619,
+    "oof_macro_f1": 0.7247660427807486,
+    "oof_macro_f1_threshold": 0.8357980741516581,
+    "oof_c_to_a_threshold": 51
+   },
+   {
+    "value": 7,
+    "train_macro_f1": 0.7956992735328746,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8583787315328962,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 8,
+    "train_macro_f1": 0.8521945162710296,
+    "oof_macro_f1": 0.8422451532207629,
+    "oof_macro_f1_threshold": 0.914963955055593,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 10,
+    "train_macro_f1": 0.8799343074487872,
+    "oof_macro_f1": 0.8754719922282207,
+    "oof_macro_f1_threshold": 0.9164598842018196,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 12,
+    "train_macro_f1": 0.9195577908055048,
+    "oof_macro_f1": 0.9164598842018196,
+    "oof_macro_f1_threshold": 0.9150437024598816,
+    "oof_c_to_a_threshold": 50
+   }
+  ],
+  "max_features": [
+   {
+    "value": 1,
+    "train_macro_f1": 0.6518582539496152,
+    "oof_macro_f1": 0.6439058670333716,
+    "oof_macro_f1_threshold": 0.78049034898335,
+    "oof_c_to_a_threshold": 87
+   },
+   {
+    "value": 2,
+    "train_macro_f1": 0.7361944122357451,
+    "oof_macro_f1": 0.7299185056027991,
+    "oof_macro_f1_threshold": 0.8474476903600303,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 3,
+    "train_macro_f1": 0.7728134578992186,
+    "oof_macro_f1": 0.7656463877430606,
+    "oof_macro_f1_threshold": 0.853083853083853,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 4,
+    "train_macro_f1": 0.7956992735328746,
+    "oof_macro_f1": 0.7835082221643653,
+    "oof_macro_f1_threshold": 0.8583787315328962,
+    "oof_c_to_a_threshold": 50
+   },
+   {
+    "value": 6,
+    "train_macro_f1": 0.7808928971199166,
+    "oof_macro_f1": 0.7645717928142473,
+    "oof_macro_f1_threshold": 0.8624614758586598,
+    "oof_c_to_a_threshold": 55
+   },
+   {
+    "value": 8,
+    "train_macro_f1": 0.799397896109033,
+    "oof_macro_f1": 0.7925084175084175,
+    "oof_macro_f1_threshold": 0.8818767598007363,
+    "oof_c_to_a_threshold": 52
+   },
+   {
+    "value": 10,
+    "train_macro_f1": 0.8096147818151312,
+    "oof_macro_f1": 0.7925084175084175,
+    "oof_macro_f1_threshold": 0.8767709029587204,
+    "oof_c_to_a_threshold": 61
+   },
+   {
+    "value": 14,
+    "train_macro_f1": 0.8102699034384132,
+    "oof_macro_f1": 0.7867189055517659,
+    "oof_macro_f1_threshold": 0.8728482165131011,
+    "oof_c_to_a_threshold": 60
+   }
+  ]
+ }
+}
