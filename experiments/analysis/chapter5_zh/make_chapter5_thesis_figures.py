@@ -53,8 +53,10 @@ def title(ax, label: str, text: str) -> None:
 # ---------------------------------------------------------------- survey sites and image temperatures
 def fig_survey_sites() -> None:
     sites = {s["site"]: s for s in TA["inspection"]["sites"]}
-    fig = plt.figure(figsize=(W, 2.75))
-    gs = fig.add_gridspec(1, 3, width_ratios=[0.75, 1.0, 1.2], wspace=0.38, left=0.085, right=0.99, bottom=0.3, top=0.9)
+    IS_ = json.loads((HERE / "inspection_supplement.json").read_text(encoding="utf-8"))
+    fig = plt.figure(figsize=(W, 4.6))
+    gs = fig.add_gridspec(2, 2, width_ratios=[0.8, 1.0], height_ratios=[1.15, 1], wspace=0.3, hspace=0.55,
+                          left=0.09, right=0.99, bottom=0.17, top=0.94)
     for k, key in enumerate("AB"):
         s = sites[key]
         ax = fig.add_subplot(gs[0, k])
@@ -63,31 +65,45 @@ def fig_survey_sites() -> None:
         order = np.arange(len(pts))
         ax.plot(x, y, color="#C8C8C8", linewidth=0.5, zorder=1)
         ax.scatter(x, y, c=order, cmap="Blues", vmin=-0.3 * len(pts), s=9, edgecolors="none", zorder=2)
-        ax.scatter(x[:1], y[:1], marker="^", s=26, color=B.EV if hasattr(B, "EV") else "#8A6D3B", zorder=4)
+        ax.scatter(x[:1], y[:1], marker="^", s=26, color="#8A6D3B", zorder=4)
         cand = np.array([p["reviewed_candidate"] for p in pts])
         ax.scatter(x[cand], y[cand], marker="x", color=B.DANGER, s=22, linewidths=1.0, zorder=3)
         ax.set_aspect("equal", adjustable="datalim")
         ax.set_xlabel("相对东向距离/m")
         if k == 0:
             ax.set_ylabel("相对北向距离/m")
-        title(ax, "ab"[k], f"片区{key}（{s['start']}—{s['end']}）")
-    ax = fig.add_subplot(gs[0, 2])
-    pts = [p for s in TA["inspection"]["sites"] for p in s["points"] if p["t_max"] is not None]
-    hh = np.array([int(p["time"][:2]) + int(p["time"][3:5]) / 60 + int(p["time"][6:8]) / 3600 for p in pts])
-    tmax = np.array([p["t_max"] for p in pts]); tmin = np.array([p["t_min"] for p in pts])
+        title(ax, "ab"[k], f"片区{key}（{s['start']}～{s['end']}）")
+    scol = {"A": "#2F6DA8", "B": "#E07B39", "C": "#6AAF5A"}
+    def hours(t):
+        return int(t[:2]) + int(t[3:5]) / 60 + int(t[6:8]) / 3600
+    ax = fig.add_subplot(gs[1, 0])
+    for sk in "ABC":
+        im = [r for r in IS_["flight"]["images"] if r["site"] == sk]
+        ax.scatter([hours(r["time"]) for r in im], [r["rel_alt_m"] for r in im], s=8, color=scol[sk], label=f"片区{sk}", zorder=3)
+    for h in (50, 100):
+        ax.axhline(h, color="#BBBBBB", linewidth=0.6, linestyle="--", zorder=1)
+    ax.set_yscale("log"); ax.set_yticks([10, 20, 50, 100, 200, 300], ["10", "20", "50", "100", "200", "300"])
+    ax.set_xlim(9.4, 15.4); ax.set_xticks([10, 11, 12, 13, 14, 15])
+    ax.set_xlabel("采集时刻/h"); ax.set_ylabel("相对航高/m")
+    ax.legend(loc="upper right", fontsize=7.0, handletextpad=0.2, borderaxespad=0.2)
+    title(ax, "c", "相对起飞点的飞行高度")
+    ax = fig.add_subplot(gs[1, 1])
+    rows = IS_["temperature"]["images"]
+    hh = np.array([hours(r["time"]) for r in rows])
+    tmax = np.array([r["t_max"] for r in rows]); tmin = np.array([r["t_min"] for r in rows])
     ax.vlines(hh, tmin, tmax, color="#D0D0D0", linewidth=0.5)
-    ax.scatter(hh, tmax, s=8, color=B.DANGER, zorder=3)
-    ax.scatter(hh, tmin, s=8, color=B.RF, zorder=3)
+    ax.scatter(hh, tmax, s=7, color=B.DANGER, zorder=3)
+    ax.scatter(hh, tmin, s=7, color=B.RF, zorder=3)
     ax.set_xlabel("采集时刻/h"); ax.set_ylabel("温度/℃")
     ax.set_xlim(9.4, 15.4); ax.set_xticks([10, 11, 12, 13, 14, 15])
-    title(ax, "c", "单张图像温度极值")
+    title(ax, "d", f"单张图像温度极值（{len(rows)}张）")
     handles = [Line2D([], [], marker="^", color="#8A6D3B", linestyle="none", markersize=5),
                Line2D([], [], marker="o", color="#5B8DC3", linestyle="none", markersize=4),
                Line2D([], [], marker="x", color=B.DANGER, linestyle="none", markersize=5),
                Line2D([], [], marker="o", color=B.DANGER, linestyle="none", markersize=4),
                Line2D([], [], marker="o", color=B.RF, linestyle="none", markersize=4)]
     labels = ["首张图像机位", "机位（颜色由浅至深为采集先后）", "经复核的算法候选（均为误报）", "图像最高温度", "图像最低温度"]
-    fig.legend(handles, labels, loc="lower center", ncol=3, bbox_to_anchor=(0.52, -0.01), fontsize=B.FS_LEG,
+    fig.legend(handles, labels, loc="lower center", ncol=3, bbox_to_anchor=(0.52, -0.005), fontsize=B.FS_LEG,
                handletextpad=0.3, columnspacing=1.2)
     B.save(fig, "fig5_survey_sites")
 
@@ -359,6 +375,209 @@ def fig_injection() -> None:
     B.save(fig, "fig5_injection")
 
 
+# ---------------------------------------------------------------- reused figures (group paper and mid-term report)
+P2ES_PDF = REPO / "notes" / "references" / "基于P2ES-YOLO的堤防红外图像管涌渗漏识别_侯国鑫.pdf"
+MIDTERM = REPO / "notes" / "20260418中期报告合稿.docx"
+IS = json.loads((HERE / "inspection_supplement.json").read_text(encoding="utf-8"))
+SA = json.loads((HERE / "sensitivity_analysis.json").read_text(encoding="utf-8"))
+REASON_COL = {"水陆边界": "#4C9BD6", "植被与阴影": "#6AAF5A", "建筑边缘与阴影": "#9C7A55", "潮湿地面或镜头边缘": "#BCA640"}
+
+
+def pdf_figure(page: int) -> np.ndarray:
+    """First embedded image of a page of the P2ES-YOLO paper, soft mask composited on white."""
+    import pymupdf
+    doc = pymupdf.open(P2ES_PDF)
+    xref, smask = doc[page - 1].get_images(full=True)[0][:2]
+    pix = pymupdf.Pixmap(doc, xref)
+    if pix.colorspace and pix.colorspace.n == 4:
+        pix = pymupdf.Pixmap(pymupdf.csRGB, pix)
+    a = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, pix.n).astype(float)
+    rgb = a[:, :, :3]
+    if pix.alpha:
+        rgb = rgb * a[:, :, 3:4] / 255 + 255 * (1 - a[:, :, 3:4] / 255)
+    if smask:
+        m = pymupdf.Pixmap(doc, smask)
+        m = np.frombuffer(m.samples, dtype=np.uint8).reshape(m.height, m.width, m.n)[:, :, :1] / 255
+        rgb = rgb * m + 255 * (1 - m)
+    return rgb.clip(0, 255).astype(np.uint8)
+
+
+def midterm_image(name: str) -> np.ndarray:
+    import io
+    import zipfile
+    with zipfile.ZipFile(MIDTERM) as z:
+        im = Image.open(io.BytesIO(z.read(f"word/media/{name}"))).convert("RGBA")
+    bg = Image.new("RGBA", im.size, (255, 255, 255, 255)); bg.alpha_composite(im)
+    return np.asarray(bg.convert("RGB"))
+
+
+def save_raster(arr: np.ndarray, name: str, width: float) -> None:
+    h, w = arr.shape[:2]
+    fig = plt.figure(figsize=(width, width * h / w))
+    ax = fig.add_axes([0, 0, 1, 1]); ax.imshow(arr, interpolation="lanczos"); ax.set_axis_off()
+    B.save(fig, name)
+
+
+def fig_ir_modes() -> None:
+    arr = pdf_figure(4)
+    w = arr.shape[1] // 4
+    caps = ["a  低温异常（植被背景）", "b  低温异常（裸土背景）", "c  高温异常（植被背景）", "d  高温异常（裸土背景）"]
+    fig, axes = plt.subplots(1, 4, figsize=(W, 1.85))
+    for k, ax in enumerate(axes):
+        ax.imshow(arr[:, k * w:(k + 1) * w]); ax.set_axis_off()
+        ax.set_title(caps[k], fontsize=B.FS_LEG, pad=3, y=-0.16)
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.99, bottom=0.14, wspace=0.04)
+    B.save(fig, "fig5_ir_modes")
+
+
+def fig_devices() -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(W, 2.3), gridspec_kw=dict(width_ratios=[831 / 563, 825 / 516]))
+    for ax, (name, cap) in zip(axes, [("image236.png", "a  M300 RTK无人机"), ("image237.png", "b  禅思H20T多传感器载荷")]):
+        ax.imshow(midterm_image(name)); ax.set_axis_off()
+        ax.set_title(cap, fontsize=B.FS_LEG, pad=3, y=-0.13)
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.99, bottom=0.1, wspace=0.04)
+    B.save(fig, "fig5_devices")
+
+
+def fig_dataset_examples() -> None:
+    arr = pdf_figure(8)
+    w = arr.shape[1] // 3
+    lab = midterm_image("image244.png")[14:578, 98:660]       # LabelImg canvas only
+    panels = [(arr[:, k * w:(k + 1) * w], c) for k, c in enumerate(["a  植被干扰", "b  夜间采集", "c  日间采集"])]
+    panels.append((lab, "d  矩形框标注示例"))
+    fig, axes = plt.subplots(1, 4, figsize=(W, 1.85))
+    for ax, (im, cap) in zip(axes, panels):
+        ax.imshow(im, aspect="auto"); ax.set_axis_off()
+        ax.set_title(cap, fontsize=B.FS_LEG, pad=3, y=-0.16)
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.99, bottom=0.14, wspace=0.04)
+    B.save(fig, "fig5_dataset_examples")
+
+
+def fig_training_curve() -> None:
+    save_raster(midterm_image("image252.png"), "fig5_training_curve", 5.6)
+
+
+def fig_p2es_structure() -> None:
+    save_raster(pdf_figure(5), "fig5_p2es_structure", 4.4)
+
+
+def fig_c2fsimam() -> None:
+    save_raster(pdf_figure(7), "fig5_c2fsimam", 4.8)
+
+
+def fig_p2es_compare() -> None:
+    save_raster(pdf_figure(11), "fig5_p2es_compare", 4.5)
+
+
+P2ES_ABLATION = [  # Table 2 of the P2ES-YOLO paper, % (P, R, mAP@0.5, mAP@0.5:0.95)
+    ("YOLOv8n", 94.0, 89.4, 95.7, 66.8), ("+P2", 92.4, 92.4, 96.9, 68.0),
+    ("+P2+EIoU", 93.6, 93.0, 96.9, 68.1), ("P2ES-YOLO", 95.1, 93.4, 97.2, 68.5)]
+P2ES_COMPARE = [  # Table 3 of the P2ES-YOLO paper, %
+    ("YOLOv5n", 83.1, 75.2, 80.6, 42.3), ("YOLOv8n", 94.0, 89.4, 95.7, 66.8), ("YOLOv9-T", 93.8, 87.4, 95.0, 65.2),
+    ("YOLOv10n", 90.6, 89.1, 94.8, 66.8), ("YOLOv11n", 86.9, 87.9, 93.9, 63.2), ("P2ES-YOLO", 95.1, 93.4, 97.2, 68.5)]
+
+
+XLAB = {"+P2+EIoU": "+P2\n+EIoU", "P2ES-YOLO": "P2ES-\nYOLO", "YOLOv5n": "YOLO\nv5n", "YOLOv8n": "YOLO\nv8n",
+        "YOLOv9-T": "YOLO\nv9-T", "YOLOv10n": "YOLO\nv10n", "YOLOv11n": "YOLO\nv11n"}
+
+
+def fig_p2es_results() -> None:
+    mets = [("查准率", "#1F4E79"), ("查全率", "#3F7FBF"), ("mAP@0.5", "#7FB0DD"), ("mAP@0.5:0.95", "#BCD5EC")]
+    fig, axes = plt.subplots(1, 2, figsize=(W, 2.65), gridspec_kw=dict(width_ratios=[4, 6]))
+    for ax, rows, lab, txt, lo in [(axes[0], P2ES_ABLATION, "a", "消融试验（逐模块叠加）", 60), (axes[1], P2ES_COMPARE, "b", "与主流轻量模型对比", 40)]:
+        x = np.arange(len(rows)); wb = 0.2
+        for j, (m, col) in enumerate(mets):
+            v = [r[j + 1] for r in rows]
+            ax.bar(x + (j - 1.5) * wb, v, wb, color=col, edgecolor="#1F4E79", linewidth=0.3, label=m)
+        ax.set_xticks(x, [XLAB.get(r[0], r[0]) for r in rows], fontsize=7.2)
+        ax.get_xticklabels()[-1].set_color(B.FLOOR); ax.get_xticklabels()[-1].set_fontweight("bold")
+        ax.set_ylim(lo, 100); ax.set_ylabel("指标值/%")
+        title(ax, lab, txt)
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.01), fontsize=B.FS_LEG)
+    fig.subplots_adjust(left=0.08, right=0.99, top=0.9, bottom=0.27, wspace=0.25)
+    B.save(fig, "fig5_p2es_results")
+
+
+def fig_candidates() -> None:
+    cand = IS["candidates"]; val = IS["validation"]["boxes"]
+    fig = plt.figure(figsize=(W, 2.9))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.25, 1.05], wspace=0.42, left=0.075, right=0.99, bottom=0.36, top=0.9)
+    ax = fig.add_subplot(gs[0, 0])
+    rng = np.random.default_rng(3)
+    for c in cand:
+        ax.scatter(c["conf"], 1 + rng.uniform(-0.12, 0.12), s=22, color=REASON_COL[c["reason"]], edgecolors="white", linewidths=0.4, zorder=3)
+    ax.scatter([b["conf"] for b in val], 0 + rng.uniform(-0.12, 0.12, len(val)), s=20, facecolors="none", edgecolors="#555555", linewidths=0.8)
+    ax.set_yticks([0, 1], ["人工管涌\n验证图", "现场\n候选"]); ax.set_ylim(-0.5, 1.5)
+    ax.set_xlim(0.4, 1.0); ax.set_xlabel("检测置信度")
+    title(ax, "a", "置信度分布")
+    ax = fig.add_subplot(gs[0, 1])
+    order = sorted(range(len(cand)), key=lambda i: cand[i]["time"])
+    y = np.arange(len(order))[::-1]
+    for yi, i in zip(y, order):
+        c = cand[i]
+        ax.barh(yi, c["dT"], color=REASON_COL[c["reason"]], height=0.62)
+        ax.text(c["dT"] + (0.3 if c["dT"] >= 0 else -0.3), yi, f"{c['dT']:+.1f}", va="center", ha="left" if c["dT"] >= 0 else "right", fontsize=6.8)
+    ax.set_yticks(y, [f"{cand[i]['time']}（{cand[i]['site']}）" for i in order], fontsize=6.6)
+    ax.axvline(0, color="#555555", linewidth=0.6); ax.set_xlim(-10, 11)
+    ax.set_xlabel("框内外温差ΔT/℃")
+    title(ax, "b", "候选框的近似温差")
+    ax = fig.add_subplot(gs[0, 2])
+    hrs = [int(x["time"][:2]) + int(x["time"][3:5]) / 60 for x in IS["temperature"]["images"]]
+    ax.axvspan(0, 6, color="#E3EDF7", zorder=0); ax.axvspan(20, 24, color="#E3EDF7", zorder=0)
+    ax.hist(hrs, bins=np.arange(0, 24.5, 1), color="#9A9A9A", edgecolor="white", linewidth=0.4, zorder=2)
+    ax.text(3, 72, "夜间", ha="center", color="#2F5F8F", fontsize=7.5)
+    ax.set_xlim(0, 24); ax.set_xticks([0, 6, 12, 18, 24]); ax.set_ylim(0, 80)
+    ax.set_xlabel("采集时刻/h"); ax.set_ylabel("图像数/张")
+    title(ax, "c", "采集时刻分布")
+    handles = [Line2D([], [], marker="o", color=REASON_COL[k], linestyle="none", markersize=5) for k in REASON_COL]
+    handles.append(Line2D([], [], marker="o", markerfacecolor="none", markeredgecolor="#555555", linestyle="none", markersize=5))
+    labels = [f"{k}（{IS['review']['reasons'][k]}个）" for k in REASON_COL] + ["验证图检出框（14个）"]
+    fig.legend(handles, labels, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.01), fontsize=B.FS_LEG, columnspacing=1.0)
+    B.save(fig, "fig5_candidates")
+
+
+NAMES = {"C1": "C1 堤基坡降比", "C4": "C4 堤身坡降比", "C5": "C5 接触面坡降比", "D1": "D1 背水坡安全系数",
+         "D2": "D2 临水坡安全系数", "B1": "B1 堤顶高程", "D3": "D3 冲刷深度", "C6": "C6 穿堤建筑物渗流",
+         "B3": "B3 风浪爬高", "A6": "A6 内部隐患", "A7": "A7 堤基处理", "C2": "C2 排水设施", "A8": "A8 结合部止水",
+         "D5": "D5 沉降与裂缝", "B2": "B2 防洪标准", "B4": "B4 建筑物防洪标准", "D4": "D4 穿堤结构", "A4": "A4 护坡",
+         "E4": "E4 应急预案", "E1": "E1 监测设施"}
+
+
+def fig_sensitivity() -> None:
+    al = SA["alpha"]; oat = SA["one_at_a_time"]["cases"]
+    fig = plt.figure(figsize=(W, 3.0))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1, 1.15], wspace=0.62, left=0.085, right=0.985, bottom=0.17, top=0.9)
+    ax = fig.add_subplot(gs[0, 0])
+    a = [o["alpha"] for o in al]
+    ax.plot(a, [o["mean_score"] for o in al], color=B.RULE, marker="o", markersize=2.6, linewidth=1.0, label="平均得分")
+    ax.set_xlabel("短板系数α"); ax.set_ylabel("平均得分"); ax.set_ylim(40, 90)
+    ax.axvline(0.45, color="#999999", linestyle=":", linewidth=0.7)
+    ax2 = ax.twinx()
+    ax2.plot(a, [o["final_correct"] / 875 for o in al], color=B.FLOOR, marker="s", markersize=2.6, linewidth=1.0, label="规则等级准确率")
+    ax2.plot(a, [o["raw_correct"] / 875 for o in al], color=B.RF, marker="^", markersize=2.6, linewidth=1.0, linestyle="--", label="仅按得分定级的准确率")
+    ax2.set_ylim(0.1, 0.92); ax2.set_ylabel("准确率")
+    for sp in ("right",):
+        ax2.spines[sp].set_visible(True)
+    h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
+    ax.legend(h1 + h2, l1 + l2, loc="lower left", fontsize=7.0, borderaxespad=0.2)
+    title(ax, "a", "短板系数敏感性（875条记录）")
+    ax = fig.add_subplot(gs[0, 1])
+    top = [c for c in oat if c["range"] >= 0.7][:16][::-1]
+    y = np.arange(len(top))
+    cont = {"C1", "C4", "C5", "D1", "D2", "B1", "D3"}
+    ax.barh(y, [c["range"] for c in top], color=[B.RF if c["code"] in cont else B.RF_LIGHT for c in top],
+            edgecolor=B.RF, linewidth=0.4, height=0.66)
+    for yi, c in zip(y, top):
+        ax.text(c["range"] + 0.8, yi, f"{c['range']:.1f}", va="center", fontsize=6.6)
+    ax.set_yticks(y, [NAMES.get(c["code"], c["code"]) for c in top], fontsize=6.8)
+    ax.set_xlim(0, 78); ax.set_xlabel("得分变化幅度")
+    title(ax, "b", "单指标敏感性")
+    handles = [Patch(color=B.RF), Patch(color=B.RF_LIGHT)]
+    ax.legend(handles, ["物理量连续变化", "分档取100分与0分"], loc="lower right", fontsize=7.0)
+    B.save(fig, "fig5_sensitivity")
+
+
 def main() -> None:
     fig_survey_sites()
     fig_detection_examples()
@@ -369,6 +588,15 @@ def main() -> None:
     fig_k45()
     fig_ch4_interval()
     fig_injection()
+    fig_ir_modes()
+    fig_devices()
+    fig_dataset_examples()
+    fig_training_curve()
+    fig_p2es_structure()
+    fig_c2fsimam()
+    fig_p2es_results()
+    fig_candidates()
+    fig_sensitivity()
     print("wrote thesis figures to", B.OUT)
 
 

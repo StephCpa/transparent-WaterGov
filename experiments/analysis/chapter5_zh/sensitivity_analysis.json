@@ -1,0 +1,645 @@
+{
+ "alpha": [
+  {
+   "alpha": 0.0,
+   "mean_score": 81.78,
+   "raw_counts": {
+    "A": 630,
+    "B": 195,
+    "C": 50
+   },
+   "final_counts": {
+    "A": 346,
+    "B": 236,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 764,
+   "C_to_A": 0,
+   "A_to_B_or_C": 29
+  },
+  {
+   "alpha": 0.05,
+   "mean_score": 80.82,
+   "raw_counts": {
+    "A": 575,
+    "B": 250,
+    "C": 50
+   },
+   "final_counts": {
+    "A": 346,
+    "B": 236,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 764,
+   "C_to_A": 0,
+   "A_to_B_or_C": 29
+  },
+  {
+   "alpha": 0.1,
+   "mean_score": 79.86,
+   "raw_counts": {
+    "A": 550,
+    "B": 275,
+    "C": 50
+   },
+   "final_counts": {
+    "A": 346,
+    "B": 236,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 764,
+   "C_to_A": 0,
+   "A_to_B_or_C": 29
+  },
+  {
+   "alpha": 0.15,
+   "mean_score": 78.9,
+   "raw_counts": {
+    "A": 550,
+    "B": 250,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 346,
+    "B": 236,
+    "C": 293
+   },
+   "raw_correct": 450,
+   "final_correct": 764,
+   "C_to_A": 0,
+   "A_to_B_or_C": 29
+  },
+  {
+   "alpha": 0.2,
+   "mean_score": 77.94,
+   "raw_counts": {
+    "A": 550,
+    "B": 250,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 346,
+    "B": 236,
+    "C": 293
+   },
+   "raw_correct": 450,
+   "final_correct": 764,
+   "C_to_A": 0,
+   "A_to_B_or_C": 29
+  },
+  {
+   "alpha": 0.25,
+   "mean_score": 76.98,
+   "raw_counts": {
+    "A": 526,
+    "B": 274,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 322,
+    "B": 260,
+    "C": 293
+   },
+   "raw_correct": 426,
+   "final_correct": 740,
+   "C_to_A": 0,
+   "A_to_B_or_C": 53
+  },
+  {
+   "alpha": 0.3,
+   "mean_score": 76.02,
+   "raw_counts": {
+    "A": 525,
+    "B": 275,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.35,
+   "mean_score": 75.06,
+   "raw_counts": {
+    "A": 525,
+    "B": 275,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.4,
+   "mean_score": 74.1,
+   "raw_counts": {
+    "A": 500,
+    "B": 300,
+    "C": 75
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 425,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.45,
+   "mean_score": 73.14,
+   "raw_counts": {
+    "A": 450,
+    "B": 325,
+    "C": 100
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 450,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.5,
+   "mean_score": 72.18,
+   "raw_counts": {
+    "A": 425,
+    "B": 350,
+    "C": 100
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 450,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.55,
+   "mean_score": 71.21,
+   "raw_counts": {
+    "A": 425,
+    "B": 350,
+    "C": 100
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 450,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.6,
+   "mean_score": 70.25,
+   "raw_counts": {
+    "A": 400,
+    "B": 350,
+    "C": 125
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 500,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.65,
+   "mean_score": 69.29,
+   "raw_counts": {
+    "A": 400,
+    "B": 350,
+    "C": 125
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 500,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.7,
+   "mean_score": 68.33,
+   "raw_counts": {
+    "A": 400,
+    "B": 276,
+    "C": 199
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 574,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.75,
+   "mean_score": 67.37,
+   "raw_counts": {
+    "A": 400,
+    "B": 275,
+    "C": 200
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 575,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.8,
+   "mean_score": 66.41,
+   "raw_counts": {
+    "A": 399,
+    "B": 276,
+    "C": 200
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 576,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.85,
+   "mean_score": 65.45,
+   "raw_counts": {
+    "A": 397,
+    "B": 278,
+    "C": 200
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 578,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.9,
+   "mean_score": 64.49,
+   "raw_counts": {
+    "A": 397,
+    "B": 278,
+    "C": 200
+   },
+   "final_counts": {
+    "A": 321,
+    "B": 261,
+    "C": 293
+   },
+   "raw_correct": 578,
+   "final_correct": 739,
+   "C_to_A": 0,
+   "A_to_B_or_C": 54
+  },
+  {
+   "alpha": 0.95,
+   "mean_score": 63.53,
+   "raw_counts": {
+    "A": 372,
+    "B": 303,
+    "C": 200
+   },
+   "final_counts": {
+    "A": 302,
+    "B": 280,
+    "C": 293
+   },
+   "raw_correct": 565,
+   "final_correct": 720,
+   "C_to_A": 0,
+   "A_to_B_or_C": 73
+  },
+  {
+   "alpha": 1.0,
+   "mean_score": 62.57,
+   "raw_counts": {
+    "A": 341,
+    "B": 311,
+    "C": 223
+   },
+   "final_counts": {
+    "A": 274,
+    "B": 287,
+    "C": 314
+   },
+   "raw_correct": 521,
+   "final_correct": 671,
+   "C_to_A": 0,
+   "A_to_B_or_C": 101
+  }
+ ],
+ "one_at_a_time": {
+  "base_score": 96.05,
+  "base_grade": "A",
+  "cases": [
+   {
+    "label": "接触面坡降比",
+    "code": "C5",
+    "score_max": 97.53,
+    "score_min": 30.77,
+    "range": 66.77,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "堤身坡降比",
+    "code": "C4",
+    "score_max": 96.88,
+    "score_min": 31.41,
+    "range": 65.47,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "堤基坡降比",
+    "code": "C1",
+    "score_max": 97.68,
+    "score_min": 32.51,
+    "range": 65.17,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "背水坡安全系数",
+    "code": "D1",
+    "score_max": 96.05,
+    "score_min": 40.75,
+    "range": 55.3,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "临水坡安全系数",
+    "code": "D2",
+    "score_max": 96.05,
+    "score_min": 40.75,
+    "range": 55.3,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "堤顶高程",
+    "code": "B1",
+    "score_max": 96.05,
+    "score_min": 44.18,
+    "range": 51.87,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "C6",
+    "code": "C6",
+    "score_max": 96.05,
+    "score_min": 76.01,
+    "range": 20.04,
+    "grades": [
+     "A",
+     "C"
+    ]
+   },
+   {
+    "label": "B3",
+    "code": "B3",
+    "score_max": 96.05,
+    "score_min": 82.81,
+    "range": 13.24,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "冲刷深度",
+    "code": "D3",
+    "score_max": 96.05,
+    "score_min": 85.3,
+    "range": 10.75,
+    "grades": [
+     "A",
+     "B",
+     "C"
+    ]
+   },
+   {
+    "label": "A6",
+    "code": "A6",
+    "score_max": 96.05,
+    "score_min": 91.44,
+    "range": 4.61,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "A7",
+    "code": "A7",
+    "score_max": 96.05,
+    "score_min": 92.04,
+    "range": 4.01,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "C2",
+    "code": "C2",
+    "score_max": 96.05,
+    "score_min": 92.05,
+    "range": 4.0,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "A8",
+    "code": "A8",
+    "score_max": 96.05,
+    "score_min": 92.32,
+    "range": 3.73,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "D5",
+    "code": "D5",
+    "score_max": 96.05,
+    "score_min": 92.58,
+    "range": 3.47,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "B2",
+    "code": "B2",
+    "score_max": 96.05,
+    "score_min": 92.9,
+    "range": 3.15,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "B4",
+    "code": "B4",
+    "score_max": 96.05,
+    "score_min": 93.29,
+    "range": 2.76,
+    "grades": [
+     "A",
+     "C"
+    ]
+   },
+   {
+    "label": "D4",
+    "code": "D4",
+    "score_max": 96.05,
+    "score_min": 93.48,
+    "range": 2.57,
+    "grades": [
+     "A",
+     "C"
+    ]
+   },
+   {
+    "label": "A4",
+    "code": "A4",
+    "score_max": 96.05,
+    "score_min": 93.9,
+    "range": 2.15,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "E4",
+    "code": "E4",
+    "score_max": 96.05,
+    "score_min": 95.27,
+    "range": 0.78,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "E1",
+    "code": "E1",
+    "score_max": 96.05,
+    "score_min": 95.56,
+    "range": 0.49,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "A9",
+    "code": "A9",
+    "score_max": 96.05,
+    "score_min": 95.68,
+    "range": 0.37,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "E5",
+    "code": "E5",
+    "score_max": 96.05,
+    "score_min": 95.75,
+    "range": 0.3,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "E2",
+    "code": "E2",
+    "score_max": 96.05,
+    "score_min": 95.87,
+    "range": 0.18,
+    "grades": [
+     "A"
+    ]
+   },
+   {
+    "label": "E3",
+    "code": "E3",
+    "score_max": 96.05,
+    "score_min": 95.93,
+    "range": 0.11,
+    "grades": [
+     "A"
+    ]
+   }
+  ]
+ }
+}

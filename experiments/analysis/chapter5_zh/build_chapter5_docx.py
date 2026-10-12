@@ -96,7 +96,22 @@ REFS = {
     "Zitzler2003": "ZITZLER E, THIELE L, LAUMANNS M, et al. Performance assessment of multiobjective optimizers: an analysis and review[J]. IEEE Transactions on Evolutionary Computation, 2003, 7(2): 117-132.",
     "McNemar": "McNEMAR Q. Note on the sampling error of the difference between correlated proportions or percentages[J]. Psychometrika, 1947, 12(2): 153-157.",
     "Efron": "EFRON B, TIBSHIRANI R J. An introduction to the bootstrap[M]. New York: Chapman & Hall, 1993.",
+    # ---- cited only by the thesis-style copy (2026-10-12): datasets and detectors of the P2ES-YOLO study
+    "SuZhou2022": "苏怀智, 周仁练. 土石堤坝渗漏病险探测模式和方法研究进展[J]. 水利水电科技进展, 2022, 42(1): 1-10.",
+    "CIoU": "ZHENG Z, WANG P, LIU W, et al. Distance-IoU loss: faster and better learning for bounding box regression[C]//Proceedings of the AAAI Conference on Artificial Intelligence. New York: AAAI Press, 2020, 34(7): 12993-13000.",
+    "LabelImg": "TZUTALIN. LabelImg[CP/OL]. (2015)[2026-10-12]. https://github.com/tzutalin/labelImg.",
+    "ZhouDS1": "周仁练. 土石堤坝渗漏红外-可见双光融合图像数据集[DS/OL]. V1. 南京: 河海大学, (2023-04-26)[2025-10-20]. https://cstr.cn/16666.11.nbsdc.F39Aw69j.",
+    "ZhouDS2": "周仁练. 土石堤坝渗漏长续航双光巡测装备示范应用数据集[DS/OL]. V1. 南京: 河海大学, (2023-04-26)[2025-10-20]. https://cstr.cn/16666.11.nbsdc.e8bZU2yB.",
+    "ZhouDS3": "周仁练. 土石堤坝渗漏长续航双光巡测装备野外巡测图像数据集[DS/OL]. V1. 南京: 河海大学, (2023-04-26)[2025-10-20]. https://cstr.cn/16666.11.nbsdc.gjlpJzd4.",
+    "ZhouDS4": "周仁练. 土坝渗漏红外感测模型试验数据集[DS/OL]. V1. 南京: 河海大学, (2023-04-26)[2025-10-20]. https://cstr.cn/16666.11.nbsdc.orPyhf5g.",
+    "DuanDS": "DUAN Q, CHEN B, LUO L. Data for UAV detection of river embankment piping[DS/OL]. V1. Zenodo, (2024-03-30)[2025-10-20]. https://doi.org/10.5281/zenodo.10896178.",
+    "YOLOv5": "JOCHER G. YOLOv5 by Ultralytics[CP/OL]. (2020)[2026-10-12]. https://github.com/ultralytics/yolov5.",
+    "YOLOv9": "WANG C Y, YEH I H, LIAO H Y M. YOLOv9: learning what you want to learn using programmable gradient information[EB/OL]. (2024-02-21)[2026-10-12]. https://arxiv.org/abs/2402.13616.",
+    "YOLOv10": "WANG A, CHEN H, LIU L, et al. YOLOv10: real-time end-to-end object detection[EB/OL]. (2024-05-23)[2026-10-12]. https://arxiv.org/abs/2405.14458.",
+    "YOLO11": "JOCHER G, QIU J. Ultralytics YOLO11[CP/OL]. (2024)[2026-10-12]. https://github.com/ultralytics/ultralytics.",
 }
+THESIS_ONLY_REFS = {"SuZhou2022", "CIoU", "LabelImg", "ZhouDS1", "ZhouDS2", "ZhouDS3", "ZhouDS4", "DuanDS",
+                    "YOLOv5", "YOLOv9", "YOLOv10", "YOLO11"}
 
 # ------------------------------------------------------------------ run formatting
 def rpr(size=24, bold=False, italic=False, vert=None, east="SimSun", ascii_font="Times New Roman"):
@@ -143,7 +158,7 @@ CITE = Citations()
 
 # ------------------------------------------------------------------ inline math
 GREEK_ITALIC = set("αβγδεζηθικλμνξοπρστυφχψωℓŷϕ")
-SPECIAL_FONT = set("≼∅⇔∧∨⋯∇⊕⋃∩")      # set in Cambria Math (TNR lacks some of these glyphs)
+SPECIAL_FONT = set("≼∅⇔∧∨⋯∇⊕⋃∩⊙")      # set in Cambria Math (TNR lacks some of these glyphs)
 REL = set("=≥≤<>≠⇔∈≈∧∨")
 BIN = set("+−×⊕")
 GREEK_CMDS = {"alpha": "α", "lambda": "λ", "tau": "τ", "rho": "ρ", "pi": "π", "phi": "φ", "delta": "δ"}
@@ -465,7 +480,7 @@ def build_body() -> str:
         parts.append(ref_heading(ref_head))
         for k, key in enumerate(CITE.order):
             parts.append(ref_entry(FIRST_NEW_REF + k, ref_text(key)))
-    unused = sorted(set(REFS) - set(CITE.order))
+    unused = sorted(set(REFS) - set(CITE.order) - THESIS_ONLY_REFS)
     if unused and not LOCAL_REFS:  # the thesis copy cites a subset of the shared list
         raise SystemExit(f"references defined but never cited: {unused}")
     return "".join(parts)
