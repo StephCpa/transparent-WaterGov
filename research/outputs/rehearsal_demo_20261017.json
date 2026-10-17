@@ -1,0 +1,144 @@
+{
+ "R0_section_I_gate_stages": {
+  "possible_B": 29.617,
+  "certain_B": 30.043,
+  "possible_C": 30.043,
+  "certain_C": 30.58
+ },
+ "R1_gate_stages": {
+  "无措施": {
+   "possible_B": 30.606,
+   "certain_B": 31.63,
+   "possible_C": 31.63,
+   "certain_C": 32.913
+  },
+  "减压井满负荷": {
+   "possible_B": 36.191,
+   "certain_B": null,
+   "possible_C": null,
+   "certain_C": null
+  },
+  "反滤围井": {
+   "possible_B": 30.971,
+   "certain_B": 32.118,
+   "possible_C": 32.118,
+   "certain_C": 33.555
+  },
+  "压渗平台": {
+   "possible_B": 31.261,
+   "certain_B": 32.452,
+   "possible_C": 32.452,
+   "certain_C": 33.941
+  },
+  "蓄水反压": {
+   "possible_B": 31.604,
+   "certain_B": 32.627,
+   "possible_C": 32.627,
+   "certain_C": 33.911
+  },
+  "减压井+反滤围井": {
+   "possible_B": null,
+   "certain_B": null,
+   "possible_C": null,
+   "certain_C": null
+  }
+ },
+ "plans": {
+  "P0 仅巡查": {
+   "hours_certain_C": 138.5,
+   "hours_possible_C": 162.29,
+   "hours_B_or_worse": 156.09,
+   "hours_true_R_ge_1": 54.17,
+   "max_r_high": 1.378974318447137,
+   "cost": 0.0,
+   "reviews": 14.07,
+   "false_reviews": 10.84,
+   "confirmed": 3.23,
+   "episodes_certain_C": 78,
+   "episodes_true_boil": 81,
+   "median_warning_lead_h": 38.999999999999964,
+   "n": 100
+  },
+  "P1 水位分级响应": {
+   "hours_certain_C": 11.08,
+   "hours_possible_C": 34.7,
+   "hours_B_or_worse": 15.61,
+   "hours_true_R_ge_1": 1.27,
+   "max_r_high": 1.0078180802380958,
+   "cost": 5.8224583333333815,
+   "reviews": 11.17,
+   "false_reviews": 11.1,
+   "confirmed": 0.07,
+   "episodes_certain_C": 7,
+   "episodes_true_boil": 22,
+   "median_warning_lead_h": 26.999999999999957,
+   "n": 100
+  },
+  "P2 测压管反馈": {
+   "hours_certain_C": 3.8,
+   "hours_possible_C": 27.78,
+   "hours_B_or_worse": 7.7,
+   "hours_true_R_ge_1": 1.25,
+   "max_r_high": 1.0423975558165564,
+   "cost": 6.407360763970116,
+   "reviews": 11.08,
+   "false_reviews": 11.06,
+   "confirmed": 0.02,
+   "episodes_certain_C": 3,
+   "episodes_true_boil": 32,
+   "median_warning_lead_h": 37.000000000000014,
+   "n": 100
+  },
+  "P3 预报前瞻（孪生预测）": {
+   "hours_certain_C": 0.0,
+   "hours_possible_C": 20.58,
+   "hours_B_or_worse": 0.02,
+   "hours_true_R_ge_1": 0.0,
+   "max_r_high": 0.85508946473062,
+   "cost": 5.299458333333333,
+   "reviews": 11.04,
+   "false_reviews": 11.04,
+   "confirmed": 0.0,
+   "episodes_certain_C": 0,
+   "episodes_true_boil": 0,
+   "median_warning_lead_h": null,
+   "n": 100
+  },
+  "P4 蓄水反压优先": {
+   "hours_certain_C": 96.23,
+   "hours_possible_C": 120.33,
+   "hours_B_or_worse": 110.14,
+   "hours_true_R_ge_1": 26.94,
+   "max_r_high": 1.1860019991692121,
+   "cost": 10.0090625,
+   "reviews": 13.35,
+   "false_reviews": 11.64,
+   "confirmed": 1.71,
+   "episodes_certain_C": 59,
+   "episodes_true_boil": 63,
+   "median_warning_lead_h": 50.99999999999987,
+   "n": 100
+  },
+  "P3 + 仅夜间巡检": {
+   "hours_certain_C": 0.0,
+   "hours_possible_C": 7.19,
+   "hours_B_or_worse": 0.02,
+   "hours_true_R_ge_1": 0.0,
+   "max_r_high": 0.85508946473062,
+   "cost": 5.299458333333333,
+   "reviews": 2.95,
+   "false_reviews": 2.95,
+   "confirmed": 0.0,
+   "episodes_certain_C": 0,
+   "episodes_true_boil": 0,
+   "median_warning_lead_h": null,
+   "n": 100
+  }
+ },
+ "pareto": [
+  "P0 仅巡查",
+  "P3 + 仅夜间巡检"
+ ],
+ "n_scenarios": 100,
+ "synthetic": true
+}
