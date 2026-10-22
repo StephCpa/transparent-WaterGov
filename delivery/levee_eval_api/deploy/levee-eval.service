@@ -1,0 +1,28 @@
+# systemd unit.  Assumes the package at /opt/levee_eval_api and a virtualenv at /opt/levee_eval_api/.venv
+#   sudo cp deploy/levee-eval.service /etc/systemd/system/ && sudo systemctl daemon-reload
+#   sudo systemctl enable --now levee-eval
+[Unit]
+Description=Levee seepage-safety evaluation service
+After=network.target
+
+[Service]
+Type=simple
+User=levee
+Group=levee
+WorkingDirectory=/opt/levee_eval_api
+Environment=LEVEE_EVAL_HOST=127.0.0.1
+Environment=LEVEE_EVAL_PORT=8080
+Environment=LEVEE_EVAL_WORKERS=4
+# Put LEVEE_EVAL_API_KEY=... in this file (chmod 600) rather than here
+EnvironmentFile=-/etc/levee-eval.env
+ExecStart=/opt/levee_eval_api/.venv/bin/gunicorn -c deploy/gunicorn.conf.py levee_eval.wsgi:application
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

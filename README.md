@@ -7,6 +7,7 @@ This repository contains a de-identified research release for a transparent leve
 - paper/english/: IEEE-style English LaTeX manuscript, figures, PDF, and references.
 - paper/chinese/: Chinese working manuscripts and chapter drafts.
 - data/875_benchmark/: controlled 875-scenario benchmark and reference-rule implementation.
+- delivery/levee_eval_api/: collaborator integration package; the delivered rule-chain model behind a JSON/HTTP service (standard library only), with docs, examples, deployment files and an 875-sample regression test.
 - data/supplementary/: indicator definitions, sensitivity analyses, parameter files, and engineering-case materials.
 - experiments/analysis/: reproducible scripts, logs, metrics, figures, and multi-seed robustness analyses.
 - inspection/audit/: de-identified inspection audit tables and summaries.

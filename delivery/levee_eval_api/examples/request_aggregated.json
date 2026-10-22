@@ -1,0 +1,91 @@
+{
+  "request_id": "demo-0002",
+  "section": {
+    "section_id": "DEMO-K0+500",
+    "is_lake_levee": false,
+    "crest_elevation_m": 36.84,
+    "design_flood_level_m": 34.04,
+    "crest_width_m": 8.5,
+    "outer_slope_ratio": 3.0,
+    "inner_slope_ratio": 3.2,
+    "foundation_class": "B",
+    "control_layer": {
+      "name": "粉细砂（合成示例）",
+      "Gs": 2.65,
+      "e": 0.7,
+      "J_allow": 0.25
+    },
+    "soil_layers": [
+      {
+        "name": "粉质黏土（合成示例）",
+        "Gs": 2.72,
+        "e": 0.82,
+        "thickness_m": 3.5,
+        "k_cm_s": 2e-05,
+        "J_allow": 0.45
+      },
+      {
+        "name": "粉细砂（合成示例）",
+        "Gs": 2.65,
+        "e": 0.7,
+        "thickness_m": 2.0,
+        "k_cm_s": 0.00488,
+        "J_allow": 0.25
+      }
+    ]
+  },
+  "computation": {
+    "foundation_gradient": 0.82,
+    "body_gradient": 0.3,
+    "contact_gradient": 0.45,
+    "back_slope_fos": 1.42,
+    "front_slope_fos": 1.38
+  },
+  "survey": {
+    "scour_depth_m": 0.2,
+    "soft_foundation_settlement_cm": null
+  },
+  "records": {
+    "fill_quality": "质量一般",
+    "crossing_structure_class": "不涉及",
+    "historical_dangers": [
+      {
+        "type": "蚁穴",
+        "reinforced": true,
+        "severity": "轻微"
+      }
+    ]
+  },
+  "qualitative": {
+    "A4": "良",
+    "A8": "不涉及",
+    "A9": "不涉及",
+    "B2": "符合",
+    "B4": "不涉及",
+    "C2": "一般",
+    "C6": "不涉及",
+    "D4": "不涉及",
+    "D5": "轻微",
+    "E1": "一般",
+    "E2": "基本健全",
+    "E3": "基本满足",
+    "E4": "基本满足",
+    "E5": "部分处置"
+  },
+  "calculated": {
+    "overtopping": {
+      "discharge": 0.0,
+      "allowable_discharge": 0.02
+    }
+  },
+  "inspection": {
+    "coverage": "complete",
+    "mode": "aggregated",
+    "aggregated": {
+      "weighted_density_per_100m": 1.2,
+      "evidence_level": 2,
+      "gate_cap": "B",
+      "note": "调用方系统按交付规则汇总"
+    }
+  }
+}

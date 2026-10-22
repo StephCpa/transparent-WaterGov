@@ -1,0 +1,4 @@
+# The service itself needs only the Python standard library (Python >= 3.10).
+# Production WSGI servers (install one):
+gunicorn==23.0.0; sys_platform != "win32"
+waitress==3.0.2; sys_platform == "win32"

@@ -1,0 +1,7 @@
+**/__pycache__
+**/*.pyc
+tests
+tools
+docs
+examples
+*.zip

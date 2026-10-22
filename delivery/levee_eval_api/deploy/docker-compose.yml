@@ -1,0 +1,18 @@
+# docker compose -f deploy/docker-compose.yml up -d --build   (run from the package root)
+services:
+  levee-eval:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: levee-eval:1.0.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"     # expose through the reverse proxy, not directly
+    environment:
+      LEVEE_EVAL_WORKERS: "4"
+      LEVEE_EVAL_API_KEY: "${LEVEE_EVAL_API_KEY:-}"
+      LEVEE_EVAL_CORS_ORIGINS: "${LEVEE_EVAL_CORS_ORIGINS:-}"
+      LEVEE_EVAL_MAX_BODY_MB: "5"
+    read_only: true
+    tmpfs:
+      - /tmp

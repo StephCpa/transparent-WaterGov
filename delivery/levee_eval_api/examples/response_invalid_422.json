@@ -1,0 +1,35 @@
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "请求字段校验未通过",
+    "details": [
+      {
+        "field": "section.crest_elevation_m",
+        "reason": "type_number_required"
+      },
+      {
+        "field": "computation.back_slope_fos",
+        "reason": "required"
+      },
+      {
+        "field": "records.fill_quality",
+        "reason": "not_in_enum",
+        "allowed": [
+          "质量较好",
+          "质量一般",
+          "质量较差"
+        ]
+      },
+      {
+        "field": "qualitative.E1",
+        "reason": "not_in_enum",
+        "allowed": [
+          "完善",
+          "一般",
+          "差"
+        ]
+      }
+    ]
+  },
+  "trace_id": "<服务端生成或回传X-Request-ID>"
+}

@@ -1,0 +1,614 @@
+{
+  "api_version": "1.0.0",
+  "count": 3,
+  "succeeded": 2,
+  "failed": 1,
+  "results": [
+    {
+      "index": 0,
+      "ok": true,
+      "response": {
+        "request_id": "demo-0001",
+        "section_id": "DEMO-K0+500",
+        "api_version": "1.0.0",
+        "model": {
+          "name": "failure-response / safety-barrier rule chain (Chapter 5)",
+          "files": {
+            "failure_mode_indicator_matrix.json": "6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088",
+            "failure_response_barrier_model.py": "c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa",
+            "safety_evaluation.py": "89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb"
+          }
+        },
+        "result": {
+          "score": 67.5529,
+          "grade": "B",
+          "grade_label": "基本安全",
+          "model_grade": "B",
+          "grade_after_observation_gate": "B",
+          "gate_reasons": [
+            "C1堤基渗透比降: i/i_cr=0.84接近临界"
+          ],
+          "rho": 0.324471,
+          "dominant_mode": {
+            "code": "seepage",
+            "name": "渗流破坏"
+          },
+          "barrier": {
+            "ability": 0.71032,
+            "coverage": 1.0,
+            "lambda": 0.5
+          },
+          "observation_gate": {
+            "cap": "B",
+            "note": "无人机渗漏点位于敏感部位或多点出现，最高等级限制为B级"
+          },
+          "inspection_evidence": {
+            "mode": "events",
+            "weighted_density_per_100m": 1.2,
+            "evidence_level": 2,
+            "gate_cap": "B",
+            "note": "无人机渗漏点位于敏感部位或多点出现，最高等级限制为B级",
+            "event_count": 1,
+            "weighted_event_count": 1.2,
+            "segment_length_m": 100.0,
+            "events": [
+              {
+                "position_weight": 1.2,
+                "repeat_weight": 1.0,
+                "weighted_value": 1.2,
+                "sensitive_position": true,
+                "severe_sign": false,
+                "repeat_count": 1
+              }
+            ]
+          },
+          "mode_responses": {
+            "overtopping": {
+              "name": "漫顶失效",
+              "weight": 0.172618,
+              "raw": 0.0,
+              "adjusted": 0.0
+            },
+            "seepage": {
+              "name": "渗流破坏",
+              "weight": 0.408463,
+              "raw": 0.417832,
+              "adjusted": 0.453064
+            },
+            "slope_instability": {
+              "name": "边坡失稳",
+              "weight": 0.235018,
+              "raw": 0.080931,
+              "adjusted": 0.091704
+            },
+            "scour": {
+              "name": "冲刷破坏",
+              "weight": 0.075034,
+              "raw": 0.11044,
+              "adjusted": 0.12467
+            },
+            "crossing_structure": {
+              "name": "穿堤建筑物失效",
+              "weight": 0.108867,
+              "raw": 0.026502,
+              "adjusted": 0.030239
+            }
+          },
+          "indicator_scores": {
+            "A1": 100,
+            "A2": 80,
+            "A3": 100,
+            "A4": 80.0,
+            "A5": 100,
+            "A6": 80,
+            "A7": 100,
+            "A8": 100.0,
+            "A9": 100.0,
+            "B1": 100,
+            "B2": 100.0,
+            "B3": 100.0,
+            "B4": 100.0,
+            "C1": 28.6231,
+            "C2": 60.0,
+            "C3": 60.0,
+            "C4": 90.4463,
+            "C5": 78.5041,
+            "C6": 100.0,
+            "D1": 86.6667,
+            "D2": 96.6667,
+            "D3": 100,
+            "D4": 100.0,
+            "D5": 70.0,
+            "E1": 80.0,
+            "E2": 70.0,
+            "E3": 70.0,
+            "E4": 70.0,
+            "E5": 60.0
+          },
+          "missing_indicators": [],
+          "dominant_mode_contributions": [
+            {
+              "indicator": "C1",
+              "score": 28.6231,
+              "risk_response": 0.844848,
+              "weight_in_mode": 0.235054,
+              "contribution": 0.198585,
+              "contribution_rate": 0.475275,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C5",
+              "score": 78.5041,
+              "risk_response": 0.463636,
+              "weight_in_mode": 0.235054,
+              "contribution": 0.10898,
+              "contribution_rate": 0.260823,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C4",
+              "score": 90.4463,
+              "risk_response": 0.309091,
+              "weight_in_mode": 0.148118,
+              "contribution": 0.045782,
+              "contribution_rate": 0.10957,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C2",
+              "score": 60.0,
+              "risk_response": 0.4,
+              "weight_in_mode": 0.05077,
+              "contribution": 0.020308,
+              "contribution_rate": 0.048603,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "C3",
+              "score": 60.0,
+              "risk_response": 0.4,
+              "weight_in_mode": 0.034227,
+              "contribution": 0.013691,
+              "contribution_rate": 0.032767,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A2",
+              "score": 80,
+              "risk_response": 0.2,
+              "weight_in_mode": 0.058557,
+              "contribution": 0.011711,
+              "contribution_rate": 0.028028,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A6",
+              "score": 80,
+              "risk_response": 0.2,
+              "weight_in_mode": 0.058557,
+              "contribution": 0.011711,
+              "contribution_rate": 0.028028,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "D5",
+              "score": 70.0,
+              "risk_response": 0.3,
+              "weight_in_mode": 0.023545,
+              "contribution": 0.007064,
+              "contribution_rate": 0.016906,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A5",
+              "score": 100,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.005334,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A7",
+              "score": 100,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.044552,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A8",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.02972,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A9",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.003266,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "C6",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.073246,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            }
+          ],
+          "seepage_checks": {
+            "control_layer": {
+              "name": "粉细砂（合成示例）",
+              "Gs": 2.65,
+              "e": 0.7
+            },
+            "C1": {
+              "gradient": 0.82,
+              "critical_gradient": 0.970588,
+              "ratio": 0.844848,
+              "state": "near_critical"
+            },
+            "C4": {
+              "gradient": 0.3,
+              "critical_gradient": 0.970588,
+              "ratio": 0.309091,
+              "state": "below_gate"
+            },
+            "C5": {
+              "gradient": 0.45,
+              "critical_gradient": 0.970588,
+              "ratio": 0.463636,
+              "state": "below_gate"
+            }
+          }
+        },
+        "warnings": [
+          {
+            "code": "not_applicable_scored_100",
+            "message": "无穿堤建筑物（不涉及），A3按交付模型编码为100分",
+            "indicator": "A3"
+          },
+          {
+            "code": "not_applicable_scored_100",
+            "message": "未给出软基沉降（非软基段），A5按交付模型编码为100分",
+            "indicator": "A5"
+          },
+          {
+            "code": "derived_from_records",
+            "message": "A7由堤基类型B推定为100分",
+            "indicator": "A7"
+          }
+        ],
+        "notice": "A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。",
+        "provenance": {
+          "evaluated_at": "2026-10-22T00:00:00+00:00",
+          "input_sha256": "6e7909adc0f6f0845b80c3e2133eb453f3329fd35e19e3ea8832fd45f7382220"
+        }
+      }
+    },
+    {
+      "index": 1,
+      "ok": true,
+      "response": {
+        "request_id": "demo-0002",
+        "section_id": "DEMO-K0+500",
+        "api_version": "1.0.0",
+        "model": {
+          "name": "failure-response / safety-barrier rule chain (Chapter 5)",
+          "files": {
+            "failure_mode_indicator_matrix.json": "6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088",
+            "failure_response_barrier_model.py": "c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa",
+            "safety_evaluation.py": "89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb"
+          }
+        },
+        "result": {
+          "score": 67.5529,
+          "grade": "B",
+          "grade_label": "基本安全",
+          "model_grade": "B",
+          "grade_after_observation_gate": "B",
+          "gate_reasons": [
+            "C1堤基渗透比降: i/i_cr=0.84接近临界"
+          ],
+          "rho": 0.324471,
+          "dominant_mode": {
+            "code": "seepage",
+            "name": "渗流破坏"
+          },
+          "barrier": {
+            "ability": 0.71032,
+            "coverage": 1.0,
+            "lambda": 0.5
+          },
+          "observation_gate": {
+            "cap": "B",
+            "note": "调用方系统按交付规则汇总"
+          },
+          "inspection_evidence": {
+            "mode": "aggregated",
+            "weighted_density_per_100m": 1.2,
+            "evidence_level": 2,
+            "gate_cap": "B",
+            "note": "调用方系统按交付规则汇总"
+          },
+          "mode_responses": {
+            "overtopping": {
+              "name": "漫顶失效",
+              "weight": 0.172618,
+              "raw": 0.0,
+              "adjusted": 0.0
+            },
+            "seepage": {
+              "name": "渗流破坏",
+              "weight": 0.408463,
+              "raw": 0.417832,
+              "adjusted": 0.453064
+            },
+            "slope_instability": {
+              "name": "边坡失稳",
+              "weight": 0.235018,
+              "raw": 0.080931,
+              "adjusted": 0.091704
+            },
+            "scour": {
+              "name": "冲刷破坏",
+              "weight": 0.075034,
+              "raw": 0.11044,
+              "adjusted": 0.12467
+            },
+            "crossing_structure": {
+              "name": "穿堤建筑物失效",
+              "weight": 0.108867,
+              "raw": 0.026502,
+              "adjusted": 0.030239
+            }
+          },
+          "indicator_scores": {
+            "A1": 100,
+            "A2": 80,
+            "A3": 100,
+            "A4": 80.0,
+            "A5": 100,
+            "A6": 80,
+            "A7": 100,
+            "A8": 100.0,
+            "A9": 100.0,
+            "B1": 100,
+            "B2": 100.0,
+            "B3": 100.0,
+            "B4": 100.0,
+            "C1": 28.6231,
+            "C2": 60.0,
+            "C3": 60.0,
+            "C4": 90.4463,
+            "C5": 78.5041,
+            "C6": 100.0,
+            "D1": 86.6667,
+            "D2": 96.6667,
+            "D3": 100,
+            "D4": 100.0,
+            "D5": 70.0,
+            "E1": 80.0,
+            "E2": 70.0,
+            "E3": 70.0,
+            "E4": 70.0,
+            "E5": 60.0
+          },
+          "missing_indicators": [],
+          "dominant_mode_contributions": [
+            {
+              "indicator": "C1",
+              "score": 28.6231,
+              "risk_response": 0.844848,
+              "weight_in_mode": 0.235054,
+              "contribution": 0.198585,
+              "contribution_rate": 0.475275,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C5",
+              "score": 78.5041,
+              "risk_response": 0.463636,
+              "weight_in_mode": 0.235054,
+              "contribution": 0.10898,
+              "contribution_rate": 0.260823,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C4",
+              "score": 90.4463,
+              "risk_response": 0.309091,
+              "weight_in_mode": 0.148118,
+              "contribution": 0.045782,
+              "contribution_rate": 0.10957,
+              "source": "physical_response"
+            },
+            {
+              "indicator": "C2",
+              "score": 60.0,
+              "risk_response": 0.4,
+              "weight_in_mode": 0.05077,
+              "contribution": 0.020308,
+              "contribution_rate": 0.048603,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "C3",
+              "score": 60.0,
+              "risk_response": 0.4,
+              "weight_in_mode": 0.034227,
+              "contribution": 0.013691,
+              "contribution_rate": 0.032767,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A2",
+              "score": 80,
+              "risk_response": 0.2,
+              "weight_in_mode": 0.058557,
+              "contribution": 0.011711,
+              "contribution_rate": 0.028028,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A6",
+              "score": 80,
+              "risk_response": 0.2,
+              "weight_in_mode": 0.058557,
+              "contribution": 0.011711,
+              "contribution_rate": 0.028028,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "D5",
+              "score": 70.0,
+              "risk_response": 0.3,
+              "weight_in_mode": 0.023545,
+              "contribution": 0.007064,
+              "contribution_rate": 0.016906,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A5",
+              "score": 100,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.005334,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A7",
+              "score": 100,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.044552,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A8",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.02972,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "A9",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.003266,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            },
+            {
+              "indicator": "C6",
+              "score": 100.0,
+              "risk_response": 0.0,
+              "weight_in_mode": 0.073246,
+              "contribution": 0.0,
+              "contribution_rate": 0.0,
+              "source": "indicator_score"
+            }
+          ],
+          "seepage_checks": {
+            "control_layer": {
+              "name": "粉细砂（合成示例）",
+              "Gs": 2.65,
+              "e": 0.7
+            },
+            "C1": {
+              "gradient": 0.82,
+              "critical_gradient": 0.970588,
+              "ratio": 0.844848,
+              "state": "near_critical"
+            },
+            "C4": {
+              "gradient": 0.3,
+              "critical_gradient": 0.970588,
+              "ratio": 0.309091,
+              "state": "below_gate"
+            },
+            "C5": {
+              "gradient": 0.45,
+              "critical_gradient": 0.970588,
+              "ratio": 0.463636,
+              "state": "below_gate"
+            }
+          }
+        },
+        "warnings": [
+          {
+            "code": "not_applicable_scored_100",
+            "message": "无穿堤建筑物（不涉及），A3按交付模型编码为100分",
+            "indicator": "A3"
+          },
+          {
+            "code": "not_applicable_scored_100",
+            "message": "未给出软基沉降（非软基段），A5按交付模型编码为100分",
+            "indicator": "A5"
+          },
+          {
+            "code": "derived_from_records",
+            "message": "A7由堤基类型B推定为100分",
+            "indicator": "A7"
+          }
+        ],
+        "notice": "A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。",
+        "provenance": {
+          "evaluated_at": "2026-10-22T00:00:00+00:00",
+          "input_sha256": "29ba1ea517db85f4c478989c2dbacd983360549e094c9b3af0c6b027c9b31558"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "ok": false,
+      "request_id": "demo-0004",
+      "error": {
+        "code": "validation_failed",
+        "message": "请求字段校验未通过",
+        "details": [
+          {
+            "field": "section.crest_elevation_m",
+            "reason": "type_number_required"
+          },
+          {
+            "field": "computation.back_slope_fos",
+            "reason": "required"
+          },
+          {
+            "field": "records.fill_quality",
+            "reason": "not_in_enum",
+            "allowed": [
+              "质量较好",
+              "质量一般",
+              "质量较差"
+            ]
+          },
+          {
+            "field": "qualitative.E1",
+            "reason": "not_in_enum",
+            "allowed": [
+              "完善",
+              "一般",
+              "差"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

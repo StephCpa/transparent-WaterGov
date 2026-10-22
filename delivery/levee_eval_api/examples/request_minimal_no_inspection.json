@@ -1,0 +1,41 @@
+{
+  "request_id": "demo-0003",
+  "section": {
+    "section_id": "DEMO-K0+500",
+    "is_lake_levee": false,
+    "crest_elevation_m": 36.84,
+    "design_flood_level_m": 34.04,
+    "crest_width_m": 8.5,
+    "outer_slope_ratio": 3.0,
+    "inner_slope_ratio": 3.2,
+    "foundation_class": "B",
+    "control_layer": {
+      "name": "粉细砂（合成示例）",
+      "Gs": 2.65,
+      "e": 0.7,
+      "J_allow": 0.25
+    }
+  },
+  "computation": {
+    "foundation_gradient": 0.82,
+    "body_gradient": 0.3,
+    "contact_gradient": 0.45,
+    "back_slope_fos": 1.42,
+    "front_slope_fos": 1.38
+  },
+  "survey": {
+    "scour_depth_m": 0.2,
+    "soft_foundation_settlement_cm": null
+  },
+  "records": {
+    "fill_quality": "质量一般",
+    "crossing_structure_class": "不涉及",
+    "historical_dangers": [
+      {
+        "type": "蚁穴",
+        "reinforced": true,
+        "severity": "轻微"
+      }
+    ]
+  }
+}

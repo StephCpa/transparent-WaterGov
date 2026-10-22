@@ -1,0 +1,1767 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "堤防渗流安全评价服务",
+    "version": "1.0.0",
+    "description": "失效响应—安全屏障规则链评价模型的HTTP接口。A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "EvaluateRequest": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "description": "调用方请求编号，原样返回，便于日志关联"
+          },
+          "section": {
+            "type": "object",
+            "description": "评价单元（代表断面）基本信息",
+            "properties": {
+              "section_id": {
+                "type": "string",
+                "description": "断面或评价单元编号，如K0+500，原样返回",
+                "x-internal-name": "桩号"
+              },
+              "is_lake_levee": {
+                "type": "boolean",
+                "description": "是否为湖堤；决定规范超高（湖堤2.5 m，河堤2.0 m）",
+                "x-internal-name": "是否为湖堤",
+                "x-indicator": "B1"
+              },
+              "crest_elevation_m": {
+                "type": "number",
+                "description": "堤顶高程（单位：m）",
+                "x-internal-name": "堤顶高程_m",
+                "x-indicator": "B1"
+              },
+              "design_flood_level_m": {
+                "type": "number",
+                "description": "设计洪水位（单位：m）",
+                "x-internal-name": "设计洪水位_m",
+                "x-indicator": "B1"
+              },
+              "crest_width_m": {
+                "type": "number",
+                "description": "堤顶宽度（设计标准7.5 m）（单位：m）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "x-internal-name": "堤顶宽度_m",
+                "x-indicator": "A1"
+              },
+              "outer_slope_ratio": {
+                "type": "number",
+                "description": "临水坡（外坡）坡比1:m中的m（标准2.5）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "x-internal-name": "外坡坡比",
+                "x-indicator": "A1"
+              },
+              "inner_slope_ratio": {
+                "type": "number",
+                "description": "背水坡（内坡）坡比1:m中的m（标准3.0）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "x-internal-name": "内坡坡比",
+                "x-indicator": "A1"
+              },
+              "foundation_class": {
+                "type": "string",
+                "description": "堤基类型（地勘分类）；未给出qualitative.A7时用于A7：C类70分、D类60分、其余100分",
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ],
+                "x-internal-name": "堤基类型",
+                "x-indicator": "A7"
+              },
+              "control_layer": {
+                "type": "object",
+                "description": "渗流控制土层；与soil_layers至少给出其一",
+                "x-indicator": "C1,C4,C5",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "控制土层名称",
+                    "x-internal-name": "控制土层名称"
+                  },
+                  "Gs": {
+                    "type": "number",
+                    "description": "控制土层土粒比重",
+                    "minimum": 2.0,
+                    "maximum": 3.2,
+                    "x-internal-name": "控制层Gs"
+                  },
+                  "e": {
+                    "type": "number",
+                    "description": "控制土层孔隙比",
+                    "minimum": 0.1,
+                    "maximum": 3.0,
+                    "x-internal-name": "控制层e"
+                  },
+                  "J_allow": {
+                    "type": "number",
+                    "description": "控制土层允许渗透比降（仅记录）",
+                    "minimum": 0,
+                    "x-internal-name": "控制渗透比降J_allow"
+                  }
+                },
+                "required": [
+                  "Gs",
+                  "e"
+                ],
+                "additionalProperties": false
+              },
+              "soil_layers": {
+                "type": "array",
+                "description": "土层参数表；未给control_layer时取临界比降最小的土层为控制层",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "土层名称",
+                      "x-internal-name": "土层名称"
+                    },
+                    "Gs": {
+                      "type": "number",
+                      "description": "土粒比重",
+                      "minimum": 2.0,
+                      "maximum": 3.2,
+                      "x-internal-name": "Gs"
+                    },
+                    "e": {
+                      "type": "number",
+                      "description": "孔隙比",
+                      "minimum": 0.1,
+                      "maximum": 3.0,
+                      "x-internal-name": "e"
+                    },
+                    "thickness_m": {
+                      "type": "number",
+                      "description": "厚度（单位：m）",
+                      "minimum": 0,
+                      "x-internal-name": "厚度_m"
+                    },
+                    "k_cm_s": {
+                      "type": "number",
+                      "description": "渗透系数（单位：cm/s）",
+                      "minimum": 0,
+                      "x-internal-name": "渗透系数_cm_s"
+                    },
+                    "J_allow": {
+                      "type": "number",
+                      "description": "允许渗透比降",
+                      "minimum": 0,
+                      "x-internal-name": "允许渗透比降J_allow"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "Gs",
+                    "e"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "section_id",
+              "is_lake_levee",
+              "crest_elevation_m",
+              "design_flood_level_m",
+              "crest_width_m",
+              "outer_slope_ratio",
+              "inner_slope_ratio"
+            ],
+            "additionalProperties": false
+          },
+          "computation": {
+            "type": "object",
+            "description": "渗流计算与边坡稳定复核结果（同一水位工况）",
+            "properties": {
+              "foundation_gradient": {
+                "type": "number",
+                "description": "堤基渗透比降i（出口法向出逸梯度）",
+                "minimum": 0,
+                "x-internal-name": "渗透比降i",
+                "x-indicator": "C1"
+              },
+              "body_gradient": {
+                "type": "number",
+                "description": "堤身渗透比降",
+                "minimum": 0,
+                "x-internal-name": "堤身渗透比降i",
+                "x-indicator": "C4"
+              },
+              "contact_gradient": {
+                "type": "number",
+                "description": "堤基接触面渗透比降",
+                "minimum": 0,
+                "x-internal-name": "接触面渗透比降i",
+                "x-indicator": "C5"
+              },
+              "body_Gs": {
+                "type": "number",
+                "description": "堤身土粒比重（缺省取控制层）",
+                "minimum": 2.0,
+                "maximum": 3.2,
+                "x-internal-name": "堤身Gs",
+                "x-indicator": "C4"
+              },
+              "body_e": {
+                "type": "number",
+                "description": "堤身孔隙比（缺省取控制层）",
+                "minimum": 0.1,
+                "maximum": 3.0,
+                "x-internal-name": "堤身e",
+                "x-indicator": "C4"
+              },
+              "back_slope_fos": {
+                "type": "number",
+                "description": "背水坡抗滑稳定安全系数（正常运用）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "x-internal-name": "背水坡FoS_正常",
+                "x-indicator": "D1"
+              },
+              "front_slope_fos": {
+                "type": "number",
+                "description": "临水坡抗滑稳定安全系数（稳态）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "x-internal-name": "临水坡FoS",
+                "x-indicator": "D2"
+              }
+            },
+            "required": [
+              "foundation_gradient",
+              "body_gradient",
+              "contact_gradient",
+              "back_slope_fos",
+              "front_slope_fos"
+            ],
+            "additionalProperties": false
+          },
+          "survey": {
+            "type": "object",
+            "description": "测量与检查资料",
+            "properties": {
+              "scour_depth_m": {
+                "type": "number",
+                "description": "堤脚冲刷深度（单位：m）",
+                "minimum": 0,
+                "x-internal-name": "冲刷深度_m",
+                "x-indicator": "D3"
+              },
+              "soft_foundation_settlement_cm": {
+                "type": "number",
+                "description": "软基段沉降量；缺省或null表示非软基段（A5按100分，并给出提示）（单位：cm）",
+                "minimum": 0,
+                "nullable": true,
+                "x-internal-name": "软基段_沉降量_cm",
+                "x-indicator": "A5"
+              },
+              "soft_foundation_settlement_diff_cm": {
+                "type": "number",
+                "description": "软基段沉降差；给出沉降量时必填（单位：cm）",
+                "minimum": 0,
+                "nullable": true,
+                "x-internal-name": "软基段_沉降差_cm",
+                "x-indicator": "A5"
+              }
+            },
+            "required": [
+              "scour_depth_m"
+            ],
+            "additionalProperties": false
+          },
+          "records": {
+            "type": "object",
+            "description": "台账与检查结论",
+            "properties": {
+              "fill_quality": {
+                "type": "string",
+                "description": "堤身填土质量（地勘结论）",
+                "enum": [
+                  "质量较好",
+                  "质量一般",
+                  "质量较差"
+                ],
+                "x-internal-name": "填土质量",
+                "x-indicator": "A2"
+              },
+              "crossing_structure_class": {
+                "type": "string",
+                "description": "穿堤建筑物安全检测结论；无穿堤建筑物填“不涉及”（按交付模型编码为100分，并给出提示）",
+                "enum": [
+                  "一类",
+                  "二类",
+                  "三类",
+                  "四类",
+                  "1类",
+                  "2类",
+                  "3类",
+                  "4类",
+                  "加固",
+                  "改建",
+                  "重建",
+                  "不涉及"
+                ],
+                "x-internal-name": "检测结论",
+                "x-indicator": "A3"
+              },
+              "historical_dangers": {
+                "type": "array",
+                "description": "本评价单元的历史险情与隐患记录；已核查无记录时传空数组",
+                "x-indicator": "A6,D3",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "险情类型，如管涌、散浸、渗漏、崩岸、蚁穴、隐患",
+                      "x-internal-name": "险情类型"
+                    },
+                    "reinforced": {
+                      "type": "boolean",
+                      "description": "是否已加固处置",
+                      "x-internal-name": "是否已加固"
+                    },
+                    "severity": {
+                      "type": "string",
+                      "description": "严重程度",
+                      "enum": [
+                        "无",
+                        "轻微",
+                        "中度",
+                        "严重"
+                      ],
+                      "x-internal-name": "严重程度"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "reinforced"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "fill_quality",
+              "crossing_structure_class",
+              "historical_dangers"
+            ],
+            "additionalProperties": false
+          },
+          "qualitative": {
+            "type": "object",
+            "description": "定性指标结论：键为指标代码，值为分档名称或0～100分；未给出的指标按缺失处理（不默认100分）",
+            "properties": {
+              "A4": {
+                "description": "A4：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "优",
+                      "良",
+                      "中",
+                      "一般",
+                      "差",
+                      "极差"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "A6": {
+                "description": "A6：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "无",
+                      "轻微",
+                      "中度",
+                      "严重"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "A7": {
+                "description": "A7：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "良好",
+                      "一般",
+                      "未处理",
+                      "险情"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "A8": {
+                "description": "A8：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "不涉及",
+                      "密实",
+                      "良好",
+                      "轻微渗漏",
+                      "集中渗漏",
+                      "严重渗漏"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "A9": {
+                "description": "A9：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "不涉及",
+                      "无影响",
+                      "轻微影响",
+                      "存在危险",
+                      "危险"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "B2": {
+                "description": "B2：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "符合",
+                      "待复核",
+                      "不符合"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "B3": {
+                "description": "B3：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "满足",
+                      "待复核",
+                      "略超标",
+                      "严重超标",
+                      "超标"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "B4": {
+                "description": "B4：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "不涉及",
+                      "完全符合",
+                      "符合",
+                      "待复核",
+                      "高程不足",
+                      "不达标"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "C2": {
+                "description": "C2：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "通畅",
+                      "一般",
+                      "局部淤积",
+                      "局部堵塞",
+                      "失效"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "C6": {
+                "description": "C6：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "不涉及",
+                      "无渗漏",
+                      "明显渗漏",
+                      "失稳",
+                      "带砂"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "D4": {
+                "description": "D4：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "不涉及",
+                      "全部满足",
+                      "满足",
+                      "临界状态",
+                      "临界",
+                      "不满足"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "D5": {
+                "description": "D5：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "无",
+                      "轻微",
+                      "明显",
+                      "严重"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "E1": {
+                "description": "E1：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "完善",
+                      "一般",
+                      "差"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "E2": {
+                "description": "E2：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "健全",
+                      "基本健全",
+                      "不健全"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "E3": {
+                "description": "E3：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "完备",
+                      "基本满足",
+                      "缺失"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "E4": {
+                "description": "E4：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "完备",
+                      "基本满足",
+                      "严重缺失",
+                      "缺失"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              },
+              "E5": {
+                "description": "E5：分档名称或0～100分",
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "全部处置",
+                      "部分处置",
+                      "未执行"
+                    ]
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "calculated": {
+            "type": "object",
+            "description": "可替代定性结论的计算量（qualitative中给出同一指标时以qualitative为准）",
+            "properties": {
+              "flood_standard": {
+                "type": "object",
+                "description": "防洪标准",
+                "x-indicator": "B2",
+                "properties": {
+                  "current_return_period_a": {
+                    "type": "number",
+                    "description": "现状防洪标准（重现期）（单位：a）",
+                    "minimum": 0,
+                    "x-internal-name": "现状防洪标准_年"
+                  },
+                  "approved_return_period_a": {
+                    "type": "number",
+                    "description": "批复防洪标准（重现期）（单位：a）",
+                    "minimum": 0,
+                    "x-internal-name": "批复防洪标准_年"
+                  }
+                },
+                "required": [
+                  "current_return_period_a",
+                  "approved_return_period_a"
+                ],
+                "additionalProperties": false
+              },
+              "overtopping": {
+                "type": "object",
+                "description": "越浪量复核",
+                "x-indicator": "B3",
+                "properties": {
+                  "discharge": {
+                    "type": "number",
+                    "description": "越浪量（单位：L/(s·m)）",
+                    "minimum": 0,
+                    "x-internal-name": "越浪量"
+                  },
+                  "allowable_discharge": {
+                    "type": "number",
+                    "description": "允许越浪量（单位：L/(s·m)）",
+                    "minimum": 0,
+                    "x-internal-name": "允许越浪量"
+                  }
+                },
+                "required": [
+                  "discharge",
+                  "allowable_discharge"
+                ],
+                "additionalProperties": false
+              },
+              "crossing_structure": {
+                "type": "object",
+                "description": "穿堤建筑物复核计算",
+                "x-indicator": "B4,D4",
+                "properties": {
+                  "flood_defence_elevation_m": {
+                    "type": "number",
+                    "description": "挡洪高程（与required_elevation_m同时给出用于B4）（单位：m）",
+                    "x-internal-name": "穿堤建筑物挡洪高程_m"
+                  },
+                  "required_elevation_m": {
+                    "type": "number",
+                    "description": "防洪要求高程（单位：m）",
+                    "x-internal-name": "穿堤建筑物防洪要求高程_m"
+                  },
+                  "sliding_fos": {
+                    "type": "number",
+                    "description": "抗滑安全系数（D4需六项齐全）",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤抗滑安全系数"
+                  },
+                  "overturning_fos": {
+                    "type": "number",
+                    "description": "抗倾安全系数",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤抗倾安全系数"
+                  },
+                  "bearing_fos": {
+                    "type": "number",
+                    "description": "承载力安全系数",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤承载力安全系数"
+                  },
+                  "sliding_fos_allow": {
+                    "type": "number",
+                    "description": "抗滑允许安全系数",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤抗滑允许安全系数"
+                  },
+                  "overturning_fos_allow": {
+                    "type": "number",
+                    "description": "抗倾允许安全系数",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤抗倾允许安全系数"
+                  },
+                  "bearing_fos_allow": {
+                    "type": "number",
+                    "description": "承载力允许安全系数",
+                    "minimum": 0,
+                    "x-internal-name": "穿堤承载力允许安全系数"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "inspection": {
+            "type": "object",
+            "description": "巡检证据（C3与观测门控）；缺省时C3按缺失处理",
+            "x-indicator": "C3",
+            "properties": {
+              "coverage": {
+                "type": "string",
+                "description": "巡检覆盖状态：complete为覆盖完整且在有效期内；none为未覆盖或过期（C3按缺失处理）",
+                "enum": [
+                  "complete",
+                  "none"
+                ]
+              },
+              "mode": {
+                "type": "string",
+                "description": "events：传入已确认事件，由服务按交付规则汇总；aggregated：传入已汇总的密度与门控",
+                "enum": [
+                  "events",
+                  "aggregated"
+                ],
+                "default": "events"
+              },
+              "segment_length_m": {
+                "type": "number",
+                "description": "评价段长度（events模式）（单位：m）",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "default": 100.0
+              },
+              "confirmed_events": {
+                "type": "array",
+                "description": "经人工复核确认的渗漏/管涌事件；events模式必填，无事件时传空数组；算法候选与误报不得传入",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "type": "string",
+                      "description": "位置类型（决定位置权重：普通1.0，堤脚1.2，建筑物附近1.3，结合部或历史险情附近1.5）",
+                      "enum": [
+                        "普通堤身",
+                        "堤身",
+                        "堤坡",
+                        "堤脚",
+                        "坡脚",
+                        "穿堤建筑物",
+                        "建筑物附近",
+                        "结合部",
+                        "历史险情附近"
+                      ],
+                      "default": "普通堤身",
+                      "x-internal-name": "位置类型"
+                    },
+                    "repeat_count": {
+                      "type": "integer",
+                      "description": "同一位置出现次数",
+                      "minimum": 1,
+                      "default": 1,
+                      "x-internal-name": "重复次数"
+                    },
+                    "sand": {
+                      "type": "boolean",
+                      "description": "带砂",
+                      "default": false,
+                      "x-internal-name": "带砂"
+                    },
+                    "muddy": {
+                      "type": "boolean",
+                      "description": "浑水",
+                      "default": false,
+                      "x-internal-name": "浑水"
+                    },
+                    "spouting": {
+                      "type": "boolean",
+                      "description": "冒水",
+                      "default": false,
+                      "x-internal-name": "冒水"
+                    },
+                    "clustered": {
+                      "type": "boolean",
+                      "description": "集中成簇",
+                      "default": false,
+                      "x-internal-name": "集中成簇"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "aggregated": {
+                "type": "object",
+                "description": "已汇总的巡检证据（aggregated模式）",
+                "properties": {
+                  "weighted_density_per_100m": {
+                    "type": "number",
+                    "description": "加权渗漏点密度（单位：点/100 m）",
+                    "minimum": 0,
+                    "x-internal-name": "加权渗漏点密度_点每100m"
+                  },
+                  "evidence_level": {
+                    "type": "integer",
+                    "description": "巡检证据等级0～3",
+                    "minimum": 0,
+                    "maximum": 3,
+                    "x-internal-name": "UAV证据等级"
+                  },
+                  "gate_cap": {
+                    "type": "string",
+                    "description": "观测门控等级上限（B或C；不设门控时为null）",
+                    "enum": [
+                      "B",
+                      "C"
+                    ],
+                    "nullable": true,
+                    "x-internal-name": "UAV门控等级上限"
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "门控说明",
+                    "x-internal-name": "UAV门控说明"
+                  }
+                },
+                "required": [
+                  "weighted_density_per_100m",
+                  "evidence_level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "coverage"
+            ],
+            "additionalProperties": false
+          },
+          "options": {
+            "type": "object",
+            "description": "模型参数（一般不需改动；改动时响应中给出提示）",
+            "properties": {
+              "alpha": {
+                "type": "number",
+                "description": "短板系数α",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.45
+              },
+              "barrier_lambda": {
+                "type": "number",
+                "description": "运行管理屏障强度λ",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.5
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "section",
+          "computation",
+          "survey",
+          "records"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "request_id": "demo-0001",
+          "section": {
+            "section_id": "DEMO-K0+500",
+            "is_lake_levee": false,
+            "crest_elevation_m": 36.84,
+            "design_flood_level_m": 34.04,
+            "crest_width_m": 8.5,
+            "outer_slope_ratio": 3.0,
+            "inner_slope_ratio": 3.2,
+            "foundation_class": "B",
+            "control_layer": {
+              "name": "粉细砂（合成示例）",
+              "Gs": 2.65,
+              "e": 0.7,
+              "J_allow": 0.25
+            },
+            "soil_layers": [
+              {
+                "name": "粉质黏土（合成示例）",
+                "Gs": 2.72,
+                "e": 0.82,
+                "thickness_m": 3.5,
+                "k_cm_s": 2e-05,
+                "J_allow": 0.45
+              },
+              {
+                "name": "粉细砂（合成示例）",
+                "Gs": 2.65,
+                "e": 0.7,
+                "thickness_m": 2.0,
+                "k_cm_s": 0.00488,
+                "J_allow": 0.25
+              }
+            ]
+          },
+          "computation": {
+            "foundation_gradient": 0.82,
+            "body_gradient": 0.3,
+            "contact_gradient": 0.45,
+            "back_slope_fos": 1.42,
+            "front_slope_fos": 1.38
+          },
+          "survey": {
+            "scour_depth_m": 0.2,
+            "soft_foundation_settlement_cm": null
+          },
+          "records": {
+            "fill_quality": "质量一般",
+            "crossing_structure_class": "不涉及",
+            "historical_dangers": [
+              {
+                "type": "蚁穴",
+                "reinforced": true,
+                "severity": "轻微"
+              }
+            ]
+          },
+          "qualitative": {
+            "A4": "良",
+            "A8": "不涉及",
+            "A9": "不涉及",
+            "B2": "符合",
+            "B4": "不涉及",
+            "C2": "一般",
+            "C6": "不涉及",
+            "D4": "不涉及",
+            "D5": "轻微",
+            "E1": "一般",
+            "E2": "基本健全",
+            "E3": "基本满足",
+            "E4": "基本满足",
+            "E5": "部分处置"
+          },
+          "calculated": {
+            "overtopping": {
+              "discharge": 0.0,
+              "allowable_discharge": 0.02
+            }
+          },
+          "inspection": {
+            "coverage": "complete",
+            "mode": "events",
+            "segment_length_m": 100,
+            "confirmed_events": [
+              {
+                "position": "堤脚",
+                "repeat_count": 1,
+                "sand": false,
+                "muddy": false,
+                "spouting": false,
+                "clustered": false
+              }
+            ]
+          }
+        }
+      },
+      "EvaluateResponse": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "section_id": {
+            "type": "string"
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "model": {
+            "type": "object",
+            "description": "模型名称与各模型文件sha256"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "number",
+                "description": "安全得分S=100(1-ρ)"
+              },
+              "grade": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C"
+                ],
+                "nullable": true,
+                "description": "最终等级（经观测门控与硬约束门控）"
+              },
+              "grade_label": {
+                "type": "string"
+              },
+              "model_grade": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C"
+                ],
+                "nullable": true,
+                "description": "仅按得分划分的等级"
+              },
+              "grade_after_observation_gate": {
+                "type": "string",
+                "enum": [
+                  "A",
+                  "B",
+                  "C"
+                ],
+                "nullable": true
+              },
+              "gate_reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "硬约束门控触发原因"
+              },
+              "rho": {
+                "type": "number",
+                "description": "综合风险度量ρ"
+              },
+              "dominant_mode": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "overtopping",
+                      "seepage",
+                      "slope_instability",
+                      "scour",
+                      "crossing_structure"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "barrier": {
+                "type": "object",
+                "properties": {
+                  "ability": {
+                    "type": "number",
+                    "nullable": true
+                  },
+                  "coverage": {
+                    "type": "number"
+                  },
+                  "lambda": {
+                    "type": "number"
+                  }
+                }
+              },
+              "observation_gate": {
+                "type": "object",
+                "properties": {
+                  "cap": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "B",
+                      "C"
+                    ],
+                    "nullable": true
+                  },
+                  "note": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "inspection_evidence": {
+                "type": "object",
+                "nullable": true
+              },
+              "mode_responses": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "weight": {
+                      "type": "number"
+                    },
+                    "raw": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "adjusted": {
+                      "type": "number",
+                      "nullable": true
+                    }
+                  }
+                }
+              },
+              "indicator_scores": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number",
+                  "nullable": true
+                }
+              },
+              "missing_indicators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "dominant_mode_contributions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "indicator": {
+                      "type": "string"
+                    },
+                    "score": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "risk_response": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "weight_in_mode": {
+                      "type": "number"
+                    },
+                    "contribution": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "contribution_rate": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "physical_response",
+                        "indicator_score"
+                      ]
+                    }
+                  }
+                }
+              },
+              "contributions_by_mode": {
+                "type": "object",
+                "description": "detail=summary时省略",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "indicator": {
+                        "type": "string"
+                      },
+                      "score": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "risk_response": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "weight_in_mode": {
+                        "type": "number"
+                      },
+                      "contribution": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "contribution_rate": {
+                        "type": "number",
+                        "nullable": true
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "physical_response",
+                          "indicator_score"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "seepage_checks": {
+                "type": "object",
+                "properties": {
+                  "control_layer": {
+                    "type": "object"
+                  },
+                  "C1": {
+                    "type": "object",
+                    "properties": {
+                      "gradient": {
+                        "type": "number"
+                      },
+                      "critical_gradient": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      },
+                      "state": {
+                        "type": "string",
+                        "enum": [
+                          "below_gate",
+                          "near_critical",
+                          "critical"
+                        ]
+                      }
+                    }
+                  },
+                  "C4": {
+                    "type": "object",
+                    "properties": {
+                      "gradient": {
+                        "type": "number"
+                      },
+                      "critical_gradient": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      },
+                      "state": {
+                        "type": "string",
+                        "enum": [
+                          "below_gate",
+                          "near_critical",
+                          "critical"
+                        ]
+                      }
+                    }
+                  },
+                  "C5": {
+                    "type": "object",
+                    "properties": {
+                      "gradient": {
+                        "type": "number"
+                      },
+                      "critical_gradient": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      },
+                      "state": {
+                        "type": "string",
+                        "enum": [
+                          "below_gate",
+                          "near_critical",
+                          "critical"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "indicator": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "notice": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "evaluated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "input_sha256": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BatchRequest": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "$ref": "#/components/schemas/EvaluateRequest"
+            }
+          }
+        }
+      },
+      "BatchResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "succeeded": {
+            "type": "integer"
+          },
+          "failed": {
+            "type": "integer"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "ok": {
+                  "type": "boolean"
+                },
+                "response": {
+                  "$ref": "#/components/schemas/EvaluateResponse"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "健康检查（不需要API Key）",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "服务正常"
+          }
+        }
+      }
+    },
+    "/api/v1/meta": {
+      "get": {
+        "summary": "权重、分档、等级阈值与常数",
+        "responses": {
+          "200": {
+            "description": "模型元数据"
+          },
+          "401": {
+            "description": "缺少或错误的X-API-Key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/openapi.json": {
+      "get": {
+        "summary": "本文档",
+        "responses": {
+          "200": {
+            "description": "OpenAPI文档"
+          }
+        }
+      }
+    },
+    "/api/v1/evaluate": {
+      "post": {
+        "summary": "单个评价单元评价",
+        "parameters": [
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "description": "full（默认）返回全部失效模式的指标贡献；summary省略result.contributions_by_mode，仅保留主控模式贡献",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "summary"
+              ],
+              "default": "full"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "评价结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求体不是合法JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或错误的X-API-Key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "请求体过大",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type不是application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "字段校验未通过（details逐项列出）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evaluate/batch": {
+      "post": {
+        "summary": "批量评价（≤1000个；单项失败不影响其他项）",
+        "parameters": [
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "description": "full（默认）返回全部失效模式的指标贡献；summary省略result.contributions_by_mode，仅保留主控模式贡献",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "summary"
+              ],
+              "default": "full"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "逐项结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求体不是合法JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或错误的X-API-Key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "请求体过大",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type不是application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "字段校验未通过（details逐项列出）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
