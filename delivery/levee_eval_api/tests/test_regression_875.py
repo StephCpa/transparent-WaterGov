@@ -38,6 +38,17 @@ class Regression875(unittest.TestCase):
                 self.assertEqual(resp["request_id"], exp["request_id"])
                 self.assertEqual(_project(resp["result"]), {k: v for k, v in exp.items() if k != "request_id"})
 
+    def test_gate_caps_explain_the_final_grade(self):
+        """The worse of the score grade and every gate_details cap must be the final grade."""
+        order = {"A": 0, "B": 1, "C": 2}
+        requests = json.loads((FIX / "synthetic_875_requests.json").read_text(encoding="utf-8"))
+        for req in requests:
+            with self.subTest(req["request_id"]):
+                x = evaluate(req, detail="summary")["result"]
+                caps = [d["cap"] for d in x["gate_details"]]
+                self.assertEqual(max(caps + [x["model_grade"]], key=order.get), x["grade"])
+                self.assertEqual(len([d for d in x["gate_details"] if d["kind"] == "hard"]), len(x["gate_reasons"]))
+
 
 if __name__ == "__main__":
     unittest.main()

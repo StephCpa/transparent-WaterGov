@@ -107,12 +107,13 @@ tests/                单元测试、HTTP测试、875样本回归测试、文档
 python -m unittest discover -s tests -t . -v
 ```
 
-共24项测试，全部只用标准库：
+共26项测试，全部只用标准库：
 
 - **875样本回归**（`tests/test_regression_875.py`）：用交付的合成样本生成脚本（固定随机种子）重建875个样本，转换成API请求后经服务计算，得分、等级、模型原始等级、观测门控后等级、ρ、主控模式、门控原因、屏障能力与覆盖度、五类模式原始与修正响应、29项指标得分、缺失指标**逐项完全相等**于直接调用交付代码的结果；生成基准时还与交付的结果文件 `synthetic_evaluation_results.json` 逐项比对一致。
 - **模型文件校验**：三个模型文件的sha256必须等于上表。
 - **校验与证据规则**：必填、未知字段、类型、枚举、范围、交叉规则；无巡检时C3缺失；events模式证据等级与门控；aggregated模式；硬约束门控；批量接口单项失败隔离。
 - **缺资料输入（v1.1）**：不给安全系数、冲刷深度、沉降资料和巡检时对应指标缺失、门控不检查；只给一侧安全系数；无冲刷深度但有未加固管涌记录时D3=0；D3门控文字改写。
+- **限级说明与结论（v1.2）**：875个样本上，`gate_details` 中各条限级的封顶等级与模型等级取最不利，均等于最终等级；`conclusion_text` 写出起决定作用的限级原因。
 - **HTTP**：各接口、400/401/404/405/413/415/422、API Key、CORS、真实端口收发。
 - **文档一致性**：参数字典、openapi.json、examples必须与代码生成结果一致。
 
@@ -136,6 +137,7 @@ python tools/gen_docs.py
 - 接口版本 `api_version` 遵循语义化版本：1.x内只做向后兼容的新增（新增可选字段、新增响应字段）；不兼容的变更使用新的路径前缀 `/api/v2`。
 - 调用方应忽略不认识的响应字段，以便兼容1.x的后续版本。
 - 版本记录：
+  - **1.2.0（2026-10-25）**：响应新增 `result.gate_details`（逐条限级的指标、B/C上限和通俗说明）和 `result.conclusion_text`（一句话结论），供面向非专业用户的简化界面直接显示；其余不变。
   - **1.1.0（2026-10-25）**：安全系数、冲刷深度可不填；新增 `survey.soft_foundation_status`；响应新增 `result.gates_not_checked`、`result.indicator_sources`、`mode_responses.*.basis`，`/meta` 新增 `indicator_source_labels`；新增警告码 `input_missing_no_gate`；D3由险情记录触发时改写门控文字。1.0.0 的请求无需修改，完整输入下的结果不变（D3门控文字除外）。
   - **1.0.0（2026-10-22）**：首个版本。
 - 模型代码如有更新：替换 `levee_eval/model/` 中的文件 → 更新 `tests/test_api.py` 中的sha256 → 运行 `tools/build_fixtures.py` 重建基准并核对差异 → 运行 `tools/gen_docs.py` → 全部测试通过后提升版本号。

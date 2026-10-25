@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "堤防渗流安全评价服务",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "失效响应—安全屏障规则链评价模型的HTTP接口。A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。"
   },
   "servers": [
@@ -1143,6 +1143,43 @@
                   "type": "string"
                 },
                 "description": "硬约束门控触发原因"
+              },
+              "conclusion_text": {
+                "type": "string",
+                "description": "一句话结论：决定最终等级的限级条件（无则为得分）、等级、主要风险、因缺资料未做的检查（v1.2）"
+              },
+              "gate_details": {
+                "type": "array",
+                "description": "逐条限级（门控）：indicator、kind（hard硬约束/observation巡检）、cap（B/C）、reason（原文）、plain（通俗说明）（v1.2）",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "indicator": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "hard",
+                        "observation"
+                      ]
+                    },
+                    "cap": {
+                      "type": "string",
+                      "enum": [
+                        "B",
+                        "C"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "plain": {
+                      "type": "string"
+                    }
+                  }
+                }
               },
               "gates_not_checked": {
                 "type": "array",

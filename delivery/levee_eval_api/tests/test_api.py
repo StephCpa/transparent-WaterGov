@@ -196,6 +196,14 @@ class MissingInputs(unittest.TestCase):
         self.assertIn("D3堤岸冲刷稳定性: 冲刷深度0.20m未达0.5m，因有已加固的重大险情记录（管涌）计70分，存在冲刷风险",
                       x["gate_reasons"])
 
+    def test_conclusion_names_the_decisive_limit(self):
+        x = evaluate(req(computation__foundation_gradient=1.0, inspection__confirmed_events=[]))["result"]
+        self.assertEqual(x["grade"], "C")
+        self.assertEqual([(d["indicator"], d["cap"]) for d in x["gate_details"]], [("C1", "C")])
+        self.assertTrue(x["conclusion_text"].startswith("DEMO-K0+500：堤基渗透比降达到临界（i/i_cr=1.03），评价为C级（不安全）。"))
+        y = evaluate(req(computation__back_slope_fos=..., inspection=...))["result"]
+        self.assertIn("因缺资料，边坡稳定、巡检的限级检查未做。", y["conclusion_text"])
+
     def test_settlement_status_rules(self):
         self.assertIn(("survey.soft_foundation_status", "not_allowed_when_settlement_given"),
                       reasons(req(survey__soft_foundation_settlement_cm=8.0, survey__soft_foundation_settlement_diff_cm=2.0,

@@ -1,5 +1,5 @@
 {
-  "api_version": "1.1.0",
+  "api_version": "1.2.0",
   "count": 3,
   "succeeded": 2,
   "failed": 1,
@@ -10,7 +10,7 @@
       "response": {
         "request_id": "demo-0001",
         "section_id": "DEMO-K0+500",
-        "api_version": "1.1.0",
+        "api_version": "1.2.0",
         "model": {
           "name": "failure-response / safety-barrier rule chain (Chapter 5)",
           "files": {
@@ -25,8 +25,25 @@
           "grade_label": "基本安全",
           "model_grade": "B",
           "grade_after_observation_gate": "B",
+          "conclusion_text": "DEMO-K0+500：巡检确认渗漏（证据2级）、堤基渗透比降接近临界（i/i_cr=0.84），评价为B级（基本安全）。主要风险为渗流破坏。",
           "gate_reasons": [
             "C1堤基渗透比降: i/i_cr=0.84接近临界"
+          ],
+          "gate_details": [
+            {
+              "indicator": "C3",
+              "kind": "observation",
+              "cap": "B",
+              "reason": "无人机渗漏点位于敏感部位或多点出现，最高等级限制为B级",
+              "plain": "巡检确认渗漏（证据2级）"
+            },
+            {
+              "indicator": "C1",
+              "kind": "hard",
+              "cap": "B",
+              "reason": "C1堤基渗透比降: i/i_cr=0.84接近临界",
+              "plain": "堤基渗透比降接近临界（i/i_cr=0.84）"
+            }
           ],
           "gates_not_checked": [],
           "rho": 0.324471,
@@ -384,7 +401,7 @@
       "response": {
         "request_id": "demo-0002",
         "section_id": "DEMO-K0+500",
-        "api_version": "1.1.0",
+        "api_version": "1.2.0",
         "model": {
           "name": "failure-response / safety-barrier rule chain (Chapter 5)",
           "files": {
@@ -399,8 +416,25 @@
           "grade_label": "基本安全",
           "model_grade": "B",
           "grade_after_observation_gate": "B",
+          "conclusion_text": "DEMO-K0+500：巡检确认渗漏（证据2级）、堤基渗透比降接近临界（i/i_cr=0.84），评价为B级（基本安全）。主要风险为渗流破坏。",
           "gate_reasons": [
             "C1堤基渗透比降: i/i_cr=0.84接近临界"
+          ],
+          "gate_details": [
+            {
+              "indicator": "C3",
+              "kind": "observation",
+              "cap": "B",
+              "reason": "调用方系统按交付规则汇总",
+              "plain": "巡检确认渗漏（证据2级）"
+            },
+            {
+              "indicator": "C1",
+              "kind": "hard",
+              "cap": "B",
+              "reason": "C1堤基渗透比降: i/i_cr=0.84接近临界",
+              "plain": "堤基渗透比降接近临界（i/i_cr=0.84）"
+            }
           ],
           "gates_not_checked": [],
           "rho": 0.324471,

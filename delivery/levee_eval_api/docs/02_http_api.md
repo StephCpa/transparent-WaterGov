@@ -126,7 +126,7 @@ events模式的汇总规则（交付代码原样）：
 {
   "request_id": "demo-0001",
   "section_id": "DEMO-K0+500",
-  "api_version": "1.1.0",
+  "api_version": "1.2.0",
   "model": {"name": "...", "files": {"safety_evaluation.py": "89808c...", "...": "..."}},
   "result": {
     "score": 67.5529, "grade": "B", "grade_label": "基本安全",
@@ -161,6 +161,8 @@ events模式的汇总规则（交付代码原样）：
 
 界面展示建议：
 
+- 面向非专业用户的简化界面：结论直接显示 `conclusion_text`，等级显示 `grade` + `grade_label`，原因列表显示 `gate_details[].plain`；其余字段放进“查看详情”；
+- 术语：接口里的“门控”（gate）是一条判定规则，不是参数值——某项关键指标超过限值时，等级最高只能为B或C，与综合得分无关。界面上建议称为“限级”，例如“限级条件：堤基渗透比降达到临界，最高C级”；
 - 主结论显示 `grade`、`grade_label`、`score` 和 `dominant_mode.name`；
 - `gate_reasons` 非空时一并显示——它说明等级为什么被压低，比得分更重要；
 - `grade` 与 `model_grade` 不同时，提示“等级经门控下调”；
@@ -226,7 +228,7 @@ POST /api/v1/evaluate/batch?detail=summary
 
 ```json
 {
-  "api_version": "1.1.0", "count": 3, "succeeded": 2, "failed": 1,
+  "api_version": "1.2.0", "count": 3, "succeeded": 2, "failed": 1,
   "results": [
     {"index": 0, "ok": true, "response": {"request_id": "demo-0001", "result": {"...": "..."}}},
     {"index": 1, "ok": true, "response": {"...": "..."}},

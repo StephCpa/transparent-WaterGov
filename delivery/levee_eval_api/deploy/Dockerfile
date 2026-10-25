@@ -1,4 +1,4 @@
-# Build from the package root:  docker build -f deploy/Dockerfile -t levee-eval:1.1.0 .
+# Build from the package root:  docker build -f deploy/Dockerfile -t levee-eval:1.2.0 .
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \

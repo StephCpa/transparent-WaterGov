@@ -123,6 +123,10 @@ def response_schema():
             "model_grade": {**_GRADE, "description": "仅按得分划分的等级"},
             "grade_after_observation_gate": _GRADE,
             "gate_reasons": {"type": "array", "items": {"type": "string"}, "description": "硬约束门控触发原因"},
+            "conclusion_text": {"type": "string", "description": "一句话结论：决定最终等级的限级条件（无则为得分）、等级、主要风险、因缺资料未做的检查（v1.2）"},
+            "gate_details": {"type": "array", "description": "逐条限级（门控）：indicator、kind（hard硬约束/observation巡检）、cap（B/C）、reason（原文）、plain（通俗说明）（v1.2）",
+                             "items": {"type": "object", "properties": {"indicator": {"type": "string"}, "kind": {"type": "string", "enum": ["hard", "observation"]},
+                                                                         "cap": {"type": "string", "enum": ["B", "C"]}, "reason": _STR_N, "plain": {"type": "string"}}}},
             "gates_not_checked": {"type": "array", "description": "因缺资料未做的门控检查（v1.1）", "items": {"type": "object", "properties": {
                 "indicator": {"type": "string"}, "reason": {"type": "string"}}}},
             "rho": {**_NUM, "description": "综合风险度量ρ"},

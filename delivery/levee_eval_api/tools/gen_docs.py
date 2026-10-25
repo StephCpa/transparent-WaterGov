@@ -31,6 +31,8 @@ OUTPUT_FIELDS = [
     ("result.model_grade", "string", "仅按得分分级的等级（A≥80，40≤B<80，C<40）"),
     ("result.grade_after_observation_gate", "string", "经巡检观测门控后的等级"),
     ("result.gate_reasons", "string[]", "硬约束门控触发原因（交付模型原文；D3由险情记录触发时改写为说明记录的文字），为空表示未触发"),
+    ("result.conclusion_text", "string", "一句话结论，可直接作为界面结论：决定最终等级的限级条件（没有时为综合得分）、等级、主要风险、因缺资料未做的限级检查"),
+    ("result.gate_details[]", "object[]", "逐条限级（门控）：indicator、kind（hard硬约束 / observation巡检）、cap（该条把等级限制在B或C）、reason（原文）、plain（通俗说明）"),
     ("result.gates_not_checked[]", "object[]", "因缺资料未做的门控检查：indicator、reason（如未给安全系数时的D1/D2、无有效巡检时的C3）"),
     ("result.rho", "number", "综合风险度量ρ=α·max(Rk)+(1−α)·Σwk·Rk"),
     ("result.dominant_mode.code / name", "string", "主控失效模式（屏障修正后响应最大者）"),

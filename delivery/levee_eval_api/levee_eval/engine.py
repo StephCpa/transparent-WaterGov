@@ -25,7 +25,7 @@ from pathlib import Path
 
 from . import schema
 
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 MODEL_DIR = Path(__file__).resolve().parent / "model"
 if str(MODEL_DIR) not in sys.path:
     sys.path.insert(0, str(MODEL_DIR))
@@ -306,6 +306,82 @@ def _indicator_sources(req, scores):
     return out
 
 
+# Each delivered hard-gate message has a fixed wording per cap (hard_constraint_gate in the model
+# file); these markers tell the two apart.  tests/test_api.py checks them on every fixture.
+_C_MARKERS = ("严重不足", "达到临界", "<1.05", "严重冲刷", "为失效状态", "严重超限")
+_B_MARKERS = ("不足", "接近临界", "<允许值", "冲刷风险", "处于不利状态", "超限")
+_STRUCTURE_LABELS = {"A3": "穿堤建筑物完好性", "B4": "穿堤建筑物防洪标准", "C6": "穿堤建筑物渗流稳定", "D4": "穿堤建筑物结构安全"}
+_GRADE_ORDER = {"A": 0, "B": 1, "C": 2}
+_NOT_CHECKED_NAMES = {"D1": "边坡稳定", "D2": "边坡稳定", "D3": "冲刷", "A5": "软基沉降", "C3": "巡检"}
+
+
+def _gate_cap(reason):
+    if any(m in reason for m in _C_MARKERS):
+        return "C"
+    if any(m in reason for m in _B_MARKERS):
+        return "B"
+    raise ValueError(f"unrecognised gate message: {reason}")
+
+
+def _gate_plain(code, cap, req, seep):
+    """The gate in words a non-specialist reads; numbers come from the request and the response."""
+    s, comp, sv = req["section"], req["computation"], req["survey"]
+    severe = cap == "C"
+    if code == "B1":
+        deficit = s["design_flood_level_m"] + (SE.FREEBOARD_LAKE if s["is_lake_levee"] else SE.FREEBOARD_RIVER) - s["crest_elevation_m"]
+        return f"堤顶高程{'严重' if severe else ''}不足（超高亏欠{deficit:.2f} m）"
+    if code in ("C1", "C4", "C5"):
+        where = {"C1": "堤基", "C4": "堤身", "C5": "接触面"}[code]
+        return f"{where}渗透比降{'达到' if severe else '接近'}临界（i/i_cr={seep[code]['ratio']:.2f}）"
+    if code in ("D1", "D2"):
+        side, fos = ("背水坡", comp["back_slope_fos"]) if code == "D1" else ("临水坡", comp["front_slope_fos"])
+        return f"{side}抗滑稳定{'严重' if severe else ''}不足（安全系数{fos:.2f}）"
+    if code == "D3":
+        scour = sv.get("scour_depth_m")
+        majors = [h for h in req["records"]["historical_dangers"] if any(k in h["type"] for k in MAJOR_DANGER_KEYS)]
+        if severe:
+            if scour is not None and scour >= 1.0:
+                return f"冲刷严重（冲刷深度{scour:.2f} m）"
+            return "有未处理的重大险情记录（" + "、".join(dict.fromkeys(h["type"] for h in majors if not h["reinforced"])) + "）"
+        if scour is not None and scour >= 0.5:
+            return f"存在冲刷（冲刷深度{scour:.2f} m）"
+        return "有已处置的重大险情记录（" + "、".join(dict.fromkeys(h["type"] for h in majors if h["reinforced"])) + "）"
+    if code in _STRUCTURE_LABELS:
+        return _STRUCTURE_LABELS[code] + ("失效" if severe else "不满足要求")
+    if code == "A5":
+        return (f"软基沉降{'严重' if severe else ''}超限（沉降{sv['soft_foundation_settlement_cm']:.1f} cm，"
+                f"沉降差{sv['soft_foundation_settlement_diff_cm']:.1f} cm）")
+    return code
+
+
+def _gate_details(reasons, req, seep, obs_cap, leak):
+    out = [{"indicator": r[:2], "kind": "hard", "cap": _gate_cap(r), "reason": r} for r in reasons]
+    for d in out:
+        d["plain"] = _gate_plain(d["indicator"], d["cap"], req, seep)
+    if obs_cap:
+        out.insert(0, {"indicator": "C3", "kind": "observation", "cap": obs_cap, "reason": leak.get("UAV门控说明"),
+                       "plain": f"巡检确认渗漏（证据{leak['UAV证据等级']}级）"})
+    return out
+
+
+def _conclusion_text(section_id, grade, label, score, details, dominant, not_checked):
+    """One sentence for the result header: the limits that set the final grade, else the score."""
+    decisive = [d["plain"] for d in details if d["cap"] == grade]
+    if decisive:
+        head = "、".join(decisive[:2]) + ("等" if len(decisive) > 2 else "")
+    elif grade == "A":
+        head = f"限级检查均未触发，综合得分{score:.1f}"
+    else:
+        head = f"综合得分{score:.1f}"
+    text = f"{section_id}：{head}，评价为{grade}级（{label}）。"
+    if dominant:
+        text += f"主要风险为{dominant}。"
+    names = list(dict.fromkeys(_NOT_CHECKED_NAMES.get(g["indicator"], g["indicator"]) for g in not_checked))
+    if names:
+        text += "因缺资料，" + "、".join(names) + "的限级检查未做。"
+    return text
+
+
 _MATRIX = {r["code"]: r["modes"] for r in M.load_failure_mode_matrix()}
 
 
@@ -380,6 +456,11 @@ def evaluate(req, *, validate=True, detail="full"):
     grade, label = _grade(r["安全等级"])
     dominant = r["主控失效模式"]
     sources = _indicator_sources(req, r["二级指标得分"])
+    gate_reasons = _rewrite_d3_reason(r["硬约束门控原因"], req, r["二级指标得分"])
+    seep = _seepage_checks(sec)
+    obs_cap = _grade(r["UAV观测门控上限"])[0] if r["UAV观测门控上限"] else None
+    not_checked = _gates_not_checked(req, r["二级指标得分"], leak)
+    details = _gate_details(gate_reasons, req, seep, obs_cap, leak)
     modes = {MODE_CODES[m]: {"name": m, "weight": round(M.MODE_WEIGHTS[m], 6),
                              "raw": r["原始失效响应"][m], "adjusted": r["屏障修正响应"][m],
                              "basis": _mode_basis(m, sources)} for m in M.FAILURE_MODES}
@@ -389,13 +470,16 @@ def evaluate(req, *, validate=True, detail="full"):
         "grade_label": label,
         "model_grade": _grade(r["模型原始等级"])[0],
         "grade_after_observation_gate": _grade(r["UAV门控后等级"])[0],
-        "gate_reasons": _rewrite_d3_reason(r["硬约束门控原因"], req, r["二级指标得分"]),
-        "gates_not_checked": _gates_not_checked(req, r["二级指标得分"], leak),
+        "conclusion_text": _conclusion_text(req["section"]["section_id"], grade, label, r["安全得分"], details,
+                                            dominant, not_checked),
+        "gate_reasons": gate_reasons,
+        "gate_details": details,
+        "gates_not_checked": not_checked,
         "rho": r["综合风险度量rho"],
         "dominant_mode": {"code": MODE_CODES.get(dominant), "name": dominant} if dominant else None,
         "barrier": {"ability": r["管理屏障能力"], "coverage": r["管理信息覆盖度"],
                     "lambda": opt.get("barrier_lambda", 0.5)},
-        "observation_gate": {"cap": _grade(r["UAV观测门控上限"])[0] if r["UAV观测门控上限"] else None,
+        "observation_gate": {"cap": obs_cap,
                              "note": r["UAV观测门控说明"]},
         "inspection_evidence": _inspection_out(leak, req.get("inspection") or {}),
         "mode_responses": modes,
@@ -404,7 +488,7 @@ def evaluate(req, *, validate=True, detail="full"):
         "indicator_sources": sources,
         "dominant_mode_contributions": _contrib_rows(r["主控模式指标贡献率"]),
         "contributions_by_mode": {MODE_CODES[m]: _contrib_rows(rows) for m, rows in r["全部失效模式指标贡献率"].items()},
-        "seepage_checks": _seepage_checks(sec),
+        "seepage_checks": seep,
     }
     if detail == "summary":
         del result["contributions_by_mode"]
