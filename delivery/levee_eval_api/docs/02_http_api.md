@@ -126,7 +126,7 @@ events模式的汇总规则（交付代码原样）：
 {
   "request_id": "demo-0001",
   "section_id": "DEMO-K0+500",
-  "api_version": "1.3.0",
+  "api_version": "1.3.1",
   "model": {"name": "...", "files": {"safety_evaluation.py": "89808c...", "...": "..."}},
   "result": {
     "score": 67.5529, "grade": "B", "grade_label": "基本安全",
@@ -230,7 +230,7 @@ POST /api/v1/evaluate/batch?detail=summary
 
 ```json
 {
-  "api_version": "1.3.0", "count": 3, "succeeded": 2, "failed": 1,
+  "api_version": "1.3.1", "count": 3, "succeeded": 2, "failed": 1,
   "results": [
     {"index": 0, "ok": true, "response": {"request_id": "demo-0001", "result": {"...": "..."}}},
     {"index": 1, "ok": true, "response": {"...": "..."}},

@@ -2,8 +2,10 @@
 
     python tools/gen_import_template.py      # needs openpyxl (maintainers only; users never run this)
 
-Writes excel_import/levee_import_template.xlsx (empty) and excel_import/levee_import_example.xlsx
-(the 24 synthetic sections of the simplified batch page, 3 rows with deliberate mistakes).
+Writes excel_import/levee_import_template.xlsx (empty), excel_import/levee_import_example.xlsx
+(the 24 synthetic sections of the simplified batch page, 3 rows with deliberate mistakes) and
+excel_import/levee_import_k45500_demo.xlsx (the anonymized K45+500 section filled with existing data
+only; every filled cell carries a comment naming its source).
 example_requests() and example_rows() need no third-party package; the tests use them.
 """
 
@@ -24,6 +26,7 @@ import levee_excel as L  # noqa: E402
 OUT_DIR = ROOT / "excel_import"
 TEMPLATE = OUT_DIR / "levee_import_template.xlsx"
 EXAMPLE = OUT_DIR / "levee_import_example.xlsx"
+DEMO = OUT_DIR / "levee_import_k45500_demo.xlsx"
 BAD_ROWS = {3: "crest_width_zero", 8: "fill_quality_typo", 17: "no_foundation_gradient"}   # positions in the batch
 FILL = {"basic": "D9E1F2", "auto": "DDEBF7", "fill": "FFF2CC", "optional": "EDEDED", "detail": "D9E1F2"}
 A6_AS_RECORDS = {100: [], 80: [("蚁穴", "已处理")], 60: [("裂缝", "未处理")], 0: [("蚁穴", "未处理")]}
@@ -93,6 +96,50 @@ def example_rows():
     return main, dangers, [], other
 
 
+_GEO = "工程地质勘察报告"
+_RECOMPUTE = ("渗流计算：研究复算（35.90 m 代表高水位稳定渗流工况，土层参数取地勘建议值）。"
+              "平台上线后由第②步渗流计算给出")
+
+
+def demo_rows():
+    """K45+500 (anonymized) with existing data only.  "_notes" holds the source of each filled cell."""
+    row = {
+        "section_id": "K45+500", "levee_type": "河堤", "crest_elevation": 36.30, "layer_name": "淤泥质粉质黏土（MCN1）",
+        "layer_gs": 2.75, "layer_e": 1.115, "grad_foundation": 0.865, "grad_body": 0.535, "grad_contact": 0.535,
+        "body_gs": 2.70, "body_e": 0.778, "design_flood_level": 34.04, "crest_width": 7.0, "outer_slope": "1:2.7",
+        "inner_slope": "1:2.8", "foundation_class": "D", "fill_quality": "较差", "flood_standard": "符合",
+        "structure": "无", "over_crossing": "无", "dangers": "有", "soft_foundation": "软基段",
+        "_notes": {
+            "section_id": "代表断面，位于 2017 年管涌险情段（K44+500—K46+096）内",
+            "levee_type": "断面资料：河堤，超高要求 2.0 m",
+            "crest_elevation": "断面资料",
+            "layer_name": f"{_GEO}：渗流控制层（i/i_cr 最大的土层）",
+            "layer_gs": f"{_GEO}建议参数", "layer_e": f"{_GEO}建议参数",
+            "grad_foundation": _RECOMPUTE, "grad_body": _RECOMPUTE, "grad_contact": _RECOMPUTE,
+            "body_gs": f"{_GEO}建议参数（FT 堤身填土）", "body_e": f"{_GEO}建议参数（FT 堤身填土）",
+            "design_flood_level": "设计资料", "crest_width": "断面资料", "outer_slope": "断面资料", "inner_slope": "断面资料",
+            "foundation_class": f"{_GEO} 3.4.5.2：D 类堤基",
+            "fill_quality": f"{_GEO} 3.3.3：K43+676—K46+095 为质量较差段",
+            "flood_standard": "设计报告 5.2.1：符合 2 级堤防防洪标准",
+            "structure": "本断面范围内无穿堤建筑物（不是“检测合格”）",
+            "over_crossing": "本断面范围内无跨堤交叉工程",
+            "dangers": "见“历史险情”表",
+            "soft_foundation": "地层含 8.5 m 淤泥质粉质黏土，但没有沉降观测资料：沉降指标按缺失，不做沉降限级检查",
+            "back_fos": "选填，未填。研究复算（Bishop 法）有背水坡 1.155、临水坡 2.063，演示时可以补填后再导入一次",
+            "scour_depth": "选填，未填：没有冲刷测量资料",
+            "settlement": "选填，未填：只有代表取值，没有实测沉降",
+            "inspection": "选填，未填：现有一次无人机巡检（9 处候选经复核均为误报），尚未确认是否完整覆盖本断面及有效期",
+        },
+    }
+    dangers = [
+        {"section_id": "K45+500", "type": "蚁穴", "reinforced": False, "severity": "严重",
+         "_notes": {"type": f"{_GEO} 3.3.3：蚁穴堤，内部隐患未消除"}},
+        {"section_id": "K45+500", "type": "管涌", "reinforced": True,
+         "_notes": {"type": "2017 年该段发生管涌险情，已采用导滤围井处置"}},
+    ]
+    return [row], dangers, [], []
+
+
 def _write(path, rows=None):
     from openpyxl import Workbook
     from openpyxl.comments import Comment
@@ -155,12 +202,19 @@ def _write(path, rows=None):
     for j, c in enumerate(L.COLUMNS, 1):
         if c.kind in ("ratio", "text"):    # text format, so that Excel keeps “1:3” instead of turning it into a time
             ws.column_dimensions[get_column_letter(j)].number_format = "@"
+    def source_note(cell, values, key):
+        note = values.get("_notes", {}).get(key)
+        if note:
+            cell.comment = Comment("资料来源：" + note, "资料来源", width=300, height=120)
+
     for r, values in enumerate(main_rows, 3):
         for j, c in enumerate(L.COLUMNS, 1):
+            cell = ws.cell(row=r, column=j)
             if values.get(c.key) is not None:
-                cell = ws.cell(row=r, column=j, value=values[c.key])
+                cell.value = values[c.key]
                 if c.kind in ("ratio", "text"):
                     cell.number_format = "@"
+            source_note(cell, values, c.key)
 
     # ---- detail sheets
     for name, columns, data in ((L.SHEET_DANGERS, L.DANGER_COLUMNS, danger_rows),
@@ -177,8 +231,10 @@ def _write(path, rows=None):
                 v = values.get(c.key)
                 if isinstance(v, bool):
                     v = ("已处理" if v else "未处理") if c.key == "reinforced" else ("是" if v else "否")
+                cell = ds.cell(row=r, column=j)
                 if v is not None:
-                    ds.cell(row=r, column=j, value=v)
+                    cell.value = v
+                source_note(cell, values, c.key)
 
     # ---- 填写说明
     lines = [
@@ -230,9 +286,9 @@ _BOOL_SHOWN = ("是", "否")
 
 
 def main():
-    _write(TEMPLATE)
-    _write(EXAMPLE, example_rows())
-    print(f"wrote {TEMPLATE.relative_to(ROOT)}, {EXAMPLE.relative_to(ROOT)}")
+    for path, rows in ((TEMPLATE, None), (EXAMPLE, example_rows()), (DEMO, demo_rows())):
+        _write(path, rows)
+        print(f"wrote {path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

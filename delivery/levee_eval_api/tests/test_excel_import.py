@@ -23,6 +23,7 @@ from levee_eval.wsgi import application  # noqa: E402
 
 TEMPLATE = ROOT / "excel_import" / "levee_import_template.xlsx"
 EXAMPLE = ROOT / "excel_import" / "levee_import_example.xlsx"
+DEMO = ROOT / "excel_import" / "levee_import_k45500_demo.xlsx"
 
 BASE = {"section_id": "K45+500", "levee_type": "河堤", "crest_elevation": 36.30, "layer_name": "淤泥质粉质黏土",
         "layer_gs": 2.75, "layer_e": 1.115, "grad_foundation": 0.865, "grad_body": 0.535, "grad_contact": 0.535,
@@ -74,6 +75,23 @@ class Example(unittest.TestCase):
                 self.assertEqual(a[f], b[f], f"row {rr.row} {f}")
             grades.append(b["grade"])
         self.assertEqual({g: grades.count(g) for g in "ABC"}, {"A": 11, "B": 5, "C": 5})
+
+    def test_k45500_demo_with_existing_data(self):
+        imp = L.convert_sheets(L.read_xlsx(DEMO))
+        self.assertEqual([r.problems for r in imp.rows], [[]])
+        _, base = convert()                       # the same section as typed in these tests
+        demo = imp.rows[0].request
+        self.assertEqual({k: v for k, v in demo.items() if k != "request_id"},
+                         {k: v for k, v in base.request.items() if k != "request_id"} | {
+                             "section": {**base.request["section"], "control_layer": {
+                                 "name": "淤泥质粉质黏土（MCN1）", "Gs": 2.75, "e": 1.115}}})
+        res = evaluate(demo)["result"]
+        self.assertEqual((round(res["score"], 1), res["grade"], res["dominant_mode"]["name"]), (22.8, "C", "渗流破坏"))
+        self.assertEqual([g["indicator"] for g in res["gates_not_checked"]], ["D1", "D2", "D3", "A5", "C3"])
+        demo["computation"].update(back_slope_fos=1.155, front_slope_fos=2.063)   # step 2 of the demo
+        res = evaluate(demo)["result"]
+        self.assertEqual((round(res["score"], 1), res["grade"]), (24.3, "C"))
+        self.assertEqual([(d["indicator"], d["cap"]) for d in res["gate_details"]], [("C1", "C"), ("D1", "B")])
 
     def test_template_layout(self):
         sheets = L.read_xlsx(TEMPLATE)

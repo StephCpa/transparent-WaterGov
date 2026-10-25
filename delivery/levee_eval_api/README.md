@@ -1,4 +1,4 @@
-# 堤防渗流安全评价服务 v1.3.0（对接包）
+# 堤防渗流安全评价服务 v1.3.1（对接包）
 
 本包把第5章“失效响应—安全屏障”规则链评价模型封装为一个JSON/HTTP计算服务，供合作方系统对接。
 
@@ -31,7 +31,7 @@ Windows下把 `python3` 换成 `py -3`，`curl` 换成 `curl.exe`。
 python3 excel_import/levee_excel.py excel_import/levee_import_example.xlsx --evaluate results.csv
 ```
 
-详见 `docs/05_excel_import.md`。生产部署（gunicorn / Docker / Windows waitress）见 `docs/04_deployment.md`。
+用现有资料（匿名堤段 K45+500）做系统演示时，导入 `excel_import/levee_import_k45500_demo.xlsx`，结果为C级 22.8 分。详见 `docs/05_excel_import.md`。生产部署（gunicorn / Docker / Windows waitress）见 `docs/04_deployment.md`。
 
 ## 文档
 
@@ -84,7 +84,7 @@ requirements-deploy.txt  生产WSGI服务器（可选）
 
 | 项目 | 值 |
 |---|---|
-| 接口版本 | 1.3.0（变更见 `docs/01_code_description.md` 第7节） |
+| 接口版本 | 1.3.1（变更见 `docs/01_code_description.md` 第7节） |
 | 发布日期 | 2026-10-25 |
 | safety_evaluation.py | sha256 89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb |
 | failure_response_barrier_model.py | sha256 c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa |
