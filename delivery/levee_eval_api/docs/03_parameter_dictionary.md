@@ -198,6 +198,7 @@ B2、B3、B4、D4 未在 `qualitative` 中给出时，可由 `calculated` 中的
 | `result.observation_gate.cap / note` | string/null | 巡检观测门控上限（B/C/null）及说明 |
 | `result.inspection_evidence` | object/null | 巡检证据汇总：模式、加权密度、证据等级、事件明细；无有效巡检时为null |
 | `result.mode_responses.<mode>` | object | 五类失效模式的权重、原始响应raw、屏障修正响应adjusted（0～1，越大越危险） |
+| `result.mode_responses.<mode>.basis` | object | 该模式的资料支撑：direct_indicators（直接控制指标）、direct_missing（其中缺失的）、with_data / not_applicable / missing 计数；direct_missing非空时该模式响应依据不足 |
 | `result.indicator_scores.<code>` | number/null | 29项二级指标得分（0～100）；null为缺失 |
 | `result.missing_indicators` | string[] | 缺失指标代码；缺失指标不作满分处理，在模式内按现有权重归一化 |
 | `result.indicator_sources.<code>` | string | 各指标得分的资料来源：design_survey、computed、records、survey、survey_records、inspection、qualitative、calculated、not_applicable、missing；中文名见 /api/v1/meta 的 indicator_source_labels |

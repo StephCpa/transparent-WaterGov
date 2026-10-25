@@ -138,7 +138,8 @@ events模式的汇总规则（交付代码原样）：
     "barrier": {"ability": 0.71032, "coverage": 1.0, "lambda": 0.5},
     "observation_gate": {"cap": "B", "note": "无人机渗漏点位于敏感部位或多点出现，最高等级限制为B级"},
     "inspection_evidence": {"mode": "events", "weighted_density_per_100m": 1.2, "evidence_level": 2, "...": "..."},
-    "mode_responses": {"seepage": {"name": "渗流破坏", "weight": 0.408463, "raw": 0.417832, "adjusted": 0.453064}, "...": {}},
+    "mode_responses": {"seepage": {"name": "渗流破坏", "weight": 0.408463, "raw": 0.417832, "adjusted": 0.453064,
+                                   "basis": {"direct_indicators": ["C1", "C4", "C5"], "direct_missing": [], "...": "..."}}, "...": {}},
     "indicator_scores": {"A1": 100, "A2": 80, "...": "...", "C3": 60.0},
     "missing_indicators": [],
     "indicator_sources": {"A1": "design_survey", "C1": "computed", "A2": "records", "B2": "qualitative", "A8": "not_applicable", "...": "..."},
@@ -166,6 +167,7 @@ events模式的汇总规则（交付代码原样）：
 - `dominant_mode_contributions` 前3项可作为“主要原因”；
 - `warnings` 应展示给评价人员，尤其是 `inspection_missing`、`input_missing_no_gate` 和 `indicators_missing`；
 - `gates_not_checked` 非空时，在门控检查中把这些项标为“未检查（缺资料）”，不要显示成“通过”；
+- 失效模式的 `basis.direct_missing` 非空时（例如边坡失稳缺D1、D2），在该模式旁标“依据不足”，提醒其响应值只来自间接指标；
 - 每项指标按 `indicator_sources` 标注资料来源（中文名取 `/api/v1/meta` 的 `indicator_source_labels`）；为 `missing` 的指标不在明细中逐行显示，用一行列出“无资料、未参与评价”的指标即可；
 - `notice` 中的等级说明应随结果一起展示或在报告中注明。
 

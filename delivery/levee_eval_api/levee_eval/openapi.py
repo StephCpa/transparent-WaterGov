@@ -132,7 +132,12 @@ def response_schema():
             "observation_gate": {"type": "object", "properties": {"cap": _GRADE, "note": _STR_N}},
             "inspection_evidence": {"type": "object", "nullable": True},
             "mode_responses": {"type": "object", "additionalProperties": {"type": "object", "properties": {
-                "name": {"type": "string"}, "weight": _NUM, "raw": _NUM_N, "adjusted": _NUM_N}}},
+                "name": {"type": "string"}, "weight": _NUM, "raw": _NUM_N, "adjusted": _NUM_N,
+                "basis": {"type": "object", "description": "该模式的资料支撑（v1.1）：直接控制指标（关联强度3）、其中缺失的指标、按来源计数",
+                          "properties": {"direct_indicators": {"type": "array", "items": {"type": "string"}},
+                                         "direct_missing": {"type": "array", "items": {"type": "string"}},
+                                         "with_data": {"type": "integer"}, "not_applicable": {"type": "integer"},
+                                         "missing": {"type": "integer"}}}}}},
             "indicator_scores": {"type": "object", "additionalProperties": _NUM_N},
             "missing_indicators": {"type": "array", "items": {"type": "string"}},
             "indicator_sources": {"type": "object", "description": "各指标的资料来源（v1.1），中文名见 /api/v1/meta 的 indicator_source_labels",

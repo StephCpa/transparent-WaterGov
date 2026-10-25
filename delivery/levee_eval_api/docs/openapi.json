@@ -1237,6 +1237,33 @@
                     "adjusted": {
                       "type": "number",
                       "nullable": true
+                    },
+                    "basis": {
+                      "type": "object",
+                      "description": "该模式的资料支撑（v1.1）：直接控制指标（关联强度3）、其中缺失的指标、按来源计数",
+                      "properties": {
+                        "direct_indicators": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "direct_missing": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "with_data": {
+                          "type": "integer"
+                        },
+                        "not_applicable": {
+                          "type": "integer"
+                        },
+                        "missing": {
+                          "type": "integer"
+                        }
+                      }
                     }
                   }
                 }

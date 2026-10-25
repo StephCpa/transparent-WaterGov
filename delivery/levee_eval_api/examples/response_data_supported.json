@@ -61,31 +61,89 @@
         "name": "漫顶失效",
         "weight": 0.172618,
         "raw": 0.0,
-        "adjusted": 0.0
+        "adjusted": 0.0,
+        "basis": {
+          "direct_indicators": [
+            "B1",
+            "B3"
+          ],
+          "direct_missing": [
+            "B3"
+          ],
+          "with_data": 3,
+          "not_applicable": 1,
+          "missing": 1
+        }
       },
       "seepage": {
         "name": "渗流破坏",
         "weight": 0.408463,
         "raw": 0.425188,
-        "adjusted": 0.425188
+        "adjusted": 0.425188,
+        "basis": {
+          "direct_indicators": [
+            "C1",
+            "C4",
+            "C5"
+          ],
+          "direct_missing": [],
+          "with_data": 6,
+          "not_applicable": 3,
+          "missing": 4
+        }
       },
       "slope_instability": {
         "name": "边坡失稳",
         "weight": 0.235018,
         "raw": 0.105371,
-        "adjusted": 0.105371
+        "adjusted": 0.105371,
+        "basis": {
+          "direct_indicators": [
+            "D1",
+            "D2"
+          ],
+          "direct_missing": [
+            "D1",
+            "D2"
+          ],
+          "with_data": 5,
+          "not_applicable": 0,
+          "missing": 5
+        }
       },
       "scour": {
         "name": "冲刷破坏",
         "weight": 0.075034,
         "raw": 0.214959,
-        "adjusted": 0.214959
+        "adjusted": 0.214959,
+        "basis": {
+          "direct_indicators": [
+            "D3"
+          ],
+          "direct_missing": [
+            "D3"
+          ],
+          "with_data": 1,
+          "not_applicable": 0,
+          "missing": 3
+        }
       },
       "crossing_structure": {
         "name": "穿堤建筑物失效",
         "weight": 0.108867,
         "raw": 0.0,
-        "adjusted": 0.0
+        "adjusted": 0.0,
+        "basis": {
+          "direct_indicators": [
+            "A3",
+            "C6",
+            "D4"
+          ],
+          "direct_missing": [],
+          "with_data": 0,
+          "not_applicable": 6,
+          "missing": 1
+        }
       }
     },
     "indicator_scores": {

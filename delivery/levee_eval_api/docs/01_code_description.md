@@ -136,6 +136,6 @@ python tools/gen_docs.py
 - 接口版本 `api_version` 遵循语义化版本：1.x内只做向后兼容的新增（新增可选字段、新增响应字段）；不兼容的变更使用新的路径前缀 `/api/v2`。
 - 调用方应忽略不认识的响应字段，以便兼容1.x的后续版本。
 - 版本记录：
-  - **1.1.0（2026-10-25）**：安全系数、冲刷深度可不填；新增 `survey.soft_foundation_status`；响应新增 `result.gates_not_checked`、`result.indicator_sources`，`/meta` 新增 `indicator_source_labels`；新增警告码 `input_missing_no_gate`；D3由险情记录触发时改写门控文字。1.0.0 的请求无需修改，完整输入下的结果不变（D3门控文字除外）。
+  - **1.1.0（2026-10-25）**：安全系数、冲刷深度可不填；新增 `survey.soft_foundation_status`；响应新增 `result.gates_not_checked`、`result.indicator_sources`、`mode_responses.*.basis`，`/meta` 新增 `indicator_source_labels`；新增警告码 `input_missing_no_gate`；D3由险情记录触发时改写门控文字。1.0.0 的请求无需修改，完整输入下的结果不变（D3门控文字除外）。
   - **1.0.0（2026-10-22）**：首个版本。
 - 模型代码如有更新：替换 `levee_eval/model/` 中的文件 → 更新 `tests/test_api.py` 中的sha256 → 运行 `tools/build_fixtures.py` 重建基准并核对差异 → 运行 `tools/gen_docs.py` → 全部测试通过后提升版本号。

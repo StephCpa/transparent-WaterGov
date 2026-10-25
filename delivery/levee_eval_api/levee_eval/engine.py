@@ -306,6 +306,21 @@ def _indicator_sources(req, scores):
     return out
 
 
+_MATRIX = {r["code"]: r["modes"] for r in M.load_failure_mode_matrix()}
+
+
+def _mode_basis(mode, sources):
+    """How well a failure-mode response is supported: its direct-control indicators (association
+    strength 3 in the delivered matrix), which of them are missing, and counts by source."""
+    codes = list(M.MODE_INDICATOR_WEIGHTS[mode])
+    direct = [c for c in codes if float(_MATRIX[c].get(mode, 0)) >= 3]
+    return {"direct_indicators": direct,
+            "direct_missing": [c for c in direct if sources[c] == "missing"],
+            "with_data": sum(sources[c] not in ("missing", "not_applicable") for c in codes),
+            "not_applicable": sum(sources[c] == "not_applicable" for c in codes),
+            "missing": sum(sources[c] == "missing" for c in codes)}
+
+
 def _warnings(req, scores, missing):
     w = []
     rec, sv, ins, comp = req["records"], req["survey"], req.get("inspection"), req["computation"]
@@ -364,8 +379,10 @@ def evaluate(req, *, validate=True, detail="full"):
                            alpha=opt.get("alpha", 0.45), barrier_lambda=opt.get("barrier_lambda", 0.5))
     grade, label = _grade(r["安全等级"])
     dominant = r["主控失效模式"]
+    sources = _indicator_sources(req, r["二级指标得分"])
     modes = {MODE_CODES[m]: {"name": m, "weight": round(M.MODE_WEIGHTS[m], 6),
-                             "raw": r["原始失效响应"][m], "adjusted": r["屏障修正响应"][m]} for m in M.FAILURE_MODES}
+                             "raw": r["原始失效响应"][m], "adjusted": r["屏障修正响应"][m],
+                             "basis": _mode_basis(m, sources)} for m in M.FAILURE_MODES}
     result = {
         "score": r["安全得分"],
         "grade": grade,
@@ -384,7 +401,7 @@ def evaluate(req, *, validate=True, detail="full"):
         "mode_responses": modes,
         "indicator_scores": r["二级指标得分"],
         "missing_indicators": r["缺失指标"],
-        "indicator_sources": _indicator_sources(req, r["二级指标得分"]),
+        "indicator_sources": sources,
         "dominant_mode_contributions": _contrib_rows(r["主控模式指标贡献率"]),
         "contributions_by_mode": {MODE_CODES[m]: _contrib_rows(rows) for m, rows in r["全部失效模式指标贡献率"].items()},
         "seepage_checks": _seepage_checks(sec),

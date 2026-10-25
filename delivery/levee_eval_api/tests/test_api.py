@@ -170,6 +170,8 @@ class MissingInputs(unittest.TestCase):
         self.assertIn("input_missing_no_gate", {w["code"] for w in res["warnings"]})
         self.assertIsNotNone(x["mode_responses"]["slope_instability"]["adjusted"])
         self.assertEqual((x["indicator_sources"]["C1"], x["indicator_sources"]["A1"]), ("computed", "design_survey"))
+        self.assertEqual(x["mode_responses"]["slope_instability"]["basis"]["direct_missing"], ["D1", "D2"])
+        self.assertEqual(x["mode_responses"]["seepage"]["basis"]["direct_missing"], [])
 
     def test_one_sided_stability(self):
         x = evaluate(req(computation__front_slope_fos=..., computation__back_slope_fos=1.2))["result"]

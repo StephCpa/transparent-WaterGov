@@ -45,31 +45,87 @@
         "name": "漫顶失效",
         "weight": 0.172618,
         "raw": 0.0,
-        "adjusted": 0.0
+        "adjusted": 0.0,
+        "basis": {
+          "direct_indicators": [
+            "B1",
+            "B3"
+          ],
+          "direct_missing": [
+            "B3"
+          ],
+          "with_data": 2,
+          "not_applicable": 0,
+          "missing": 3
+        }
       },
       "seepage": {
         "name": "渗流破坏",
         "weight": 0.408463,
         "raw": 0.479823,
-        "adjusted": 0.479823
+        "adjusted": 0.479823,
+        "basis": {
+          "direct_indicators": [
+            "C1",
+            "C4",
+            "C5"
+          ],
+          "direct_missing": [],
+          "with_data": 6,
+          "not_applicable": 1,
+          "missing": 6
+        }
       },
       "slope_instability": {
         "name": "边坡失稳",
         "weight": 0.235018,
         "raw": 0.044311,
-        "adjusted": 0.044311
+        "adjusted": 0.044311,
+        "basis": {
+          "direct_indicators": [
+            "D1",
+            "D2"
+          ],
+          "direct_missing": [],
+          "with_data": 7,
+          "not_applicable": 1,
+          "missing": 2
+        }
       },
       "scour": {
         "name": "冲刷破坏",
         "weight": 0.075034,
         "raw": 0.131865,
-        "adjusted": 0.131865
+        "adjusted": 0.131865,
+        "basis": {
+          "direct_indicators": [
+            "D3"
+          ],
+          "direct_missing": [],
+          "with_data": 2,
+          "not_applicable": 0,
+          "missing": 2
+        }
       },
       "crossing_structure": {
         "name": "穿堤建筑物失效",
         "weight": 0.108867,
         "raw": 0.0,
-        "adjusted": 0.0
+        "adjusted": 0.0,
+        "basis": {
+          "direct_indicators": [
+            "A3",
+            "C6",
+            "D4"
+          ],
+          "direct_missing": [
+            "C6",
+            "D4"
+          ],
+          "with_data": 0,
+          "not_applicable": 1,
+          "missing": 6
+        }
       }
     },
     "indicator_scores": {
