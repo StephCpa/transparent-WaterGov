@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
-    image: levee-eval:1.0.0
+    image: levee-eval:1.1.0
     restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"     # expose through the reverse proxy, not directly

@@ -4,10 +4,15 @@ The model files in model/ are the delivered code, copied unchanged (sha256 in MO
 This module only translates field names, builds the auxiliary lists the delivered
 evaluate_section() expects for a single evaluation unit, and translates the result back.
 
-One behaviour is adapted at import time: the delivered score_C3() cannot express "no valid
-inspection" (it raises on None), so it is wrapped to return None in that case and C3 is then
-treated as a missing indicator, as Chapter 5 requires.  For every other input the wrapper calls
-the delivered function unchanged.
+A few delivered functions are wrapped at import time so that inputs the delivered code requires
+can be absent; an absent input then makes its indicator missing and skips its gate, instead of
+raising or defaulting to a full score.  Whenever the input is present the wrapper calls the
+delivered function unchanged (the 875-sample regression test checks this):
+
+  C3      no valid inspection                   (delivered score_C3 raises on None)
+  D1, D2  no slope-stability safety factor      (delivered code indexes the FoS directly)
+  D3      no scour depth                        (still 0 when an unrepaired major danger exists)
+  A5      settlement status unknown             (delivered code scores a missing settlement as 100)
 """
 
 from __future__ import annotations
@@ -20,7 +25,7 @@ from pathlib import Path
 
 from . import schema
 
-API_VERSION = "1.0.0"
+API_VERSION = "1.1.0"
 MODEL_DIR = Path(__file__).resolve().parent / "model"
 if str(MODEL_DIR) not in sys.path:
     sys.path.insert(0, str(MODEL_DIR))
@@ -28,14 +33,75 @@ if str(MODEL_DIR) not in sys.path:
 import failure_response_barrier_model as M  # noqa: E402
 import safety_evaluation as SE  # noqa: E402
 
-_delivered_score_C3 = M.score_C3
+_delivered = {name: getattr(M, name) for name in ("score_C3", "score_D1", "score_D2", "score_D3", "score_A5",
+                                                  "slope_response", "mode_contribution_overrides",
+                                                  "hard_constraint_gate")}
+_BACK, _FRONT, _SCOUR, _SETTLE = "背水坡FoS_正常", "临水坡FoS", "冲刷深度_m", "软基段_沉降量_cm"
+_A5_UNKNOWN = "_软基状态未知"   # internal flag set by to_internal(); not a delivered field
+_NO_GATE_FOS = 99.0            # stands in for an absent FoS only inside the gate check; never scored
+MAJOR_DANGER_KEYS = ("崩", "管涌", "散浸", "渗漏")   # delivered score_D3's notion of a major danger
 
 
-def _score_C3_allow_missing(leak_n):
-    return None if leak_n is None else _delivered_score_C3(leak_n)
+def _has(sec, key):
+    return sec.get(key) is not None
 
 
-M.score_C3 = _score_C3_allow_missing
+def _score_C3(leak_n):
+    return None if leak_n is None else _delivered["score_C3"](leak_n)
+
+
+def _score_D1(sec):
+    return _delivered["score_D1"](sec) if _has(sec, _BACK) else None
+
+
+def _score_D2(sec):
+    return _delivered["score_D2"](sec) if _has(sec, _FRONT) else None
+
+
+def _score_D3(sec, hist):
+    if _has(sec, _SCOUR):
+        return _delivered["score_D3"](sec, hist)
+    # without a depth only an unrepaired major danger decides D3: the delivered rule gives 0 at any depth
+    return 0 if _delivered["score_D3"]({**sec, _SCOUR: 0.0}, hist) == 0 else None
+
+
+def _score_A5(sec):
+    return None if sec.get(_A5_UNKNOWN) else _delivered["score_A5"](sec)
+
+
+def _with_fos_placeholders(sec):
+    return {**sec, **{k: _NO_GATE_FOS for k in (_BACK, _FRONT) if not _has(sec, k)}}
+
+
+def _slope_response(sec, scores):
+    if _has(sec, _BACK) and _has(sec, _FRONT):
+        return _delivered["slope_response"](sec, scores)
+    overrides = {}   # same rule as the delivered slope_response, for the side that has a FoS
+    for key, code, allow in ((_BACK, "D1", SE.FOS_BACK_ALLOW), (_FRONT, "D2", SE.FOS_FRONT_ALLOW)):
+        if _has(sec, key):
+            fos = float(sec[key])
+            if fos < 1.0:
+                return 1.0
+            overrides[code] = M.clamp01((allow - fos) / (allow - 1.0))
+    return M.mode_weighted_response("边坡失稳", scores, overrides=overrides)
+
+
+def _mode_contribution_overrides(sec):
+    out = _delivered["mode_contribution_overrides"](_with_fos_placeholders(sec))
+    for key, code in ((_BACK, "D1"), (_FRONT, "D2")):
+        if not _has(sec, key):
+            out["边坡失稳"].pop(code, None)
+    return out
+
+
+def _hard_constraint_gate(sec, scores, grade):
+    return _delivered["hard_constraint_gate"](_with_fos_placeholders(sec), scores, grade)
+
+
+M.score_C3, M.score_D1, M.score_D2, M.score_D3, M.score_A5 = _score_C3, _score_D1, _score_D2, _score_D3, _score_A5
+M.slope_response = _slope_response
+M.mode_contribution_overrides = _mode_contribution_overrides
+M.hard_constraint_gate = _hard_constraint_gate
 
 
 def _sha256(path):
@@ -88,6 +154,8 @@ def to_internal(req):
                           if lay.get(f.path.split(".")[-1]) is not None}
                          for lay in req["section"]["soil_layers"]]
     sec["待输入指标"] = dict(req.get("qualitative") or {})
+    if req["survey"].get("soft_foundation_status") == "unknown":
+        sec[_A5_UNKNOWN] = True
 
     rec = req["records"]
     geo_cls = [{"起始桩号": STAKE, "终止桩号": STAKE, "填土质量": rec["fill_quality"]}]
@@ -168,9 +236,79 @@ def _seepage_checks(sec):
     return {"control_layer": {"name": ctrl.get("土层名称"), "Gs": gs, "e": e}, **rows}
 
 
+def _rewrite_d3_reason(reasons, req, scores):
+    """The delivered D3 gate message names only the scour depth, also when the 70 or the 0 comes
+    from the danger records; state what actually set it.  Scores and caps are unchanged."""
+    d3, scour = scores.get("D3"), req["survey"].get("scour_depth_m")
+    majors = [h for h in req["records"]["historical_dangers"] if any(k in h["type"] for k in MAJOR_DANGER_KEYS)]
+
+    def names(reinforced):
+        return "、".join(dict.fromkeys(h["type"] for h in majors if h["reinforced"] is reinforced))
+
+    if d3 == 0 and (scour is None or scour < 1.0):
+        text = f"D3堤岸冲刷稳定性: 有未加固的重大险情记录（{names(False)}），按严重冲刷计0分"
+    elif d3 == 70 and scour is not None and scour < 0.5:
+        text = f"D3堤岸冲刷稳定性: 冲刷深度{scour:.2f}m未达0.5m，因有已加固的重大险情记录（{names(True)}）计70分，存在冲刷风险"
+    else:
+        return reasons
+    return [text if r.startswith("D3") else r for r in reasons]
+
+
+def _gates_not_checked(req, scores, leak):
+    comp, sv = req["computation"], req["survey"]
+    out = []
+    if comp.get("back_slope_fos") is None:
+        out.append({"indicator": "D1", "reason": "未提供背水坡抗滑稳定安全系数，未做背水坡稳定门控"})
+    if comp.get("front_slope_fos") is None:
+        out.append({"indicator": "D2", "reason": "未提供临水坡抗滑稳定安全系数，未做临水坡稳定门控"})
+    if sv.get("scour_depth_m") is None and scores.get("D3") is None:
+        out.append({"indicator": "D3", "reason": "未提供冲刷深度，未做冲刷门控"})
+    if sv.get("soft_foundation_status") == "unknown":
+        out.append({"indicator": "A5", "reason": "软基沉降资料缺失，未做沉降门控"})
+    if leak is None:
+        out.append({"indicator": "C3", "reason": "无有效巡检，未做观测门控"})
+    return out
+
+
+INDICATOR_SOURCE_LABELS = {"design_survey": "设计或测量资料", "computed": "渗流或稳定计算", "records": "地勘与台账资料",
+                           "survey": "监测资料", "survey_records": "测量与险情记录", "inspection": "巡检证据",
+                           "qualitative": "定性结论", "calculated": "复核计算量", "not_applicable": "不涉及",
+                           "missing": "缺失（未参与评价）"}
+
+
+def _indicator_sources(req, scores):
+    """Which kind of input each indicator score came from (keys of INDICATOR_SOURCE_LABELS)."""
+    q, sv, rec = req.get("qualitative") or {}, req["survey"], req["records"]
+    out = {}
+    for code, score in scores.items():
+        if score is None:
+            out[code] = "missing"
+        elif code in q:
+            out[code] = "not_applicable" if q[code] == "不涉及" else "qualitative"
+        elif code in ("C1", "C4", "C5", "D1", "D2"):
+            out[code] = "computed"
+        elif code in ("A1", "B1"):
+            out[code] = "design_survey"
+        elif code == "A5":
+            out[code] = "survey" if sv.get("soft_foundation_settlement_cm") is not None else "not_applicable"
+        elif code == "A3":
+            out[code] = "not_applicable" if rec["crossing_structure_class"] == "不涉及" else "records"
+        elif code == "D3":
+            out[code] = "survey_records" if sv.get("scour_depth_m") is not None else "records"
+        elif code in ("A2", "A6", "A7"):
+            out[code] = "records"
+        elif code in ("B2", "B3", "B4", "D4"):
+            out[code] = "calculated"
+        elif code == "C3":
+            out[code] = "inspection"
+        else:
+            out[code] = "qualitative"
+    return out
+
+
 def _warnings(req, scores, missing):
     w = []
-    rec, sv, ins = req["records"], req["survey"], req.get("inspection")
+    rec, sv, ins, comp = req["records"], req["survey"], req.get("inspection"), req["computation"]
     q = req.get("qualitative") or {}
 
     def add(code, message, indicator=None):
@@ -180,9 +318,19 @@ def _warnings(req, scores, missing):
         add("inspection_missing", "无有效巡检覆盖，C3按缺失处理，不触发观测门控；不能解读为未发现渗漏", "C3")
         if ins and ("confirmed_events" in ins or "aggregated" in ins):
             add("inspection_ignored", "coverage=none时传入的巡检事件或汇总证据未参与计算", "C3")
+    for key, code, what in (("back_slope_fos", "D1", "背水坡"), ("front_slope_fos", "D2", "临水坡")):
+        if comp.get(key) is None:
+            add("input_missing_no_gate", f"未提供{what}抗滑稳定安全系数，{code}按缺失处理，未做{what}稳定门控", code)
+    if sv.get("scour_depth_m") is None:
+        if scores.get("D3") == 0:
+            add("input_missing_no_gate", "未提供冲刷深度；因有未加固的重大险情记录，D3按交付规则计0分", "D3")
+        else:
+            add("input_missing_no_gate", "未提供冲刷深度，D3按缺失处理，未做冲刷门控", "D3")
     if rec["crossing_structure_class"] == "不涉及":
         add("not_applicable_scored_100", "无穿堤建筑物（不涉及），A3按交付模型编码为100分", "A3")
-    if sv.get("soft_foundation_settlement_cm") is None:
+    if sv.get("soft_foundation_status") == "unknown":
+        add("input_missing_no_gate", "软基沉降资料缺失，A5按缺失处理，未做沉降门控", "A5")
+    elif sv.get("soft_foundation_settlement_cm") is None:
         add("not_applicable_scored_100", "未给出软基沉降（非软基段），A5按交付模型编码为100分", "A5")
     if "A6" not in q and not rec["historical_dangers"]:
         add("derived_from_records", "未给出qualitative.A6且历史险情记录为空，A6按“无隐患”计100分", "A6")
@@ -224,7 +372,8 @@ def evaluate(req, *, validate=True, detail="full"):
         "grade_label": label,
         "model_grade": _grade(r["模型原始等级"])[0],
         "grade_after_observation_gate": _grade(r["UAV门控后等级"])[0],
-        "gate_reasons": r["硬约束门控原因"],
+        "gate_reasons": _rewrite_d3_reason(r["硬约束门控原因"], req, r["二级指标得分"]),
+        "gates_not_checked": _gates_not_checked(req, r["二级指标得分"], leak),
         "rho": r["综合风险度量rho"],
         "dominant_mode": {"code": MODE_CODES.get(dominant), "name": dominant} if dominant else None,
         "barrier": {"ability": r["管理屏障能力"], "coverage": r["管理信息覆盖度"],
@@ -235,6 +384,7 @@ def evaluate(req, *, validate=True, detail="full"):
         "mode_responses": modes,
         "indicator_scores": r["二级指标得分"],
         "missing_indicators": r["缺失指标"],
+        "indicator_sources": _indicator_sources(req, r["二级指标得分"]),
         "dominant_mode_contributions": _contrib_rows(r["主控模式指标贡献率"]),
         "contributions_by_mode": {MODE_CODES[m]: _contrib_rows(rows) for m, rows in r["全部失效模式指标贡献率"].items()},
         "seepage_checks": _seepage_checks(sec),
@@ -296,6 +446,7 @@ def meta():
         "crossing_structure_scores": {"一类": 100, "二类": 100, "三类": 70, "四类": 0, "1类": 100, "2类": 100,
                                       "3类": 70, "4类": 0, "加固": 100, "改建": 70, "重建": 0, "不涉及": 100},
         "inspection_position_weights": SE.UAV_LEAK_POSITION_WEIGHTS,
+        "indicator_source_labels": INDICATOR_SOURCE_LABELS,
         "grades": [{"grade": "A", "label": "安全", "score_min": 80}, {"grade": "B", "label": "基本安全", "score_min": 40},
                    {"grade": "C", "label": "不安全", "score_min": 0}],
         "constants": {"std_crest_width_m": SE.STD_TOP_WIDTH, "std_outer_slope": SE.STD_OUTER_SLOPE,

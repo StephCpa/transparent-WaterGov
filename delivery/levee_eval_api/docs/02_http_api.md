@@ -79,6 +79,20 @@
 - **定性指标**可以填分档名称（如 `"E4": "基本满足"`），也可以直接填0～100分；不清楚的指标**不要填**，按缺失处理比随意填“良好”更真实。
 - 未声明的字段会报 `unknown_field`，可以借此发现拼写错误。
 
+### 只用有资料支撑的输入（推荐）
+
+没有资料的指标**不要用假设值填满**：模型对未填的指标按缺失处理，在所属失效模式内按其余指标重新分配权重；用“良好”之类的假设值填进去会使得分偏乐观。v1.1 起下列输入也可以不填：
+
+| 输入 | 不填时 | 结果中的体现 |
+|---|---|---|
+| `computation.back_slope_fos`、`front_slope_fos` | D1、D2缺失，不做该侧边坡稳定门控 | `missing_indicators`、`gates_not_checked`、`warnings`（`input_missing_no_gate`） |
+| `survey.scour_depth_m` | D3缺失，不做冲刷门控；有未加固的重大险情记录时D3仍为0分 | 同上 |
+| 沉降资料（填 `survey.soft_foundation_status: "unknown"`） | A5缺失，不做沉降门控 | 同上 |
+
+注意：沉降量不填且不写 `soft_foundation_status` 时，仍按“非软基段”处理，A5计100分。沉降情况不明时务必填 `"unknown"`。
+
+渗流指标 C1、C4、C5 的三个比降仍为必填，这是评价的核心。示例见 `examples/request_data_supported.json`：只含断面、控制土层、三个比降、地勘台账结论、防洪标准和“不涉及”项，不含安全系数、冲刷深度、沉降和巡检。
+
 ## 5 巡检证据
 
 巡检证据决定C3（管涌隐患）得分和观测门控，按以下规则填写：
@@ -112,12 +126,13 @@ events模式的汇总规则（交付代码原样）：
 {
   "request_id": "demo-0001",
   "section_id": "DEMO-K0+500",
-  "api_version": "1.0.0",
+  "api_version": "1.1.0",
   "model": {"name": "...", "files": {"safety_evaluation.py": "89808c...", "...": "..."}},
   "result": {
     "score": 67.5529, "grade": "B", "grade_label": "基本安全",
     "model_grade": "B", "grade_after_observation_gate": "B",
     "gate_reasons": ["C1堤基渗透比降: i/i_cr=0.84接近临界"],
+    "gates_not_checked": [],
     "rho": 0.324471,
     "dominant_mode": {"code": "seepage", "name": "渗流破坏"},
     "barrier": {"ability": 0.71032, "coverage": 1.0, "lambda": 0.5},
@@ -126,6 +141,7 @@ events模式的汇总规则（交付代码原样）：
     "mode_responses": {"seepage": {"name": "渗流破坏", "weight": 0.408463, "raw": 0.417832, "adjusted": 0.453064}, "...": {}},
     "indicator_scores": {"A1": 100, "A2": 80, "...": "...", "C3": 60.0},
     "missing_indicators": [],
+    "indicator_sources": {"A1": "design_survey", "C1": "computed", "A2": "records", "B2": "qualitative", "A8": "not_applicable", "...": "..."},
     "dominant_mode_contributions": [
       {"indicator": "C1", "score": 28.6231, "risk_response": 0.844848, "weight_in_mode": 0.235054,
        "contribution": 0.198585, "contribution_rate": 0.475275, "source": "physical_response"}
@@ -148,7 +164,9 @@ events模式的汇总规则（交付代码原样）：
 - `gate_reasons` 非空时一并显示——它说明等级为什么被压低，比得分更重要；
 - `grade` 与 `model_grade` 不同时，提示“等级经门控下调”；
 - `dominant_mode_contributions` 前3项可作为“主要原因”；
-- `warnings` 应展示给评价人员，尤其是 `inspection_missing` 和 `indicators_missing`；
+- `warnings` 应展示给评价人员，尤其是 `inspection_missing`、`input_missing_no_gate` 和 `indicators_missing`；
+- `gates_not_checked` 非空时，在门控检查中把这些项标为“未检查（缺资料）”，不要显示成“通过”；
+- 每项指标按 `indicator_sources` 标注资料来源（中文名取 `/api/v1/meta` 的 `indicator_source_labels`）；为 `missing` 的指标不在明细中逐行显示，用一行列出“无资料、未参与评价”的指标即可；
 - `notice` 中的等级说明应随结果一起展示或在报告中注明。
 
 `warnings[].code` 取值：
@@ -161,6 +179,7 @@ events模式的汇总规则（交付代码原样）：
 | `derived_from_records` | A6由空的历史险情列表推定、A7由堤基类型推定 |
 | `indicators_missing` | 列出缺失指标（未作满分处理） |
 | `non_default_option` | 修改了α或λ，结果与标准配置不可直接比较 |
+| `input_missing_no_gate` | 未提供安全系数、冲刷深度或沉降资料，对应指标缺失、未做该项门控（v1.1） |
 
 ## 7 错误处理
 
@@ -173,7 +192,7 @@ events模式的汇总规则（交付代码原样）：
     "message": "请求字段校验未通过",
     "details": [
       {"field": "section.crest_elevation_m", "reason": "type_number_required"},
-      {"field": "computation.back_slope_fos", "reason": "required"},
+      {"field": "computation.foundation_gradient", "reason": "required"},
       {"field": "records.fill_quality", "reason": "not_in_enum", "allowed": ["质量较好", "质量一般", "质量较差"]}
     ]
   },
@@ -205,7 +224,7 @@ POST /api/v1/evaluate/batch?detail=summary
 
 ```json
 {
-  "api_version": "1.0.0", "count": 3, "succeeded": 2, "failed": 1,
+  "api_version": "1.1.0", "count": 3, "succeeded": 2, "failed": 1,
   "results": [
     {"index": 0, "ok": true, "response": {"request_id": "demo-0001", "result": {"...": "..."}}},
     {"index": 1, "ok": true, "response": {"...": "..."}},
@@ -271,6 +290,7 @@ resp = evaluate(req)              # 不合法时抛出 RequestInvalid，.details
 ## 10 对接检查清单
 
 - [ ] 用 `examples/request_full.json` 调通 `/evaluate`，结果与 `examples/response_full.json` 一致（`provenance.evaluated_at` 除外）；
+- [ ] 没有资料的指标不填假设值；沉降情况不明时填 `soft_foundation_status: "unknown"`；
 - [ ] `GET /health` 返回的模型sha256与 `01_code_description.md` 第3节一致；
 - [ ] 本方数据的字段映射逐项对照参数字典核对单位（m/cm）、坡比写法、湖堤/河堤；
 - [ ] 比降与安全系数取自同一水位工况；

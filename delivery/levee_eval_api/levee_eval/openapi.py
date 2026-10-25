@@ -123,6 +123,8 @@ def response_schema():
             "model_grade": {**_GRADE, "description": "仅按得分划分的等级"},
             "grade_after_observation_gate": _GRADE,
             "gate_reasons": {"type": "array", "items": {"type": "string"}, "description": "硬约束门控触发原因"},
+            "gates_not_checked": {"type": "array", "description": "因缺资料未做的门控检查（v1.1）", "items": {"type": "object", "properties": {
+                "indicator": {"type": "string"}, "reason": {"type": "string"}}}},
             "rho": {**_NUM, "description": "综合风险度量ρ"},
             "dominant_mode": {"type": "object", "nullable": True, "properties": {
                 "code": {"type": "string", "enum": _MODE_ENUM}, "name": {"type": "string"}}},
@@ -133,6 +135,10 @@ def response_schema():
                 "name": {"type": "string"}, "weight": _NUM, "raw": _NUM_N, "adjusted": _NUM_N}}},
             "indicator_scores": {"type": "object", "additionalProperties": _NUM_N},
             "missing_indicators": {"type": "array", "items": {"type": "string"}},
+            "indicator_sources": {"type": "object", "description": "各指标的资料来源（v1.1），中文名见 /api/v1/meta 的 indicator_source_labels",
+                                  "additionalProperties": {"type": "string", "enum": ["design_survey", "computed", "records", "survey",
+                                                                                       "survey_records", "inspection", "qualitative",
+                                                                                       "calculated", "not_applicable", "missing"]}},
             "dominant_mode_contributions": {"type": "array", "items": _CONTRIB},
             "contributions_by_mode": {"type": "object", "description": "detail=summary时省略",
                                       "additionalProperties": {"type": "array", "items": _CONTRIB}},

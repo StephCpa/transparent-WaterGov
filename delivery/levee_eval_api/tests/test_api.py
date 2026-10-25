@@ -55,7 +55,8 @@ class Validation(unittest.TestCase):
         self.assertEqual(validate(EXAMPLE_REQUEST), [])
 
     def test_required_and_unknown_fields(self):
-        self.assertIn(("computation.back_slope_fos", "required"), reasons(req(computation__back_slope_fos=...)))
+        self.assertIn(("computation.foundation_gradient", "required"), reasons(req(computation__foundation_gradient=...)))
+        self.assertEqual(validate(req(computation__back_slope_fos=..., survey__scour_depth_m=...)), [])
         self.assertIn(("records.fill_quality", "required"), reasons(req(records__fill_quality=...)))
         self.assertIn(("records.historical_dangers", "required"), reasons(req(records__historical_dangers=...)))
         self.assertIn(("section.crest_hight", "unknown_field"), reasons(req(section__crest_hight=1.0)))
@@ -150,6 +151,54 @@ class Evidence(unittest.TestCase):
         self.assertEqual(out["results"][1]["error"]["code"], "validation_failed")
         with self.assertRaises(RequestInvalid):
             evaluate_batch([])
+
+
+class MissingInputs(unittest.TestCase):
+    """v1.1: inputs without data stay missing and skip their gate instead of being required or scored 100."""
+
+    def test_no_stability_scour_settlement_inspection(self):
+        r = req(computation__back_slope_fos=..., computation__front_slope_fos=..., survey__scour_depth_m=...,
+                survey__soft_foundation_status="unknown", inspection=...)
+        res = evaluate(r)
+        x = res["result"]
+        for code in ("D1", "D2", "D3", "A5", "C3"):
+            self.assertIsNone(x["indicator_scores"][code], code)
+            self.assertIn(code, x["missing_indicators"])
+            self.assertEqual(x["indicator_sources"][code], "missing")
+        self.assertEqual({g["indicator"] for g in x["gates_not_checked"]}, {"D1", "D2", "D3", "A5", "C3"})
+        self.assertFalse([g for g in x["gate_reasons"] if g[:2] in ("D1", "D2", "D3", "A5")])
+        self.assertIn("input_missing_no_gate", {w["code"] for w in res["warnings"]})
+        self.assertIsNotNone(x["mode_responses"]["slope_instability"]["adjusted"])
+        self.assertEqual((x["indicator_sources"]["C1"], x["indicator_sources"]["A1"]), ("computed", "design_survey"))
+
+    def test_one_sided_stability(self):
+        x = evaluate(req(computation__front_slope_fos=..., computation__back_slope_fos=1.2))["result"]
+        self.assertIsNone(x["indicator_scores"]["D2"])
+        self.assertIn("D1背水坡FoS=1.20<允许值1.35", x["gate_reasons"])
+        self.assertEqual([g["indicator"] for g in x["gates_not_checked"]], ["D2"])
+        failed = evaluate(req(computation__front_slope_fos=..., computation__back_slope_fos=0.95))["result"]
+        self.assertEqual(failed["mode_responses"]["slope_instability"]["raw"], 1.0)
+        self.assertEqual(failed["grade"], "C")
+
+    def test_scour_missing_with_unrepaired_major_danger(self):
+        x = evaluate(req(survey__scour_depth_m=...,
+                         records__historical_dangers=[{"type": "管涌", "reinforced": False}]))["result"]
+        self.assertEqual(x["indicator_scores"]["D3"], 0)
+        self.assertEqual(x["grade"], "C")
+        self.assertIn("D3堤岸冲刷稳定性: 有未加固的重大险情记录（管涌），按严重冲刷计0分", x["gate_reasons"])
+        self.assertNotIn("D3", {g["indicator"] for g in x["gates_not_checked"]})
+
+    def test_d3_reason_names_the_danger_record(self):
+        x = evaluate(req(records__historical_dangers=[{"type": "管涌", "reinforced": True}]))["result"]
+        self.assertEqual(x["indicator_scores"]["D3"], 70)
+        self.assertIn("D3堤岸冲刷稳定性: 冲刷深度0.20m未达0.5m，因有已加固的重大险情记录（管涌）计70分，存在冲刷风险",
+                      x["gate_reasons"])
+
+    def test_settlement_status_rules(self):
+        self.assertIn(("survey.soft_foundation_status", "not_allowed_when_settlement_given"),
+                      reasons(req(survey__soft_foundation_settlement_cm=8.0, survey__soft_foundation_settlement_diff_cm=2.0,
+                                  survey__soft_foundation_status="unknown")))
+        self.assertEqual(evaluate(req(survey__soft_foundation_status="non_soft"))["result"]["indicator_scores"]["A5"], 100)
 
 
 def call(method, path, body=None, headers=None, raw=None):

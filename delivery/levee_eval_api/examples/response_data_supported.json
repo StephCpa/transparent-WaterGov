@@ -1,0 +1,723 @@
+{
+  "request_id": "demo-0005",
+  "section_id": "DEMO-K0+500",
+  "api_version": "1.1.0",
+  "model": {
+    "name": "failure-response / safety-barrier rule chain (Chapter 5)",
+    "files": {
+      "failure_mode_indicator_matrix.json": "6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088",
+      "failure_response_barrier_model.py": "c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa",
+      "safety_evaluation.py": "89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb"
+    }
+  },
+  "result": {
+    "score": 69.0654,
+    "grade": "B",
+    "grade_label": "基本安全",
+    "model_grade": "B",
+    "grade_after_observation_gate": "B",
+    "gate_reasons": [
+      "C1堤基渗透比降: i/i_cr=0.84接近临界"
+    ],
+    "gates_not_checked": [
+      {
+        "indicator": "D1",
+        "reason": "未提供背水坡抗滑稳定安全系数，未做背水坡稳定门控"
+      },
+      {
+        "indicator": "D2",
+        "reason": "未提供临水坡抗滑稳定安全系数，未做临水坡稳定门控"
+      },
+      {
+        "indicator": "D3",
+        "reason": "未提供冲刷深度，未做冲刷门控"
+      },
+      {
+        "indicator": "A5",
+        "reason": "软基沉降资料缺失，未做沉降门控"
+      },
+      {
+        "indicator": "C3",
+        "reason": "无有效巡检，未做观测门控"
+      }
+    ],
+    "rho": 0.309346,
+    "dominant_mode": {
+      "code": "seepage",
+      "name": "渗流破坏"
+    },
+    "barrier": {
+      "ability": null,
+      "coverage": 0.0,
+      "lambda": 0.5
+    },
+    "observation_gate": {
+      "cap": null,
+      "note": null
+    },
+    "inspection_evidence": null,
+    "mode_responses": {
+      "overtopping": {
+        "name": "漫顶失效",
+        "weight": 0.172618,
+        "raw": 0.0,
+        "adjusted": 0.0
+      },
+      "seepage": {
+        "name": "渗流破坏",
+        "weight": 0.408463,
+        "raw": 0.425188,
+        "adjusted": 0.425188
+      },
+      "slope_instability": {
+        "name": "边坡失稳",
+        "weight": 0.235018,
+        "raw": 0.105371,
+        "adjusted": 0.105371
+      },
+      "scour": {
+        "name": "冲刷破坏",
+        "weight": 0.075034,
+        "raw": 0.214959,
+        "adjusted": 0.214959
+      },
+      "crossing_structure": {
+        "name": "穿堤建筑物失效",
+        "weight": 0.108867,
+        "raw": 0.0,
+        "adjusted": 0.0
+      }
+    },
+    "indicator_scores": {
+      "A1": 100,
+      "A2": 80,
+      "A3": 100,
+      "A4": null,
+      "A5": null,
+      "A6": 80,
+      "A7": 100,
+      "A8": 100.0,
+      "A9": 100.0,
+      "B1": 100,
+      "B2": 100.0,
+      "B3": null,
+      "B4": 100.0,
+      "C1": 28.6231,
+      "C2": null,
+      "C3": null,
+      "C4": 90.4463,
+      "C5": 78.5041,
+      "C6": 100.0,
+      "D1": null,
+      "D2": null,
+      "D3": null,
+      "D4": 100.0,
+      "D5": null,
+      "E1": null,
+      "E2": null,
+      "E3": null,
+      "E4": null,
+      "E5": null
+    },
+    "missing_indicators": [
+      "A4",
+      "A5",
+      "B3",
+      "C2",
+      "C3",
+      "D1",
+      "D2",
+      "D3",
+      "D5",
+      "E1",
+      "E2",
+      "E3",
+      "E4",
+      "E5"
+    ],
+    "indicator_sources": {
+      "A1": "design_survey",
+      "A2": "records",
+      "A3": "not_applicable",
+      "A4": "missing",
+      "A5": "missing",
+      "A6": "records",
+      "A7": "records",
+      "A8": "not_applicable",
+      "A9": "not_applicable",
+      "B1": "design_survey",
+      "B2": "qualitative",
+      "B3": "missing",
+      "B4": "not_applicable",
+      "C1": "computed",
+      "C2": "missing",
+      "C3": "missing",
+      "C4": "computed",
+      "C5": "computed",
+      "C6": "not_applicable",
+      "D1": "missing",
+      "D2": "missing",
+      "D3": "missing",
+      "D4": "not_applicable",
+      "D5": "missing",
+      "E1": "missing",
+      "E2": "missing",
+      "E3": "missing",
+      "E4": "missing",
+      "E5": "missing"
+    },
+    "dominant_mode_contributions": [
+      {
+        "indicator": "C1",
+        "score": 28.6231,
+        "risk_response": 0.844848,
+        "weight_in_mode": 0.235054,
+        "contribution": 0.198585,
+        "contribution_rate": 0.527073,
+        "source": "physical_response"
+      },
+      {
+        "indicator": "C5",
+        "score": 78.5041,
+        "risk_response": 0.463636,
+        "weight_in_mode": 0.235054,
+        "contribution": 0.10898,
+        "contribution_rate": 0.289249,
+        "source": "physical_response"
+      },
+      {
+        "indicator": "C4",
+        "score": 90.4463,
+        "risk_response": 0.309091,
+        "weight_in_mode": 0.148118,
+        "contribution": 0.045782,
+        "contribution_rate": 0.121512,
+        "source": "physical_response"
+      },
+      {
+        "indicator": "A2",
+        "score": 80,
+        "risk_response": 0.2,
+        "weight_in_mode": 0.058557,
+        "contribution": 0.011711,
+        "contribution_rate": 0.031083,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "A6",
+        "score": 80,
+        "risk_response": 0.2,
+        "weight_in_mode": 0.058557,
+        "contribution": 0.011711,
+        "contribution_rate": 0.031083,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "A7",
+        "score": 100,
+        "risk_response": 0.0,
+        "weight_in_mode": 0.044552,
+        "contribution": 0.0,
+        "contribution_rate": 0.0,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "A8",
+        "score": 100.0,
+        "risk_response": 0.0,
+        "weight_in_mode": 0.02972,
+        "contribution": 0.0,
+        "contribution_rate": 0.0,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "A9",
+        "score": 100.0,
+        "risk_response": 0.0,
+        "weight_in_mode": 0.003266,
+        "contribution": 0.0,
+        "contribution_rate": 0.0,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "C6",
+        "score": 100.0,
+        "risk_response": 0.0,
+        "weight_in_mode": 0.073246,
+        "contribution": 0.0,
+        "contribution_rate": 0.0,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "A5",
+        "score": null,
+        "risk_response": null,
+        "weight_in_mode": 0.005334,
+        "contribution": null,
+        "contribution_rate": null,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "C2",
+        "score": null,
+        "risk_response": null,
+        "weight_in_mode": 0.05077,
+        "contribution": null,
+        "contribution_rate": null,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "C3",
+        "score": null,
+        "risk_response": null,
+        "weight_in_mode": 0.034227,
+        "contribution": null,
+        "contribution_rate": null,
+        "source": "indicator_score"
+      },
+      {
+        "indicator": "D5",
+        "score": null,
+        "risk_response": null,
+        "weight_in_mode": 0.023545,
+        "contribution": null,
+        "contribution_rate": null,
+        "source": "indicator_score"
+      }
+    ],
+    "contributions_by_mode": {
+      "overtopping": [
+        {
+          "indicator": "A1",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.070327,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "B1",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.489184,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "physical_response"
+        },
+        {
+          "indicator": "B2",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.105895,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "B4",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.059528,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "B3",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.275065,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        }
+      ],
+      "seepage": [
+        {
+          "indicator": "C1",
+          "score": 28.6231,
+          "risk_response": 0.844848,
+          "weight_in_mode": 0.235054,
+          "contribution": 0.198585,
+          "contribution_rate": 0.527073,
+          "source": "physical_response"
+        },
+        {
+          "indicator": "C5",
+          "score": 78.5041,
+          "risk_response": 0.463636,
+          "weight_in_mode": 0.235054,
+          "contribution": 0.10898,
+          "contribution_rate": 0.289249,
+          "source": "physical_response"
+        },
+        {
+          "indicator": "C4",
+          "score": 90.4463,
+          "risk_response": 0.309091,
+          "weight_in_mode": 0.148118,
+          "contribution": 0.045782,
+          "contribution_rate": 0.121512,
+          "source": "physical_response"
+        },
+        {
+          "indicator": "A2",
+          "score": 80,
+          "risk_response": 0.2,
+          "weight_in_mode": 0.058557,
+          "contribution": 0.011711,
+          "contribution_rate": 0.031083,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A6",
+          "score": 80,
+          "risk_response": 0.2,
+          "weight_in_mode": 0.058557,
+          "contribution": 0.011711,
+          "contribution_rate": 0.031083,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A7",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.044552,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A8",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.02972,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A9",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.003266,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C6",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.073246,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A5",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.005334,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C2",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.05077,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C3",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.034227,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D5",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.023545,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        }
+      ],
+      "slope_instability": [
+        {
+          "indicator": "A2",
+          "score": 80,
+          "risk_response": 0.2,
+          "weight_in_mode": 0.101772,
+          "contribution": 0.020354,
+          "contribution_rate": 0.52554,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A6",
+          "score": 80,
+          "risk_response": 0.2,
+          "weight_in_mode": 0.050886,
+          "contribution": 0.010177,
+          "contribution_rate": 0.26277,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C4",
+          "score": 90.4463,
+          "risk_response": 0.095537,
+          "weight_in_mode": 0.08581,
+          "contribution": 0.008198,
+          "contribution_rate": 0.211672,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A1",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.051654,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A7",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.077432,
+          "contribution": 0.0,
+          "contribution_rate": 0.0,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A5",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.01854,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C2",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.044119,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D1",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.301896,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D2",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.186045,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D5",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.081844,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        }
+      ],
+      "scour": [
+        {
+          "indicator": "C5",
+          "score": 78.5041,
+          "risk_response": 0.214959,
+          "weight_in_mode": 0.42652,
+          "contribution": 0.091684,
+          "contribution_rate": 0.999999,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A4",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.093782,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "B3",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.210931,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D3",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.268768,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        }
+      ],
+      "crossing_structure": [
+        {
+          "indicator": "A3",
+          "score": 100,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.167264,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A8",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.111509,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "A9",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.024506,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "B4",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.094387,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "C6",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.412221,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D4",
+          "score": 100.0,
+          "risk_response": 0.0,
+          "weight_in_mode": 0.101771,
+          "contribution": 0.0,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        },
+        {
+          "indicator": "D5",
+          "score": null,
+          "risk_response": null,
+          "weight_in_mode": 0.088341,
+          "contribution": null,
+          "contribution_rate": null,
+          "source": "indicator_score"
+        }
+      ]
+    },
+    "seepage_checks": {
+      "control_layer": {
+        "name": "粉细砂（合成示例）",
+        "Gs": 2.65,
+        "e": 0.7
+      },
+      "C1": {
+        "gradient": 0.82,
+        "critical_gradient": 0.970588,
+        "ratio": 0.844848,
+        "state": "near_critical"
+      },
+      "C4": {
+        "gradient": 0.3,
+        "critical_gradient": 0.970588,
+        "ratio": 0.309091,
+        "state": "below_gate"
+      },
+      "C5": {
+        "gradient": 0.45,
+        "critical_gradient": 0.970588,
+        "ratio": 0.463636,
+        "state": "below_gate"
+      }
+    }
+  },
+  "warnings": [
+    {
+      "code": "inspection_missing",
+      "message": "无有效巡检覆盖，C3按缺失处理，不触发观测门控；不能解读为未发现渗漏",
+      "indicator": "C3"
+    },
+    {
+      "code": "input_missing_no_gate",
+      "message": "未提供背水坡抗滑稳定安全系数，D1按缺失处理，未做背水坡稳定门控",
+      "indicator": "D1"
+    },
+    {
+      "code": "input_missing_no_gate",
+      "message": "未提供临水坡抗滑稳定安全系数，D2按缺失处理，未做临水坡稳定门控",
+      "indicator": "D2"
+    },
+    {
+      "code": "input_missing_no_gate",
+      "message": "未提供冲刷深度，D3按缺失处理，未做冲刷门控",
+      "indicator": "D3"
+    },
+    {
+      "code": "not_applicable_scored_100",
+      "message": "无穿堤建筑物（不涉及），A3按交付模型编码为100分",
+      "indicator": "A3"
+    },
+    {
+      "code": "input_missing_no_gate",
+      "message": "软基沉降资料缺失，A5按缺失处理，未做沉降门控",
+      "indicator": "A5"
+    },
+    {
+      "code": "derived_from_records",
+      "message": "A7由堤基类型B推定为100分",
+      "indicator": "A7"
+    },
+    {
+      "code": "indicators_missing",
+      "message": "以下指标缺失，已在模式内按现有权重归一化，不作满分处理：A4、A5、B3、C2、C3、D1、D2、D3、D5、E1、E2、E3、E4、E5"
+    }
+  ],
+  "notice": "A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。",
+  "provenance": {
+    "evaluated_at": "2026-10-22T00:00:00+00:00",
+    "input_sha256": "961ade5b5d0422b6f46656a578c8c5d3a0b88f1af6bd5e716617b104ad6e924d"
+  }
+}

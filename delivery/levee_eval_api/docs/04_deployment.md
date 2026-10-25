@@ -63,11 +63,11 @@ curl http://127.0.0.1:8080/api/v1/health
 
 ```bash
 # 在对接包根目录执行
-docker build -f deploy/Dockerfile -t levee-eval:1.0.0 .
+docker build -f deploy/Dockerfile -t levee-eval:1.1.0 .
 docker run -d --name levee-eval --restart unless-stopped \
   -p 127.0.0.1:8080:8080 --read-only --tmpfs /tmp \
   -e LEVEE_EVAL_WORKERS=4 -e LEVEE_EVAL_API_KEY=请替换 \
-  levee-eval:1.0.0
+  levee-eval:1.1.0
 docker ps            # STATUS 显示 (healthy) 即正常
 ```
 

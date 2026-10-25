@@ -47,17 +47,18 @@
 | `computation.contact_gradient` | number | 是 |  | ≥0 |  | C5 | 接触面渗透比降i | 堤基接触面渗透比降 |
 | `computation.body_Gs` | number |  |  | ≥2，≤3.2 |  | C4 | 堤身Gs | 堤身土粒比重（缺省取控制层） |
 | `computation.body_e` | number |  |  | ≥0.1，≤3 |  | C4 | 堤身e | 堤身孔隙比（缺省取控制层） |
-| `computation.back_slope_fos` | number | 是 |  | >0 |  | D1 | 背水坡FoS_正常 | 背水坡抗滑稳定安全系数（正常运用） |
-| `computation.front_slope_fos` | number | 是 |  | >0 |  | D2 | 临水坡FoS | 临水坡抗滑稳定安全系数（稳态） |
+| `computation.back_slope_fos` | number，可null |  |  | >0 |  | D1 | 背水坡FoS_正常 | 背水坡抗滑稳定安全系数（正常运用）；未做稳定计算时不填或null：D1按缺失处理，不做背水坡稳定门控 |
+| `computation.front_slope_fos` | number，可null |  |  | >0 |  | D2 | 临水坡FoS | 临水坡抗滑稳定安全系数（稳态）；未做稳定计算时不填或null：D2按缺失处理，不做临水坡稳定门控 |
 
 ### survey：测量与检查
 
 | 字段路径 | 类型 | 必填 | 单位 | 取值/范围 | 默认 | 对应指标 | 模型内部字段 | 说明 |
 |---|---|---|---|---|---|---|---|---|
 | `survey` | object | 是 |  |  |  |  |  | 测量与检查资料 |
-| `survey.scour_depth_m` | number | 是 | m | ≥0 |  | D3 | 冲刷深度_m | 堤脚冲刷深度 |
-| `survey.soft_foundation_settlement_cm` | number，可null |  | cm | ≥0 |  | A5 | 软基段_沉降量_cm | 软基段沉降量；缺省或null表示非软基段（A5按100分，并给出提示） |
+| `survey.scour_depth_m` | number，可null |  | m | ≥0 |  | D3 | 冲刷深度_m | 堤脚冲刷深度；无测量资料时不填或null：D3按缺失处理（有未加固的重大险情记录时仍计0分），不做冲刷门控 |
+| `survey.soft_foundation_settlement_cm` | number，可null |  | cm | ≥0 |  | A5 | 软基段_沉降量_cm | 软基段沉降量；缺省或null时按soft_foundation_status处理 |
 | `survey.soft_foundation_settlement_diff_cm` | number，可null |  | cm | ≥0 |  | A5 | 软基段_沉降差_cm | 软基段沉降差；给出沉降量时必填 |
+| `survey.soft_foundation_status` | string |  |  | non_soft / unknown | "non_soft" | A5 |  | 未给沉降量时说明原因：non_soft＝非软基段（默认，A5按100分并提示）；unknown＝软基情况或沉降资料未知（A5按缺失处理，不做沉降门控）。给出沉降量时不得填写 |
 
 ### records：台账与检查结论
 
@@ -131,7 +132,7 @@
 
 - `section.control_layer` 与 `section.soil_layers` 至少给出其一；都给出时以 control_layer 为准。
 - `section.foundation_class` 与 `qualitative.A7` 至少给出其一；都给出时A7以qualitative为准。
-- 给出 `survey.soft_foundation_settlement_cm` 时必须同时给出 `soft_foundation_settlement_diff_cm`。
+- 给出 `survey.soft_foundation_settlement_cm` 时必须同时给出 `soft_foundation_settlement_diff_cm`，且不得填写 `soft_foundation_status`。
 - `inspection.coverage=complete` 且 `mode=events`（默认）时必须给出 `confirmed_events`（无事件传 `[]`），不得给出 `aggregated`；`mode=aggregated` 时必须给出 `aggregated`，不得给出 `confirmed_events`。
 - aggregated模式下证据等级与门控上限须符合交付规则：0级、1级无门控（gate_cap为null或不给），2级为B，3级为C；加权密度为0当且仅当证据等级为0。
 - 未声明的字段一律报 `unknown_field`，防止拼写错误被静默忽略。
@@ -169,7 +170,9 @@ B2、B3、B4、D4 未在 `qualitative` 中给出时，可由 `calculated` 中的
 | A3 穿堤建筑物完好性 | records.crossing_structure_class | 一类：100；二类：100；三类：70；四类：0；1类：100；2类：100；3类：70；4类：0；加固：100；改建：70；重建：0；不涉及：100 |
 | A6 内部隐患 | qualitative.A6，否则records.historical_dangers | 多条记录取最低；有severity按A6分档；否则类型含“蚁”或“隐患”：未加固0、已加固80；其他类型：未加固60、已加固不扣分；无记录100 |
 | A7 堤基不良地质处理 | qualitative.A7，否则section.foundation_class | C类70分，D类60分，A/B类100分 |
-| D3 堤岸冲刷稳定性 | survey.scour_depth_m＋records.historical_dangers | 冲刷≥1.0 m或有未加固的重大险情记录（类型含“崩”、管涌、散浸、渗漏）：0；冲刷≥0.5 m或有已加固的重大险情记录：70；否则100 |
+| D3 堤岸冲刷稳定性 | survey.scour_depth_m＋records.historical_dangers | 冲刷≥1.0 m或有未加固的重大险情记录（类型含“崩”、管涌、散浸、渗漏）：0；冲刷≥0.5 m或有已加固的重大险情记录：70；否则100。未给冲刷深度：有未加固的重大险情记录仍为0，否则缺失 |
+| A5 软基段沉降 | survey.soft_foundation_settlement_cm、soft_foundation_settlement_diff_cm、soft_foundation_status | 沉降量≤15 cm且沉降差≤5 cm：100，否则0。未给沉降量：soft_foundation_status=non_soft（默认）按100分，unknown按缺失 |
+| D1、D2 抗滑稳定 | computation.back_slope_fos、front_slope_fos | 按安全系数分段评分（见第5章）；未给安全系数：缺失，不做该侧稳定门控 |
 | C3 管涌隐患（巡检） | inspection | 加权密度0：100；≤1：80；≤2：60；≤4：40；>4：0（点/100 m）；无有效巡检：缺失 |
 
 巡检事件位置权重：普通堤身 1.0，堤身 1.0，堤坡 1.0，堤脚 1.2，坡脚 1.2，穿堤建筑物 1.3，建筑物附近 1.3，结合部 1.5，历史险情附近 1.5；重复2次×1.2，≥3次×1.5。
@@ -187,7 +190,8 @@ B2、B3、B4、D4 未在 `qualitative` 中给出时，可由 `calculated` 中的
 | `result.grade_label` | string | 等级名称：安全/基本安全/不安全 |
 | `result.model_grade` | string | 仅按得分分级的等级（A≥80，40≤B<80，C<40） |
 | `result.grade_after_observation_gate` | string | 经巡检观测门控后的等级 |
-| `result.gate_reasons` | string[] | 硬约束门控触发原因（交付模型原文），为空表示未触发 |
+| `result.gate_reasons` | string[] | 硬约束门控触发原因（交付模型原文；D3由险情记录触发时改写为说明记录的文字），为空表示未触发 |
+| `result.gates_not_checked[]` | object[] | 因缺资料未做的门控检查：indicator、reason（如未给安全系数时的D1/D2、无有效巡检时的C3） |
 | `result.rho` | number | 综合风险度量ρ=α·max(Rk)+(1−α)·Σwk·Rk |
 | `result.dominant_mode.code / name` | string | 主控失效模式（屏障修正后响应最大者） |
 | `result.barrier.ability / coverage / lambda` | number | 运行管理屏障能力Bm、信息覆盖度、屏障强度λ |
@@ -196,6 +200,7 @@ B2、B3、B4、D4 未在 `qualitative` 中给出时，可由 `calculated` 中的
 | `result.mode_responses.<mode>` | object | 五类失效模式的权重、原始响应raw、屏障修正响应adjusted（0～1，越大越危险） |
 | `result.indicator_scores.<code>` | number/null | 29项二级指标得分（0～100）；null为缺失 |
 | `result.missing_indicators` | string[] | 缺失指标代码；缺失指标不作满分处理，在模式内按现有权重归一化 |
+| `result.indicator_sources.<code>` | string | 各指标得分的资料来源：design_survey、computed、records、survey、survey_records、inspection、qualitative、calculated、not_applicable、missing；中文名见 /api/v1/meta 的 indicator_source_labels |
 | `result.dominant_mode_contributions[]` | object[] | 主控模式内各指标的风险响应、模式内权重、贡献值和贡献率（降序） |
 | `result.contributions_by_mode.<mode>[]` | object[] | 全部失效模式的指标贡献（detail=summary时省略） |
 | `result.seepage_checks` | object | 控制土层及C1/C4/C5的比降、Terzaghi临界比降、i/i_cr与门控状态 |
@@ -219,4 +224,4 @@ B2、B3、B4、D4 未在 `qualitative` 中给出时，可由 `calculated` 中的
 | 422 | validation_failed | 字段校验未通过，`error.details[]` 逐项给出 field 与 reason |
 | 500 | internal_error | 服务内部错误，凭 trace_id 查日志 |
 
-`error.details[].reason` 取值：required、unknown_field、type_<类型>_required、not_in_enum、below_minimum、above_maximum、unknown_indicator、score_out_of_range_0_100、category_or_score_required、control_layer_or_soil_layers_required、foundation_class_or_qualitative_A7_required、required_when_settlement_given、required_in_events_mode_empty_list_if_none、required_in_aggregated_mode、not_allowed_in_events_mode、not_allowed_in_aggregated_mode、inconsistent_with_evidence_level、inconsistent_with_density、too_many_items、empty。
+`error.details[].reason` 取值：required、unknown_field、type_<类型>_required、not_in_enum、below_minimum、above_maximum、unknown_indicator、score_out_of_range_0_100、category_or_score_required、control_layer_or_soil_layers_required、foundation_class_or_qualitative_A7_required、required_when_settlement_given、not_allowed_when_settlement_given、required_in_events_mode_empty_list_if_none、required_in_aggregated_mode、not_allowed_in_events_mode、not_allowed_in_aggregated_mode、inconsistent_with_evidence_level、inconsistent_with_density、too_many_items、empty。

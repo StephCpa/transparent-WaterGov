@@ -30,7 +30,8 @@ OUTPUT_FIELDS = [
     ("result.grade_label", "string", "等级名称：安全/基本安全/不安全"),
     ("result.model_grade", "string", "仅按得分分级的等级（A≥80，40≤B<80，C<40）"),
     ("result.grade_after_observation_gate", "string", "经巡检观测门控后的等级"),
-    ("result.gate_reasons", "string[]", "硬约束门控触发原因（交付模型原文），为空表示未触发"),
+    ("result.gate_reasons", "string[]", "硬约束门控触发原因（交付模型原文；D3由险情记录触发时改写为说明记录的文字），为空表示未触发"),
+    ("result.gates_not_checked[]", "object[]", "因缺资料未做的门控检查：indicator、reason（如未给安全系数时的D1/D2、无有效巡检时的C3）"),
     ("result.rho", "number", "综合风险度量ρ=α·max(Rk)+(1−α)·Σwk·Rk"),
     ("result.dominant_mode.code / name", "string", "主控失效模式（屏障修正后响应最大者）"),
     ("result.barrier.ability / coverage / lambda", "number", "运行管理屏障能力Bm、信息覆盖度、屏障强度λ"),
@@ -39,6 +40,7 @@ OUTPUT_FIELDS = [
     ("result.mode_responses.<mode>", "object", "五类失效模式的权重、原始响应raw、屏障修正响应adjusted（0～1，越大越危险）"),
     ("result.indicator_scores.<code>", "number/null", "29项二级指标得分（0～100）；null为缺失"),
     ("result.missing_indicators", "string[]", "缺失指标代码；缺失指标不作满分处理，在模式内按现有权重归一化"),
+    ("result.indicator_sources.<code>", "string", "各指标得分的资料来源：design_survey、computed、records、survey、survey_records、inspection、qualitative、calculated、not_applicable、missing；中文名见 /api/v1/meta 的 indicator_source_labels"),
     ("result.dominant_mode_contributions[]", "object[]", "主控模式内各指标的风险响应、模式内权重、贡献值和贡献率（降序）"),
     ("result.contributions_by_mode.<mode>[]", "object[]", "全部失效模式的指标贡献（detail=summary时省略）"),
     ("result.seepage_checks", "object", "控制土层及C1/C4/C5的比降、Terzaghi临界比降、i/i_cr与门控状态"),
@@ -90,7 +92,7 @@ def dictionary_md():
     out += ["### 交叉校验规则", "",
             "- `section.control_layer` 与 `section.soil_layers` 至少给出其一；都给出时以 control_layer 为准。",
             "- `section.foundation_class` 与 `qualitative.A7` 至少给出其一；都给出时A7以qualitative为准。",
-            "- 给出 `survey.soft_foundation_settlement_cm` 时必须同时给出 `soft_foundation_settlement_diff_cm`。",
+            "- 给出 `survey.soft_foundation_settlement_cm` 时必须同时给出 `soft_foundation_settlement_diff_cm`，且不得填写 `soft_foundation_status`。",
             "- `inspection.coverage=complete` 且 `mode=events`（默认）时必须给出 `confirmed_events`（无事件传 `[]`），不得给出 `aggregated`；"
             "`mode=aggregated` 时必须给出 `aggregated`，不得给出 `confirmed_events`。",
             "- aggregated模式下证据等级与门控上限须符合交付规则：0级、1级无门控（gate_cap为null或不给），2级为B，3级为C；"
@@ -111,7 +113,9 @@ def dictionary_md():
             "| A3 穿堤建筑物完好性 | records.crossing_structure_class | " + "；".join(f"{k}：{v}" for k, v in meta["crossing_structure_scores"].items()) + " |",
             "| A6 内部隐患 | qualitative.A6，否则records.historical_dangers | 多条记录取最低；有severity按A6分档；否则类型含“蚁”或“隐患”：未加固0、已加固80；其他类型：未加固60、已加固不扣分；无记录100 |",
             "| A7 堤基不良地质处理 | qualitative.A7，否则section.foundation_class | C类70分，D类60分，A/B类100分 |",
-            "| D3 堤岸冲刷稳定性 | survey.scour_depth_m＋records.historical_dangers | 冲刷≥1.0 m或有未加固的重大险情记录（类型含“崩”、管涌、散浸、渗漏）：0；冲刷≥0.5 m或有已加固的重大险情记录：70；否则100 |",
+            "| D3 堤岸冲刷稳定性 | survey.scour_depth_m＋records.historical_dangers | 冲刷≥1.0 m或有未加固的重大险情记录（类型含“崩”、管涌、散浸、渗漏）：0；冲刷≥0.5 m或有已加固的重大险情记录：70；否则100。未给冲刷深度：有未加固的重大险情记录仍为0，否则缺失 |",
+            "| A5 软基段沉降 | survey.soft_foundation_settlement_cm、soft_foundation_settlement_diff_cm、soft_foundation_status | 沉降量≤15 cm且沉降差≤5 cm：100，否则0。未给沉降量：soft_foundation_status=non_soft（默认）按100分，unknown按缺失 |",
+            "| D1、D2 抗滑稳定 | computation.back_slope_fos、front_slope_fos | 按安全系数分段评分（见第5章）；未给安全系数：缺失，不做该侧稳定门控 |",
             "| C3 管涌隐患（巡检） | inspection | 加权密度0：100；≤1：80；≤2：60；≤4：40；>4：0（点/100 m）；无有效巡检：缺失 |",
             "", "巡检事件位置权重：" + "，".join(f"{k} {v}" for k, v in meta["inspection_position_weights"].items())
             + "；重复2次×1.2，≥3次×1.5。", "",
@@ -129,7 +133,7 @@ def dictionary_md():
             "`error.details[].reason` 取值：required、unknown_field、type_<类型>_required、not_in_enum、below_minimum、"
             "above_maximum、unknown_indicator、score_out_of_range_0_100、category_or_score_required、"
             "control_layer_or_soil_layers_required、foundation_class_or_qualitative_A7_required、"
-            "required_when_settlement_given、required_in_events_mode_empty_list_if_none、required_in_aggregated_mode、"
+            "required_when_settlement_given、not_allowed_when_settlement_given、required_in_events_mode_empty_list_if_none、required_in_aggregated_mode、"
             "not_allowed_in_events_mode、not_allowed_in_aggregated_mode、inconsistent_with_evidence_level、"
             "inconsistent_with_density、too_many_items、empty。", ""]
     return "\n".join(out)
@@ -157,10 +161,19 @@ def examples():
     invalid["request_id"] = "demo-0004"
     invalid["section"]["crest_elevation_m"] = "36.84"
     invalid["records"]["fill_quality"] = "较好"
-    invalid["computation"].pop("back_slope_fos")
+    invalid["computation"].pop("foundation_gradient")
     invalid["qualitative"]["E1"] = "良好"
     invalid_resp = {"error": {"code": "validation_failed", "message": "请求字段校验未通过",
                               "details": schema.validate(invalid)}, "trace_id": "<服务端生成或回传X-Request-ID>"}
+    data_only = copy.deepcopy(EXAMPLE_REQUEST)   # only inputs that site data usually supports
+    data_only["request_id"] = "demo-0005"
+    data_only["section"].pop("soil_layers")
+    for key in ("back_slope_fos", "front_slope_fos"):
+        data_only["computation"].pop(key)
+    data_only["survey"] = {"soft_foundation_status": "unknown"}
+    data_only["qualitative"] = {"A8": "不涉及", "A9": "不涉及", "B2": "符合", "B4": "不涉及", "C6": "不涉及", "D4": "不涉及"}
+    data_only.pop("calculated")
+    data_only.pop("inspection")
     batch = {"items": [full, aggregated, invalid]}
     batch_resp = engine.evaluate_batch(batch["items"], detail="summary")
     for item in batch_resp["results"]:
@@ -170,6 +183,7 @@ def examples():
         "request_full.json": full, "response_full.json": _response(full),
         "request_aggregated.json": aggregated, "response_aggregated_summary.json": _response(aggregated, detail="summary"),
         "request_minimal_no_inspection.json": minimal, "response_minimal_no_inspection.json": _response(minimal),
+        "request_data_supported.json": data_only, "response_data_supported.json": _response(data_only),
         "request_invalid.json": invalid, "response_invalid_422.json": invalid_resp,
         "request_batch.json": batch, "response_batch_summary.json": batch_resp,
     }

@@ -82,13 +82,14 @@ FIELDS: list[Field] = [
     F("computation.contact_gradient", "number", True, "堤基接触面渗透比降", minimum=0, internal="接触面渗透比降i", indicator="C5"),
     F("computation.body_Gs", "number", desc="堤身土粒比重（缺省取控制层）", minimum=2.0, maximum=3.2, internal="堤身Gs", indicator="C4"),
     F("computation.body_e", "number", desc="堤身孔隙比（缺省取控制层）", minimum=0.1, maximum=3.0, internal="堤身e", indicator="C4"),
-    F("computation.back_slope_fos", "number", True, "背水坡抗滑稳定安全系数（正常运用）", minimum=0, exclusive_min=True, internal="背水坡FoS_正常", indicator="D1"),
-    F("computation.front_slope_fos", "number", True, "临水坡抗滑稳定安全系数（稳态）", minimum=0, exclusive_min=True, internal="临水坡FoS", indicator="D2"),
+    F("computation.back_slope_fos", "number", desc="背水坡抗滑稳定安全系数（正常运用）；未做稳定计算时不填或null：D1按缺失处理，不做背水坡稳定门控", minimum=0, exclusive_min=True, nullable=True, internal="背水坡FoS_正常", indicator="D1"),
+    F("computation.front_slope_fos", "number", desc="临水坡抗滑稳定安全系数（稳态）；未做稳定计算时不填或null：D2按缺失处理，不做临水坡稳定门控", minimum=0, exclusive_min=True, nullable=True, internal="临水坡FoS", indicator="D2"),
     # ---- survey
     F("survey", "object", True, "测量与检查资料"),
-    F("survey.scour_depth_m", "number", True, "堤脚冲刷深度", "m", minimum=0, internal="冲刷深度_m", indicator="D3"),
-    F("survey.soft_foundation_settlement_cm", "number", desc="软基段沉降量；缺省或null表示非软基段（A5按100分，并给出提示）", unit="cm", minimum=0, nullable=True, internal="软基段_沉降量_cm", indicator="A5"),
+    F("survey.scour_depth_m", "number", desc="堤脚冲刷深度；无测量资料时不填或null：D3按缺失处理（有未加固的重大险情记录时仍计0分），不做冲刷门控", unit="m", minimum=0, nullable=True, internal="冲刷深度_m", indicator="D3"),
+    F("survey.soft_foundation_settlement_cm", "number", desc="软基段沉降量；缺省或null时按soft_foundation_status处理", unit="cm", minimum=0, nullable=True, internal="软基段_沉降量_cm", indicator="A5"),
     F("survey.soft_foundation_settlement_diff_cm", "number", desc="软基段沉降差；给出沉降量时必填", unit="cm", minimum=0, nullable=True, internal="软基段_沉降差_cm", indicator="A5"),
+    F("survey.soft_foundation_status", "string", desc="未给沉降量时说明原因：non_soft＝非软基段（默认，A5按100分并提示）；unknown＝软基情况或沉降资料未知（A5按缺失处理，不做沉降门控）。给出沉降量时不得填写", enum=("non_soft", "unknown"), default="non_soft", indicator="A5"),
     # ---- records
     F("records", "object", True, "台账与检查结论"),
     F("records.fill_quality", "string", True, "堤身填土质量（地勘结论）", enum=("质量较好", "质量一般", "质量较差"), internal="填土质量", indicator="A2"),
@@ -243,6 +244,8 @@ def validate(req) -> list[dict]:
         errors.append({"field": "section.foundation_class", "reason": "foundation_class_or_qualitative_A7_required"})
     if sv.get("soft_foundation_settlement_cm") is not None and sv.get("soft_foundation_settlement_diff_cm") is None:
         errors.append({"field": "survey.soft_foundation_settlement_diff_cm", "reason": "required_when_settlement_given"})
+    if sv.get("soft_foundation_settlement_cm") is not None and "soft_foundation_status" in sv:
+        errors.append({"field": "survey.soft_foundation_status", "reason": "not_allowed_when_settlement_given"})
     ins = req.get("inspection")
     if ins and ins.get("coverage") == "complete":
         if ins.get("mode", "events") == "aggregated":

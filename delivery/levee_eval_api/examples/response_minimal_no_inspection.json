@@ -1,7 +1,7 @@
 {
   "request_id": "demo-0003",
   "section_id": "DEMO-K0+500",
-  "api_version": "1.0.0",
+  "api_version": "1.1.0",
   "model": {
     "name": "failure-response / safety-barrier rule chain (Chapter 5)",
     "files": {
@@ -18,6 +18,12 @@
     "grade_after_observation_gate": "B",
     "gate_reasons": [
       "C1堤基渗透比降: i/i_cr=0.84接近临界"
+    ],
+    "gates_not_checked": [
+      {
+        "indicator": "C3",
+        "reason": "无有效巡检，未做观测门控"
+      }
     ],
     "rho": 0.334885,
     "dominant_mode": {
@@ -115,6 +121,37 @@
       "E4",
       "E5"
     ],
+    "indicator_sources": {
+      "A1": "design_survey",
+      "A2": "records",
+      "A3": "not_applicable",
+      "A4": "missing",
+      "A5": "not_applicable",
+      "A6": "records",
+      "A7": "records",
+      "A8": "missing",
+      "A9": "missing",
+      "B1": "design_survey",
+      "B2": "missing",
+      "B3": "missing",
+      "B4": "missing",
+      "C1": "computed",
+      "C2": "missing",
+      "C3": "missing",
+      "C4": "computed",
+      "C5": "computed",
+      "C6": "missing",
+      "D1": "computed",
+      "D2": "computed",
+      "D3": "survey_records",
+      "D4": "missing",
+      "D5": "missing",
+      "E1": "missing",
+      "E2": "missing",
+      "E3": "missing",
+      "E4": "missing",
+      "E5": "missing"
+    },
     "dominant_mode_contributions": [
       {
         "indicator": "C1",

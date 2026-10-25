@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "堤防渗流安全评价服务",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "失效响应—安全屏障规则链评价模型的HTTP接口。A/B/C为本研究评价等级（A≥80，40≤B<80，C<40），不等同于SL/Z 679-2015的一类/二类/三类堤，不能直接替代安全鉴定结论；结果的可信程度取决于输入资料的质量与时效。"
   },
   "servers": [
@@ -233,17 +233,19 @@
               },
               "back_slope_fos": {
                 "type": "number",
-                "description": "背水坡抗滑稳定安全系数（正常运用）",
+                "description": "背水坡抗滑稳定安全系数（正常运用）；未做稳定计算时不填或null：D1按缺失处理，不做背水坡稳定门控",
                 "minimum": 0,
                 "exclusiveMinimum": true,
+                "nullable": true,
                 "x-internal-name": "背水坡FoS_正常",
                 "x-indicator": "D1"
               },
               "front_slope_fos": {
                 "type": "number",
-                "description": "临水坡抗滑稳定安全系数（稳态）",
+                "description": "临水坡抗滑稳定安全系数（稳态）；未做稳定计算时不填或null：D2按缺失处理，不做临水坡稳定门控",
                 "minimum": 0,
                 "exclusiveMinimum": true,
+                "nullable": true,
                 "x-internal-name": "临水坡FoS",
                 "x-indicator": "D2"
               }
@@ -251,9 +253,7 @@
             "required": [
               "foundation_gradient",
               "body_gradient",
-              "contact_gradient",
-              "back_slope_fos",
-              "front_slope_fos"
+              "contact_gradient"
             ],
             "additionalProperties": false
           },
@@ -263,14 +263,15 @@
             "properties": {
               "scour_depth_m": {
                 "type": "number",
-                "description": "堤脚冲刷深度（单位：m）",
+                "description": "堤脚冲刷深度；无测量资料时不填或null：D3按缺失处理（有未加固的重大险情记录时仍计0分），不做冲刷门控（单位：m）",
                 "minimum": 0,
+                "nullable": true,
                 "x-internal-name": "冲刷深度_m",
                 "x-indicator": "D3"
               },
               "soft_foundation_settlement_cm": {
                 "type": "number",
-                "description": "软基段沉降量；缺省或null表示非软基段（A5按100分，并给出提示）（单位：cm）",
+                "description": "软基段沉降量；缺省或null时按soft_foundation_status处理（单位：cm）",
                 "minimum": 0,
                 "nullable": true,
                 "x-internal-name": "软基段_沉降量_cm",
@@ -283,11 +284,18 @@
                 "nullable": true,
                 "x-internal-name": "软基段_沉降差_cm",
                 "x-indicator": "A5"
+              },
+              "soft_foundation_status": {
+                "type": "string",
+                "description": "未给沉降量时说明原因：non_soft＝非软基段（默认，A5按100分并提示）；unknown＝软基情况或沉降资料未知（A5按缺失处理，不做沉降门控）。给出沉降量时不得填写",
+                "enum": [
+                  "non_soft",
+                  "unknown"
+                ],
+                "default": "non_soft",
+                "x-indicator": "A5"
               }
             },
-            "required": [
-              "scour_depth_m"
-            ],
             "additionalProperties": false
           },
           "records": {
@@ -1136,6 +1144,21 @@
                 },
                 "description": "硬约束门控触发原因"
               },
+              "gates_not_checked": {
+                "type": "array",
+                "description": "因缺资料未做的门控检查（v1.1）",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "indicator": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
               "rho": {
                 "type": "number",
                 "description": "综合风险度量ρ"
@@ -1229,6 +1252,25 @@
                 "type": "array",
                 "items": {
                   "type": "string"
+                }
+              },
+              "indicator_sources": {
+                "type": "object",
+                "description": "各指标的资料来源（v1.1），中文名见 /api/v1/meta 的 indicator_source_labels",
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": [
+                    "design_survey",
+                    "computed",
+                    "records",
+                    "survey",
+                    "survey_records",
+                    "inspection",
+                    "qualitative",
+                    "calculated",
+                    "not_applicable",
+                    "missing"
+                  ]
                 }
               },
               "dominant_mode_contributions": {

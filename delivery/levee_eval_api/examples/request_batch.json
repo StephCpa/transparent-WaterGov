@@ -224,9 +224,9 @@
         ]
       },
       "computation": {
-        "foundation_gradient": 0.82,
         "body_gradient": 0.3,
         "contact_gradient": 0.45,
+        "back_slope_fos": 1.42,
         "front_slope_fos": 1.38
       },
       "survey": {

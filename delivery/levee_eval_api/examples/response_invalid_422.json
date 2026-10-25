@@ -8,7 +8,7 @@
         "reason": "type_number_required"
       },
       {
-        "field": "computation.back_slope_fos",
+        "field": "computation.foundation_gradient",
         "reason": "required"
       },
       {

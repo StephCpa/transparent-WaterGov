@@ -1,4 +1,4 @@
-# 堤防渗流安全评价服务 v1.0.0（对接包）
+# 堤防渗流安全评价服务 v1.1.0（对接包）
 
 本包把第5章“失效响应—安全屏障”规则链评价模型封装为一个JSON/HTTP计算服务，供合作方系统对接。
 
@@ -68,13 +68,14 @@ requirements-deploy.txt  生产WSGI服务器（可选）
 3. 服务不做渗流和稳定计算：比降、安全系数由调用方提供，且应对应同一水位工况。
 4. 巡检证据只能传入**人工复核确认**的事件；巡检未覆盖或过期时C3按缺失处理，这不等于“未发现渗漏”。
 5. 资料缺失不会被当成安全：缺失的定性指标按缺失处理并在响应中列出；“不涉及”“无险情记录”等必须显式填写。
+6. 没有资料的指标不要用假设值填满（会使得分偏乐观）。v1.1 起安全系数、冲刷深度可不填，沉降情况不明时填 `soft_foundation_status: "unknown"`；对应门控在响应的 `gates_not_checked` 中列出。示例见 `examples/request_data_supported.json`。
 
 ## 版本
 
 | 项目 | 值 |
 |---|---|
-| 接口版本 | 1.0.0 |
-| 发布日期 | 2026-10-22 |
+| 接口版本 | 1.1.0（变更见 `docs/01_code_description.md` 第7节） |
+| 发布日期 | 2026-10-25 |
 | safety_evaluation.py | sha256 89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb |
 | failure_response_barrier_model.py | sha256 c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa |
 | failure_mode_indicator_matrix.json | sha256 6b4e5ebf8100c4addc0c2b690badd9db73e5546c80699bac31324cb771b6c088 |
