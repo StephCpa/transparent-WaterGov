@@ -192,8 +192,50 @@ def examples():
     }
 
 
+EXCEL_DOC = ROOT / "docs" / "05_excel_import.md"
+EXCEL_BEGIN = "<!-- BEGIN generated: excel columns (tools/gen_docs.py) -->"
+EXCEL_END = "<!-- END generated: excel columns -->"
+
+
+def excel_columns_md():
+    """Column tables of the Excel import template, from excel_import/levee_excel.py."""
+    sys.path.insert(0, str(ROOT / "excel_import"))
+    import levee_excel as X
+
+    groups = dict(X.GROUPS)
+    special = {"structure": "`records.crossing_structure_class`；选“无”时另设 `qualitative.A8/B4/C6/D4` = 不涉及",
+               "dangers": "`records.historical_dangers`（明细见“历史险情”表）",
+               "soft_foundation": "`survey.soft_foundation_status`（只在没填沉降量时使用）",
+               "inspection": "`inspection`（明细见“巡检事件”表）"}
+    out = ["断面表（第 2 行为表头，第 3 行起为数据）：", "",
+           "| 列 | 分组 | 必填 | 怎么填 | 对应接口字段 |", "|---|---|---|---|---|"]
+    for c in X.COLUMNS:
+        api = special.get(c.key, f"`{c.path}`")
+        out.append(f"| {c.header} | {groups[c.group]} | {'是' if c.required else ''} | {_cell(X.fill_hint(c))} | {api} |")
+    prefix = {X.SHEET_DANGERS: "records.historical_dangers[].", X.SHEET_EVENTS: "inspection.confirmed_events[]."}
+    for name, cols in X.DETAIL_SHEETS.items():
+        out += ["", f"“{name}”表（第 1 行为表头）：", "", "| 列 | 必填 | 怎么填 | 对应接口字段 |", "|---|---|---|---|"]
+        for c in cols:
+            if c.key == "section_id":
+                api = "对应“断面”表的桩号"
+            elif name == X.SHEET_OTHER:
+                api = "`qualitative.<指标代码>`"
+            else:
+                api = f"`{prefix[name]}{c.key}`"
+            out.append(f"| {c.header} | {'是' if c.required else ''} | {_cell(X.fill_hint(c))} | {api} |")
+    return "\n".join(out) + "\n"
+
+
+def excel_doc():
+    text = EXCEL_DOC.read_text(encoding="utf-8")
+    head, rest = text.split(EXCEL_BEGIN, 1)
+    _, tail = rest.split(EXCEL_END, 1)
+    return head + EXCEL_BEGIN + "\n" + excel_columns_md() + EXCEL_END + tail
+
+
 def targets():
     t = {ROOT / "docs" / "03_parameter_dictionary.md": dictionary_md(),
+         EXCEL_DOC: excel_doc(),
          ROOT / "docs" / "openapi.json": json.dumps(build_openapi(), ensure_ascii=False, indent=2) + "\n"}
     for name, obj in examples().items():
         t[ROOT / "examples" / name] = json.dumps(obj, ensure_ascii=False, indent=2) + "\n"

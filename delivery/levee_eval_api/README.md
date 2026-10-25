@@ -1,4 +1,4 @@
-# 堤防渗流安全评价服务 v1.2.0（对接包）
+# 堤防渗流安全评价服务 v1.3.0（对接包）
 
 本包把第5章“失效响应—安全屏障”规则链评价模型封装为一个JSON/HTTP计算服务，供合作方系统对接。
 
@@ -23,7 +23,15 @@ curl -X POST http://127.0.0.1:8080/api/v1/evaluate \
      -H "Content-Type: application/json" --data-binary @examples/request_full.json
 ```
 
-Windows下把 `python3` 换成 `py -3`，`curl` 换成 `curl.exe`。生产部署（gunicorn / Docker / Windows waitress）见 `docs/04_deployment.md`。
+Windows下把 `python3` 换成 `py -3`，`curl` 换成 `curl.exe`。
+
+多个断面也可以用 Excel 导入：用户按 `excel_import/levee_import_template.xlsx` 一行填一个断面，转换脚本逐行校验并调用批量接口，问题按 Excel 行号提示：
+
+```bash
+python3 excel_import/levee_excel.py excel_import/levee_import_example.xlsx --evaluate results.csv
+```
+
+详见 `docs/05_excel_import.md`。生产部署（gunicorn / Docker / Windows waitress）见 `docs/04_deployment.md`。
 
 ## 文档
 
@@ -33,6 +41,7 @@ Windows下把 `python3` 换成 `py -3`，`curl` 换成 `curl.exe`。生产部署
 | `docs/02_http_api.md` | HTTP接口说明：接口列表、请求与响应、巡检证据、错误处理、批量、示例、对接检查清单 |
 | `docs/03_parameter_dictionary.md` | 输入输出参数字典（由代码自动生成）：字段、类型、单位、范围、对应指标、分档赋分、错误码 |
 | `docs/04_deployment.md` | 部署说明：环境要求、四种部署方式、环境变量、安全、运维、常见问题 |
+| `docs/05_excel_import.md` | Excel导入：模板结构、各列填法、转换规则、校验提示、结果表、平台对接建议 |
 | `docs/openapi.json` | OpenAPI 3.0接口描述，可导入Swagger UI / Apifox / Postman |
 
 ## 目录
@@ -45,9 +54,10 @@ levee_eval/            服务代码
   wsgi.py / server.py  HTTP接口 / 开发服务器
   openapi.py           OpenAPI文档生成
 examples/              请求与响应示例、curl脚本、Python客户端
+excel_import/          Excel导入模板、填好的示例、转换脚本（标准库）
 deploy/                Dockerfile、docker-compose、gunicorn、systemd、nginx、Windows启动脚本
 tests/                 单元测试、HTTP测试、875样本回归测试
-tools/                 回归基准与文档的生成脚本
+tools/                 回归基准、文档、导入模板的生成脚本
 requirements-deploy.txt  生产WSGI服务器（可选）
 ```
 
@@ -74,7 +84,7 @@ requirements-deploy.txt  生产WSGI服务器（可选）
 
 | 项目 | 值 |
 |---|---|
-| 接口版本 | 1.2.0（变更见 `docs/01_code_description.md` 第7节） |
+| 接口版本 | 1.3.0（变更见 `docs/01_code_description.md` 第7节） |
 | 发布日期 | 2026-10-25 |
 | safety_evaluation.py | sha256 89808cfe9c4393b42074ca39a209820d5be3ee5ac06aa74a9442ed34b0b9f7bb |
 | failure_response_barrier_model.py | sha256 c031bd3a71d38dd88abe04bec4b481b618b019214047a5b0ddbb3d921f8f62aa |

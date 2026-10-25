@@ -1,0 +1,209 @@
+# Excel 导入：模板与转换脚本
+
+用于平台“安全评价 → 导入文件（多个断面）”。用户按模板一行填一个断面，平台（或本包的转换脚本）把每一行转成评价请求，调用批量接口，有问题的行按 Excel 行号提示改法，其余行照常评价。评价服务本身不变。
+
+## 1 文件
+
+| 文件 | 用途 |
+|---|---|
+| `excel_import/levee_import_template.xlsx` | 空白导入模板，给用户下载 |
+| `excel_import/levee_import_example.xlsx` | 填好的示例：24 个合成断面，其中 3 行故意填错，用来查看提示效果 |
+| `excel_import/levee_excel.py` | 转换脚本：读模板 → 逐行校验 → 批量请求 JSON；可直接计算并输出结果表。只用 Python 标准库（3.10 及以上） |
+| `tools/gen_import_template.py` | 按第 4 节的列定义重新生成上面两个 xlsx（维护者用，需要 openpyxl；用户不用运行） |
+
+## 2 快速使用
+
+在包根目录运行：
+
+```bash
+# 只转换：写出批量请求（只含可评价的行），可直接 POST 到 /api/v1/evaluate/batch
+python3 excel_import/levee_excel.py excel_import/levee_import_example.xlsx -o batch_request.json
+
+# 转换并在本机计算，输出结果表（CSV，Excel 可直接打开）
+python3 excel_import/levee_excel.py excel_import/levee_import_example.xlsx --evaluate results.csv
+
+# 交给已部署的评价服务计算
+python3 excel_import/levee_excel.py 断面资料.xlsx --url http://127.0.0.1:8080 [--api-key KEY] --evaluate results.csv
+
+# 前两步的结果由平台提供（见第 6 节），表中留空的项由它补齐
+python3 excel_import/levee_excel.py 断面资料.xlsx --auto auto_fill.json --evaluate results.csv
+```
+
+示例文件的输出：
+
+```
+levee_import_example.xlsx：共 24 个断面，可评价 21 个，需修改 3 个
+  第 6 行（K0+600）堤顶宽度(m)：须大于 0
+  第 11 行（K1+600）填土质量：只能填 较好、一般、较差（填的是“好”）
+  第 20 行（K3+400）堤基渗透比降：必填（可由前两步按桩号自动带入）
+已评价 21 个：C级 5，B级 5，A级 11；结果表：results.csv
+  C级断面：K0+400、K1+200、K2+200、K2+400、K3+600
+```
+
+退出码：0 全部可评价；2 有行需要修改（其余行照常输出）；1 整个文件无法读取。
+
+## 3 模板结构
+
+| 表 | 内容 |
+|---|---|
+| 填写说明 | 怎么填、各列说明 |
+| 断面 | 一行一个断面。第 1 行是分组色带，第 2 行是表头，第 3 行起填数据 |
+| 历史险情 | 一行一条险情记录，用桩号对应到断面 |
+| 巡检事件 | 一行一处经人工复核确认的渗漏或管涌，用桩号对应 |
+| 其他指标 | 一行一个指标结论（指标代码＋分档名称或分数），用于模板没有单独列出的指标 |
+
+- 表头带 `*` 的列必填。选填列没有资料就留空，**不要用假设值补齐**：留空的项按缺失处理，对应的限级检查显示为“未做”，不会被当成满分。
+- 列按表头名称识别，可以调换顺序；表头里的括号和 `*` 不影响识别。不认识的列会被忽略并提示。
+- 断面表的颜色：灰蓝＝基本信息，浅蓝＝前两步带入，浅黄＝需要填写，浅灰＝选填。
+- 下拉选项之外的内容在 Excel 里会被拒绝；用其他工具生成的文件，转换脚本同样会逐格检查。
+
+## 4 各列说明
+
+<!-- BEGIN generated: excel columns (tools/gen_docs.py) -->
+断面表（第 2 行为表头，第 3 行起为数据）：
+
+| 列 | 分组 | 必填 | 怎么填 | 对应接口字段 |
+|---|---|---|---|---|
+| 桩号 | 基本信息 | 是 | 文字。断面或评价单元编号，如 K45+500；同一文件内不能重复 | `section.section_id` |
+| 堤段类型 | 基本信息 | 是 | 选：河堤 / 湖堤。决定堤顶超高要求：河堤 2.0 m，湖堤 2.5 m | `section.is_lake_levee` |
+| 堤顶高程(m) | 前两步带入（平台可按桩号自动填入） | 是 | 数字，单位 m | `section.crest_elevation_m` |
+| 控制土层 | 前两步带入（平台可按桩号自动填入） |  | 文字。渗流控制土层名称，可不填 | `section.control_layer.name` |
+| 控制层比重Gs | 前两步带入（平台可按桩号自动填入） | 是 | 数字。土粒比重，一般 2.6–2.8 | `section.control_layer.Gs` |
+| 控制层孔隙比e | 前两步带入（平台可按桩号自动填入） | 是 | 数字 | `section.control_layer.e` |
+| 堤基渗透比降 | 前两步带入（平台可按桩号自动填入） | 是 | 数字。渗流计算结果 | `computation.foundation_gradient` |
+| 堤身渗透比降 | 前两步带入（平台可按桩号自动填入） | 是 | 数字。渗流计算结果 | `computation.body_gradient` |
+| 接触面渗透比降 | 前两步带入（平台可按桩号自动填入） | 是 | 数字。渗流计算结果 | `computation.contact_gradient` |
+| 堤身比重Gs | 前两步带入（平台可按桩号自动填入） |  | 数字。不填时取控制层 | `computation.body_Gs` |
+| 堤身孔隙比e | 前两步带入（平台可按桩号自动填入） |  | 数字。不填时取控制层 | `computation.body_e` |
+| 设计洪水位(m) | 需要填写 | 是 | 数字，单位 m | `section.design_flood_level_m` |
+| 堤顶宽度(m) | 需要填写 | 是 | 数字，单位 m | `section.crest_width_m` |
+| 迎水坡坡比 | 需要填写 | 是 | 坡比。填 1:2.5 或 2.5 | `section.outer_slope_ratio` |
+| 背水坡坡比 | 需要填写 | 是 | 坡比。填 1:3 或 3 | `section.inner_slope_ratio` |
+| 堤基类型 | 需要填写 | 是 | 选：A / B / C / D。地勘报告中的堤基分类 | `section.foundation_class` |
+| 填土质量 | 需要填写 | 是 | 选：较好 / 一般 / 较差。地勘结论 | `records.fill_quality` |
+| 防洪标准 | 需要填写 |  | 选：符合 / 待复核 / 不符合。现状防洪标准是否达到批复标准；不清楚可留空 | `qualitative.B2` |
+| 穿堤建筑物 | 需要填写 | 是 | 选：无 / 一类 / 二类 / 三类 / 四类 / 加固 / 改建 / 重建。没有填“无”；有的填安全检测结论 | `records.crossing_structure_class`；选“无”时另设 `qualitative.A8/B4/C6/D4` = 不涉及 |
+| 跨堤交叉工程 | 需要填写 |  | 选：无 / 无影响 / 轻微影响 / 存在危险。没有跨堤工程填“无”；有的填对堤防的影响 | `qualitative.A9` |
+| 历史险情 | 需要填写 | 是 | 选：无 / 有。已核查没有险情记录填“无”；有的填“有”，并在“历史险情”表逐条填写 | `records.historical_dangers`（明细见“历史险情”表） |
+| 背水坡安全系数 | 选填：有资料时再填，没有就留空 |  | 数字。边坡稳定计算的抗滑安全系数；没算过就留空 | `computation.back_slope_fos` |
+| 临水坡安全系数 | 选填：有资料时再填，没有就留空 |  | 数字 | `computation.front_slope_fos` |
+| 冲刷深度(m) | 选填：有资料时再填，没有就留空 |  | 数字，单位 m。堤脚冲刷深度 | `survey.scour_depth_m` |
+| 软基沉降量(cm) | 选填：有资料时再填，没有就留空 |  | 数字，单位 cm | `survey.soft_foundation_settlement_cm` |
+| 软基沉降差(cm) | 选填：有资料时再填，没有就留空 |  | 数字，单位 cm。填了沉降量时必填 | `survey.soft_foundation_settlement_diff_cm` |
+| 是否软基段 | 选填：有资料时再填，没有就留空 |  | 选：非软基段 / 软基段 / 不清楚。没有沉降资料时用；不填按“不清楚”处理（沉降指标按缺失，不按满分） | `survey.soft_foundation_status`（只在没填沉降量时使用） |
+| 巡检情况 | 选填：有资料时再填，没有就留空 |  | 选：无巡检 / 未发现险情 / 有确认险情。巡检须完整覆盖本断面且在有效期内；算法候选未经人工复核的不算险情 | `inspection`（明细见“巡检事件”表） |
+| 巡检段长(m) | 选填：有资料时再填，没有就留空 |  | 数字，单位 m。不填按 100 m | `inspection.segment_length_m` |
+
+“历史险情”表（第 1 行为表头）：
+
+| 列 | 必填 | 怎么填 | 对应接口字段 |
+|---|---|---|---|
+| 桩号 | 是 | 文字 | 对应“断面”表的桩号 |
+| 险情类型 | 是 | 文字。如 管涌、散浸、渗漏、崩岸、蚁穴、裂缝 | `records.historical_dangers[].type` |
+| 是否已处理 | 是 | 选：已处理 / 未处理 | `records.historical_dangers[].reinforced` |
+| 严重程度 |  | 选：无 / 轻微 / 中度 / 严重 | `records.historical_dangers[].severity` |
+
+“巡检事件”表（第 1 行为表头）：
+
+| 列 | 必填 | 怎么填 | 对应接口字段 |
+|---|---|---|---|
+| 桩号 | 是 | 文字 | 对应“断面”表的桩号 |
+| 位置 |  | 选：普通堤身 / 堤身 / 堤坡 / 堤脚 / 坡脚 / 穿堤建筑物 / 建筑物附近 / 结合部 / 历史险情附近。不填按“普通堤身” | `inspection.confirmed_events[].position` |
+| 重复次数 |  | 整数。同一位置出现次数，不填按 1 | `inspection.confirmed_events[].repeat_count` |
+| 带砂 |  | 填：是 / 否，不填按否 | `inspection.confirmed_events[].sand` |
+| 浑水 |  | 填：是 / 否，不填按否 | `inspection.confirmed_events[].muddy` |
+| 冒水 |  | 填：是 / 否，不填按否 | `inspection.confirmed_events[].spouting` |
+| 集中成簇 |  | 填：是 / 否，不填按否 | `inspection.confirmed_events[].clustered` |
+
+“其他指标”表（第 1 行为表头）：
+
+| 列 | 必填 | 怎么填 | 对应接口字段 |
+|---|---|---|---|
+| 桩号 | 是 | 文字 | 对应“断面”表的桩号 |
+| 指标代码 | 是 | 文字。如 A4、C2、D5、E1 | `qualitative.<指标代码>` |
+| 结论或分数 | 是 | 文字。分档名称（见参数字典第2节）或 0–100 分 | `qualitative.<指标代码>` |
+<!-- END generated: excel columns -->
+
+## 5 转换规则
+
+| 情况 | 转成的请求 |
+|---|---|
+| 堤段类型 河堤 / 湖堤 | `section.is_lake_levee` = false / true |
+| 填土质量 较好 / 一般 / 较差 | `records.fill_quality` = 质量较好 / 质量一般 / 质量较差（直接填“质量较好”等也可以） |
+| 堤基类型 D、D类、d | `section.foundation_class` = "D" |
+| 坡比 1:2.5、1：2.5 或 2.5 | 2.5 |
+| 穿堤建筑物“无” | `records.crossing_structure_class` = 不涉及，同时 `qualitative` 的 A8、B4、C6、D4 = 不涉及 |
+| 穿堤建筑物填检测结论 | 写入 `crossing_structure_class`；A8、B4、C6、D4 请在“其他指标”表填写，没填的按缺失处理并提示 |
+| 跨堤交叉工程“无” | `qualitative.A9` = 不涉及；其他选项原样写入 A9 |
+| 历史险情 | 必须明确填“无”或“有”：“无”＝已核查没有记录（空数组）；“有”＝在“历史险情”表逐条填写。留空但险情表有本桩号记录时按“有”处理；“无”与险情表矛盾时报错 |
+| 填了软基沉降量 | 必须同时填沉降差，此时“是否软基段”应为“软基段”或留空 |
+| 没填沉降量 | “是否软基段”为“非软基段”→ `soft_foundation_status` = non_soft；“软基段”“不清楚”或留空 → unknown（A5 按缺失，不做沉降限级检查） |
+| 巡检情况 无巡检或留空 | 不传 `inspection`（C3 按缺失，不做巡检限级检查） |
+| 巡检情况 未发现险情 | `inspection` = 覆盖完整、events 模式、`confirmed_events` 为空；巡检须完整覆盖本断面且在有效期内 |
+| 巡检情况 有确认险情 | events 模式，事件取自“巡检事件”表；算法候选未经人工复核的不要填 |
+| 其他指标 | `qualitative.<代码>` = 分档名称或 0–100 分；与断面表已给出的指标（如“防洪标准”对应的 B2）重复时报错 |
+| `""`、`-`、`—`、`/` | 视为留空。数字列不要填“无”“未测”，没有资料就留空 |
+
+每行请求的 `request_id` 为 `xlsx-row-<行号>`，结果可以据此对回 Excel 的行。
+
+## 6 前两步结果的自动带入
+
+浅蓝色列（堤顶高程、控制土层及其比重和孔隙比、三个渗透比降、堤身比重和孔隙比）是地质建模和渗流计算的结果。平台有两种做法：
+
+1. 用户下载模板时，平台按桩号把这些列预先填好，用户只填其余列；
+2. 用户只填其余列，转换时由平台提供前两步的结果：命令行用 `--auto`，程序里用 `convert_sheets(sheets, auto)`。表中已填的值优先，留空的由 `auto` 补齐。
+
+`auto` 的格式是“桩号 → 部分请求”，字段名与接口一致：
+
+```json
+{
+  "K45+500": {
+    "section": {"crest_elevation_m": 36.30,
+                "control_layer": {"name": "淤泥质粉质黏土", "Gs": 2.75, "e": 1.115}},
+    "computation": {"foundation_gradient": 0.865, "body_gradient": 0.535, "contact_gradient": 0.535,
+                    "body_Gs": 2.70, "body_e": 0.778}
+  }
+}
+```
+
+两种做法都没有提供时，这几列为必填，缺了会提示“必填（可由前两步按桩号自动带入）”。
+
+## 7 校验与提示
+
+- **整个文件不能导入**：不是 .xlsx（.xls、.csv 请先另存为 .xlsx）、找不到“断面”表、缺必填列、表头重复。
+- **单行需要修改**：选项不在下拉列表中、数字格式不对、必填项为空、桩号重复、险情或巡检与明细表矛盾，以及服务端的范围校验（例如堤顶宽度须大于 0、比重须在 2–3.2 之间）。提示写明 Excel 行号、列名和改法；明细表的问题写明是哪个表的第几行。其余行照常评价。
+- **提示但不影响评价**：明细表里桩号在断面表中找不到的行、不认识的列、有穿堤建筑物但没给 A8/B4/C6/D4 等。
+- 包内运行时，脚本先用 `levee_eval.schema` 在本机做与服务相同的校验；用 `--url` 交给服务计算时，服务返回的字段错误同样换算成行号和列名。
+
+## 8 结果表
+
+`--evaluate` 输出的 CSV 按 Excel 行的顺序排列，列与简化版批量页面的结论表对应：
+
+| 列 | 内容 | 来自响应 |
+|---|---|---|
+| Excel行号、桩号 | 对回原表 | — |
+| 状态 | 已评价 / 需修改 | — |
+| 等级、等级含义、得分 | A/B/C、安全/基本安全/不安全、综合得分 | `grade`、`grade_label`、`score` |
+| 最大渗透比降比值 | 堤基、堤身、接触面三者 i/i_cr 的最大值 | `seepage_checks.C1/C4/C5.ratio` |
+| 主要风险 | 主控失效模式 | `dominant_mode.name` |
+| 决定等级的原因 | 封顶等级等于最终等级的各条限级说明；没有时写得分区间，如“综合得分72.3（40–80分为B级）” | `gate_details[].plain`（`cap` = `grade`） |
+| 缺的资料 | 因缺资料没做限级检查的项：安全系数、冲刷深度、沉降资料、巡检 | `gates_not_checked` |
+| 一句话结论 | 可直接显示的结论 | `conclusion_text` |
+| 需修改的内容 | 需要修改的行写明原因 | — |
+
+## 9 平台对接建议
+
+- **直接调用本脚本**（最省事）：平台后端收到上传的 xlsx 后，调用 `levee_excel.py`（命令行，或在 Python 中 `import`），再把批量请求交给评价服务。
+
+  ```python
+  import sys; sys.path.insert(0, "excel_import")
+  from levee_excel import read_xlsx, convert_sheets, evaluate_requests, result_rows
+
+  imported = convert_sheets(read_xlsx("断面资料.xlsx"), auto=auto)   # auto 可为 None
+  problems = {r.row: r.problems for r in imported.rows if not r.ok}  # 行号 → 提示，显示在导入页
+  outcomes = evaluate_requests(imported.requests, url="http://127.0.0.1:8080")
+  table = result_rows(imported, outcomes)                           # 与第 8 节的结果表相同
+  ```
+
+- **用平台自己的语言实现**：以第 4 节的列表和第 5 节的规则为准。完成后用示例文件核对：应得到 21 行可评价、3 行需要修改（第 6、11、20 行），C级 5、B级 5、A级 11，与简化版批量页面一致。
+- 平台可以按需删去选填列或明细表；表头名称和必填列不要改。

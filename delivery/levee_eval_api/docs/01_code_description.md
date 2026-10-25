@@ -59,11 +59,16 @@ levee_eval/
   openapi.py   由schema生成OpenAPI 3.0文档；内含示例请求
   wsgi.py      HTTP层（标准库WSGI）：路由、鉴权、CORS、错误处理、日志
   server.py    标准库多线程开发服务器
+excel_import/
+  levee_excel.py               Excel导入：列定义、xlsx读取（标准库）、逐行转换与校验、批量计算、结果表
+  levee_import_template.xlsx   空白导入模板
+  levee_import_example.xlsx    填好的示例（24个合成断面，3行故意填错）
 tools/
-  build_fixtures.py   重新生成875个合成样本的回归基准
-  gen_docs.py         由代码生成参数字典、openapi.json和examples
-  reference/          交付的合成样本生成脚本（仅用于生成回归基准）
-tests/                单元测试、HTTP测试、875样本回归测试、文档一致性测试
+  build_fixtures.py         重新生成875个合成样本的回归基准
+  gen_docs.py               由代码生成参数字典、openapi.json、examples和Excel导入说明中的列表
+  gen_import_template.py    由列定义生成导入模板和示例（需要openpyxl）
+  reference/                交付的合成样本生成脚本（仅用于生成回归基准）
+tests/                      单元测试、HTTP测试、875样本回归测试、Excel导入测试、文档一致性测试
 ```
 
 交付模型文件的sha256（`GET /api/v1/health` 也会返回，可用于确认服务端未被改动）：
@@ -107,21 +112,23 @@ tests/                单元测试、HTTP测试、875样本回归测试、文档
 python -m unittest discover -s tests -t . -v
 ```
 
-共26项测试，全部只用标准库：
+共42项测试，全部只用标准库：
 
 - **875样本回归**（`tests/test_regression_875.py`）：用交付的合成样本生成脚本（固定随机种子）重建875个样本，转换成API请求后经服务计算，得分、等级、模型原始等级、观测门控后等级、ρ、主控模式、门控原因、屏障能力与覆盖度、五类模式原始与修正响应、29项指标得分、缺失指标**逐项完全相等**于直接调用交付代码的结果；生成基准时还与交付的结果文件 `synthetic_evaluation_results.json` 逐项比对一致。
 - **模型文件校验**：三个模型文件的sha256必须等于上表。
 - **校验与证据规则**：必填、未知字段、类型、枚举、范围、交叉规则；无巡检时C3缺失；events模式证据等级与门控；aggregated模式；硬约束门控；批量接口单项失败隔离。
 - **缺资料输入（v1.1）**：不给安全系数、冲刷深度、沉降资料和巡检时对应指标缺失、门控不检查；只给一侧安全系数；无冲刷深度但有未加固管涌记录时D3=0；D3门控文字改写。
 - **限级说明与结论（v1.2）**：875个样本上，`gate_details` 中各条限级的封顶等级与模型等级取最不利，均等于最终等级；`conclusion_text` 写出起决定作用的限级原因。
+- **Excel导入（v1.3）**：模板表头与列定义一致；示例文件导入后21行与直接构造的请求逐项结果相同，3行错误按行号提示；选项、坡比、险情、建筑物、沉降、巡检、其他指标、前两步带入等转换规则；xlsx读取（共享字符串、行内字符串、富文本、布尔值）；命令行本机计算与经HTTP计算。
 - **HTTP**：各接口、400/401/404/405/413/415/422、API Key、CORS、真实端口收发。
-- **文档一致性**：参数字典、openapi.json、examples必须与代码生成结果一致。
+- **文档一致性**：参数字典、openapi.json、examples、Excel导入说明中的列表必须与代码生成结果一致。
 
 基准与文档的重新生成：
 
 ```
 python tools/build_fixtures.py [--delivered-results 交付结果文件路径]
 python tools/gen_docs.py
+python tools/gen_import_template.py     # 改了 excel_import/levee_excel.py 的列定义后运行（需要 openpyxl）
 ```
 
 ## 6 适用范围与限制
@@ -137,6 +144,7 @@ python tools/gen_docs.py
 - 接口版本 `api_version` 遵循语义化版本：1.x内只做向后兼容的新增（新增可选字段、新增响应字段）；不兼容的变更使用新的路径前缀 `/api/v2`。
 - 调用方应忽略不认识的响应字段，以便兼容1.x的后续版本。
 - 版本记录：
+  - **1.3.0（2026-10-25）**：新增 Excel 导入（`excel_import/`）：导入模板、填好的示例和转换脚本，逐行校验并按 Excel 行号提示，可本机或经HTTP批量计算并输出结果表；说明见 `docs/05_excel_import.md`。接口的请求和响应不变。
   - **1.2.0（2026-10-25）**：响应新增 `result.gate_details`（逐条限级的指标、B/C上限和通俗说明）和 `result.conclusion_text`（一句话结论），供面向非专业用户的简化界面直接显示；其余不变。
   - **1.1.0（2026-10-25）**：安全系数、冲刷深度可不填；新增 `survey.soft_foundation_status`；响应新增 `result.gates_not_checked`、`result.indicator_sources`、`mode_responses.*.basis`，`/meta` 新增 `indicator_source_labels`；新增警告码 `input_missing_no_gate`；D3由险情记录触发时改写门控文字。1.0.0 的请求无需修改，完整输入下的结果不变（D3门控文字除外）。
   - **1.0.0（2026-10-22）**：首个版本。

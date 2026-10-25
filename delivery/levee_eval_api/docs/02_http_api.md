@@ -126,7 +126,7 @@ events模式的汇总规则（交付代码原样）：
 {
   "request_id": "demo-0001",
   "section_id": "DEMO-K0+500",
-  "api_version": "1.2.0",
+  "api_version": "1.3.0",
   "model": {"name": "...", "files": {"safety_evaluation.py": "89808c...", "...": "..."}},
   "result": {
     "score": 67.5529, "grade": "B", "grade_label": "基本安全",
@@ -219,6 +219,8 @@ events模式的汇总规则（交付代码原样）：
 
 ## 8 批量接口
 
+用户用 Excel 一次填多个断面时，可用 `excel_import/levee_excel.py` 把模板转成本接口的请求体，并把结果和错误对回 Excel 行号，见 `docs/05_excel_import.md`。
+
 ```
 POST /api/v1/evaluate/batch?detail=summary
 {"items": [请求1, 请求2, ...]}        最多1000项
@@ -228,7 +230,7 @@ POST /api/v1/evaluate/batch?detail=summary
 
 ```json
 {
-  "api_version": "1.2.0", "count": 3, "succeeded": 2, "failed": 1,
+  "api_version": "1.3.0", "count": 3, "succeeded": 2, "failed": 1,
   "results": [
     {"index": 0, "ok": true, "response": {"request_id": "demo-0001", "result": {"...": "..."}}},
     {"index": 1, "ok": true, "response": {"...": "..."}},
