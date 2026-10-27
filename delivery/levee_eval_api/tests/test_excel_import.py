@@ -27,7 +27,7 @@ DEMO = ROOT / "excel_import" / "levee_import_k45500_demo.xlsx"
 
 BASE = {"section_id": "K45+500", "levee_type": "河堤", "crest_elevation": 36.30, "layer_name": "淤泥质粉质黏土",
         "layer_gs": 2.75, "layer_e": 1.115, "grad_foundation": 0.865, "grad_body": 0.535, "grad_contact": 0.535,
-        "body_gs": 2.70, "body_e": 0.778, "design_flood_level": 34.04, "crest_width": 7.0, "outer_slope": "1:2.7",
+        "body_gs": 2.70, "body_e": 0.778, "design_flood_level": 33.89, "crest_width": 7.0, "outer_slope": "1:2.7",
         "inner_slope": "1：2.8", "foundation_class": "D类", "fill_quality": "较差", "flood_standard": "符合",
         "structure": "无", "over_crossing": "无", "dangers": "有"}
 DANGERS = [{"section_id": "K45+500", "type": "蚁穴", "reinforced": "未处理", "severity": "严重"},

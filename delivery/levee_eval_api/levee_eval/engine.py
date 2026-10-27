@@ -25,7 +25,7 @@ from pathlib import Path
 
 from . import schema
 
-API_VERSION = "1.3.1"
+API_VERSION = "1.3.2"
 MODEL_DIR = Path(__file__).resolve().parent / "model"
 if str(MODEL_DIR) not in sys.path:
     sys.path.insert(0, str(MODEL_DIR))

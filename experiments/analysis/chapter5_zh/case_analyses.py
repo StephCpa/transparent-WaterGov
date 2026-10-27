@@ -119,7 +119,7 @@ def k45500() -> dict:
     r5 = case["渗流计算结果"]["堤身-堤基接触带渗透比降"] / control["临界渗透比降"]
     r1_exit = layers["Q4al+l粉细砂/砂壤土"]["i_i_cr"]
     fos_back, fos_front = case["稳定计算结果"]["背水坡FoS"], case["稳定计算结果"]["临水坡FoS"]
-    freeboard = 0.0  # crest 36.30 m >= design flood level 34.04 m + 2.0 m river freeboard
+    freeboard = 0.0  # crest 36.30 m >= design flood level 33.89 m + 2.0 m river freeboard
     base = dict(ev["二级指标得分"])
     variants = {}
     variants["delivered"] = _evaluate_from_scores(base, r1, r4, r5, fos_back, fos_front, freeboard)

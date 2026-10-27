@@ -1,5 +1,5 @@
 {
-  "api_version": "1.3.1",
+  "api_version": "1.3.2",
   "count": 3,
   "succeeded": 2,
   "failed": 1,
@@ -10,7 +10,7 @@
       "response": {
         "request_id": "demo-0001",
         "section_id": "DEMO-K0+500",
-        "api_version": "1.3.1",
+        "api_version": "1.3.2",
         "model": {
           "name": "failure-response / safety-barrier rule chain (Chapter 5)",
           "files": {
@@ -401,7 +401,7 @@
       "response": {
         "request_id": "demo-0002",
         "section_id": "DEMO-K0+500",
-        "api_version": "1.3.1",
+        "api_version": "1.3.2",
         "model": {
           "name": "failure-response / safety-barrier rule chain (Chapter 5)",
           "files": {
