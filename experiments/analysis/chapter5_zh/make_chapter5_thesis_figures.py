@@ -262,7 +262,9 @@ def fig_typical_records() -> None:
     recs = CA["typical_records"]
     names = {("seepage", "severe"): "渗流严重", ("building", "critical"): "穿堤建筑物临界",
              ("safe_reference", "severe"): "安全基准严重", ("seepage", "slight"): "渗流轻微"}
-    labels = [f"{names[(r['target_mode'], r['severity'])]}\n（{r['sample_id']}）" for r in recs]
+    # Sample ids such as "0+326" are serial numbers, not chainages; label them as sample numbers.
+    serial = lambda sid: int(sid.split("+")[0]) * 1000 + int(sid.split("+")[1])  # noqa: E731
+    labels = [f"{names[(r['target_mode'], r['severity'])]}\n（样本{serial(r['sample_id'])}）" for r in recs]
     y = np.arange(len(recs))[::-1]
     fig = plt.figure(figsize=(W, 2.55))
     gs = fig.add_gridspec(1, 3, width_ratios=[1.25, 1.0, 0.95], wspace=0.16, left=0.15, right=0.99, bottom=0.2, top=0.87)
