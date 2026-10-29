@@ -336,19 +336,26 @@ def fig_k45() -> None:
 
 # ---------------------------------------------------------------- Chapter 4 results as C1 evidence
 def fig_ch4_interval() -> None:
-    objs = [("断面Ⅰ，29.00 m", 0.4218), ("断面Ⅰ，32.16 m", 1.6436), ("断面Ⅱ，32.16 m", 0.8449), ("三维计算域，32.16 m", 2.3412)]
-    fig, ax = plt.subplots(figsize=(W, 1.95))
-    fig.subplots_adjust(left=0.2, right=0.98, bottom=0.24, top=0.9)
-    for lo, hi, g, lab in [(0, 0.8, "A", "C1不触发门控"), (0.8, 1.0, "B", "不优于B级"), (1.0, 3.0, "C", "C级")]:
+    # Maximum upward exit gradients of the 1028 Chapter 4 (Sec. 4.5.2-4.5.3): 2-D steady sections, 3-D on day 30.
+    objs = [("断面Ⅰ，30.00 m", "0.9247"), ("断面Ⅱ，30.00 m", "0.4216"), ("断面Ⅰ，33.89 m", "2.149"),
+            ("断面Ⅱ，33.89 m", "1.17"), ("三维计算域，33.89 m", "3.279")]
+    fig, ax = plt.subplots(figsize=(W, 2.3))
+    fig.subplots_adjust(left=0.2, right=0.98, bottom=0.2, top=0.92)
+    for lo, hi, g, lab in [(0, 0.8, "A", "C1不触发门控"), (0.8, 1.0, "B", "不优于B级"), (1.0, 4.8, "C", "C级")]:
         ax.axvspan(lo, hi, color=BAND[g], zorder=0)
-        ax.text((lo + min(hi, 1.6)) / 2 if g != "C" else 2.4, len(objs) - 0.35, lab, ha="center", fontsize=7.2, color=GTXT[g])
-    for k, (lab, i_up) in enumerate(objs[::-1]):
+    # the B band is only 0.2 wide on this axis, so the bands are named in a legend instead of in place
+    keys = [Patch(facecolor=BAND[g], edgecolor=GCOL[g], linewidth=0.6, label=lab)
+            for g, lab in (("A", "C1不触发门控"), ("B", "不优于B级"), ("C", "C级"))]
+    ax.legend(handles=keys, loc="upper right", ncol=3, fontsize=7, handlelength=1.2, columnspacing=0.9,
+              frameon=True, facecolor="white", edgecolor="none", framealpha=0.9)
+    for k, (lab, text) in enumerate(objs[::-1]):
+        i_up = float(text)
         lo, hi = i_up / 1.03125, i_up / 0.825
         ax.plot([lo, hi], [k, k], color="#333333", linewidth=2.2, solid_capstyle="butt", zorder=3)
         ax.plot([lo, hi], [k, k], linestyle="none", marker="|", markersize=8, color="#333333", zorder=3)
-        ax.text(hi + 0.04, k, f"$i_{{up}}$={i_up:.4f}", va="center", fontsize=7)
+        ax.text(hi + 0.05, k, f"$i_{{up}}$={text}", va="center", fontsize=7)
     ax.set_yticks(range(len(objs)), [o[0] for o in objs[::-1]], fontsize=7.6)
-    ax.set_xlim(0, 3.0); ax.set_ylim(-0.6, len(objs) - 0.1)
+    ax.set_xlim(0, 4.8); ax.set_ylim(-0.6, len(objs) - 0.1)
     ax.set_xlabel("风险比 R（临界梯度取0.825—1.03125）")
     B.save(fig, "fig5_ch4_interval")
 

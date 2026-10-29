@@ -1,9 +1,17 @@
 {
- "R0_section_I_gate_stages": {
-  "possible_B": 29.617,
-  "certain_B": 30.043,
-  "possible_C": 30.043,
-  "certain_C": 30.58
+ "R0_gate_stages": {
+  "断面Ⅰ": {
+   "possible_B": 29.428,
+   "certain_B": 29.789,
+   "possible_C": 29.789,
+   "certain_C": 30.342
+  },
+  "断面Ⅱ": {
+   "possible_B": 31.243,
+   "certain_B": 32.1,
+   "possible_C": 32.1,
+   "certain_C": 33.172
+  }
  },
  "R1_gate_stages": {
   "无措施": {

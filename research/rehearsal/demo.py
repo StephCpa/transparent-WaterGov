@@ -1,6 +1,6 @@
 """Demonstration of the rehearsal skeleton (run from research/:  python -m rehearsal.demo).
 
-1. Inverse rehearsal on R0 (published Chapter 4 values, section I): river stages at which the
+1. Inverse rehearsal on R0 (1028 Chapter 4 values, sections I and II): river stages at which the
    Chapter 5 seepage gates are possibly / certainly reached.
 2. Inverse rehearsal on R1 (synthetic section) without and with each measure.
 3. Five emergency plans compared on 100 synthetic flood scenarios with virtual inspection
@@ -25,8 +25,9 @@ OUT = Path(__file__).resolve().parents[1] / "outputs" / "rehearsal_demo_20261017
 
 def main(n_scenarios=100):
     sc0 = sample_scenarios(1, seed=1)[0]
-    r0 = inverse_rehearsal(ResponseSurfaceCh4(), sc0)
-    print("R0 断面Ⅰ（第4章两点插值）门控水位/m:", r0)
+    r0 = {sec: inverse_rehearsal(ResponseSurfaceCh4(), sc0, section=sec) for sec in ResponseSurfaceCh4.sections}
+    for sec, stages in r0.items():
+        print(f"R0 {sec}（第4章30.00/33.89 m两点插值）门控水位/m:", stages)
 
     nominal = sample_scenarios(1, seed=2, param_ranges={"k_f": (50, 50), "k_b": (0.05, 0.05), "e_true": (0.7, 0.7)})[0]
     r1 = {}
@@ -50,7 +51,7 @@ def main(n_scenarios=100):
         print(f"{k:22s} {v['episodes_certain_C']:8d} {v['hours_possible_C']:8.1f} {v['hours_B_or_worse']:9.1f} "
               f"{v['cost']:6.2f} {v['reviews']:7.1f} {v['false_reviews']:7.1f} {lead:>9s}")
     OUT.parent.mkdir(exist_ok=True)
-    OUT.write_text(json.dumps({"R0_section_I_gate_stages": r0, "R1_gate_stages": r1, "plans": rows, "pareto": front,
+    OUT.write_text(json.dumps({"R0_gate_stages": r0, "R1_gate_stages": r1, "plans": rows, "pareto": front,
                                "n_scenarios": n_scenarios, "synthetic": True}, ensure_ascii=False, indent=1), encoding="utf-8")
 
 

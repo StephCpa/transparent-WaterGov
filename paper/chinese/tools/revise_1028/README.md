@@ -5,8 +5,8 @@
 ```bash
 unzip -q 1028修改.docx -d unpacked && python3 <docx-skill>/scripts/merge_runs.py unpacked/
 cp -r unpacked work_track && cp -r unpacked work_clean
-python3 revise.py work_track track ../../chapters/figures_ch5_thesis/fig5_devices_field.png ../../chapters/figures_ch5_thesis/fig5_typical_records.png
-python3 revise.py work_clean clean ../../chapters/figures_ch5_thesis/fig5_devices_field.png ../../chapters/figures_ch5_thesis/fig5_typical_records.png
+python3 revise.py work_track track ../../chapters/figures_ch5_thesis/fig5_devices_field.png ../../chapters/figures_ch5_thesis/fig5_typical_records.png ../../chapters/figures_ch5_thesis/fig5_ch4_interval.png
+python3 revise.py work_clean clean ../../chapters/figures_ch5_thesis/fig5_devices_field.png ../../chapters/figures_ch5_thesis/fig5_typical_records.png ../../chapters/figures_ch5_thesis/fig5_ch4_interval.png
 (cd work_track && zip -q -X -r ../修订痕迹.docx .) ; (cd work_clean && zip -q -X -r ../修订稿.docx .)
 ```
 

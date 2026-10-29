@@ -1,6 +1,6 @@
 """Apply the 2026-10-28 revision list to an unpacked copy of the 1028 thesis.
 
-    python3 revise.py <unpacked_dir> <track|clean> <fig5_5.png> <fig5_20.png>
+    python3 revise.py <unpacked_dir> <track|clean> <fig5_5.png> <fig5_20.png> <fig5_24.png>
 
 Element indices refer to the body of the original 1028 document (after merge_runs); all targets are
 resolved before any edit, so insertions do not shift them.
@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from lxml import etree
+from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).parent))
 from docxedit import W, Editor, make_runs, strip_ids, styled_rpr  # noqa: E402
@@ -18,7 +19,7 @@ from docxedit import W, Editor, make_runs, strip_ids, styled_rpr  # noqa: E402
 A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 WP = "{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}"
 
-root, mode, fig55, fig520 = Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3]), Path(sys.argv[4])
+root, mode, fig55, fig520, fig524 = Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3]), Path(sys.argv[4]), Path(sys.argv[5])
 doc_path = root / "word" / "document.xml"
 doc = etree.parse(str(doc_path))
 body = doc.getroot().find(W + "body")
@@ -104,7 +105,6 @@ rid = blip.get("{http://schemas.openxmlformats.org/officeDocument/2006/relations
 rels = etree.parse(str(root / "word/_rels/document.xml.rels")).getroot()
 target = next(r.get("Target") for r in rels if r.get("Id") == rid)
 shutil.copyfile(fig55, root / "word" / target)
-from PIL import Image  # noqa: E402
 wpx, hpx = Image.open(fig55).size
 ext = E[1216].find(".//" + WP + "extent")
 cx = int(ext.get("cx"))
@@ -227,6 +227,56 @@ rid = blip.get("{http://schemas.openxmlformats.org/officeDocument/2006/relations
 target = next(r.get("Target") for r in rels if r.get("Id") == rid)
 shutil.copyfile(fig520, root / "word" / target)
 ed.replace(E[1487], "（0+001）", "（样本1）")
+
+# ---------------------------------------------------------------- Case 5 recomputed with the 1028 Chapter 4 (33.89 m)
+ed.insert_after(E[1477], "的渗流计算结果接入评价。",
+    "计算水位取33.89 m洪水位和30.00 m，后者是两断面开始出现向上出逸的最低计算水位。")
+CASE5 = [
+    ["断面Ⅰ，30.00 m", "0.9247", "Ⅱ级", "0.897～1.121", "0～19.6", "B级，可能C级", "B～C级"],
+    ["断面Ⅱ，30.00 m", "0.4216", "Ⅰ级", "0.409～0.511", "73.9～83.3", "未触发", "证据不足，取决于其余指标"],
+    ["断面Ⅰ，33.89 m", "2.149", "Ⅲ级", "2.084～2.605", "0", "C级", "C级"],
+    ["断面Ⅱ，33.89 m", "1.17", "Ⅲ级", "1.135～1.418", "0", "C级", "C级"],
+    ["三维计算域，33.89 m", "3.279", "Ⅲ级", "3.180～3.975", "0", "C级", "先关联到桩号区间"],
+]
+t524 = E[1480]
+rows524 = t524.findall(W + "tr")
+spare = strip_ids(copy.deepcopy(rows524[-1]))          # template for the fifth data row, taken before editing
+for tr, vals in zip(rows524[1:], CASE5[:4]):
+    for tc, val in zip(tr.findall(W + "tc"), vals):
+        p = tc.find(W + "p")
+        if ed.para_text(p) != val:
+            ed.rewrite(p, val)
+for tc, val in zip(spare.findall(W + "tc"), CASE5[4]):
+    p = tc.find(W + "p")
+    tmpl = copy.deepcopy(p.find(W + "r").find(W + "rPr"))
+    for r in p.findall(W + "r"):
+        p.remove(r)
+    runs = make_runs(tmpl, val)
+    if ed.track:
+        ins = ed._rev("ins")
+        for r in runs:
+            ins.append(r)
+        p.append(ins)
+    else:
+        for r in runs:
+            p.append(r)
+if ed.track:
+    spare.find(W + "trPr").append(ed._rev("ins"))
+rows524[-1].addnext(spare)
+ed.rewrite(E[1481], "注：33.89 m为洪水位；断面取二维稳态结果，三维计算域取第30天结果，其8条代表性通道中Ⅰ、Ⅱ、Ⅲ级分别为1、3、4条。")
+blip = next(E[1482].iter(A + "blip"))
+rid = blip.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed")
+target = next(r.get("Target") for r in rels if r.get("Id") == rid)
+shutil.copyfile(fig524, root / "word" / target)
+wpx, hpx = Image.open(fig524).size
+ext = E[1482].find(".//" + WP + "extent")
+cx = int(ext.get("cx"))
+cy = round(cx * hpx / wpx)
+ext.set("cy", str(cy))
+for a_ext in E[1482].iter(A + "ext"):
+    if a_ext.get("cx") == str(cx):
+        a_ext.set("cy", str(cy))
+ed.rewrite(E[1485], "33.89 m洪水位下，断面Ⅰ、Ⅱ的最大出逸梯度分别为2.149和1.17，均超过临界区间上界1.03125，孔隙比在0.6～1.0内无论取何值，C1均已达到临界，C级门控是确定的，其余28项指标即使全部取得也不会使等级优于C级；即使巡检覆盖完整且未见异常，也保持该等级。30.00 m时，断面Ⅰ的0.9247位于临界区间内，只能确定不优于B级，C级仅为可能，应输出B～C级，并将出口土层孔隙比列为待补证据；断面Ⅱ的0.4216未触发门控，但其余指标缺失，仅凭渗流计算不能给出安全结论。由此可见，同一断面随水位升高会由“证据不足”或B～C级转为确定的C级，评价结论随水位工况而变化。三维计算域不是评价单元，其高梯度出逸面（洪水位下梯度不小于0.825的Ⅱ、Ⅲ级出逸面积约23822 m²，第60天）须先关联到桩号区间，同时作为巡检航线的重点区域。第4章的出口分级以理想无黏性土柱的临界梯度为参照，正式评价还应结合出口土料的启动条件复核。")
 
 # ---------------------------------------------------------------- 12. the five additional batches
 ed.replace(E[1455], "为检验结论是否依赖某一批数据，在另外5批独立生成的情景上重复上述评价（图5-21）。",

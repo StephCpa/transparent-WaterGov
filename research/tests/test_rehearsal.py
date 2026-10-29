@@ -25,9 +25,13 @@ class RehearsalTests(unittest.TestCase):
     def test_r0_reproduces_chapter4_values(self):
         a = ResponseSurfaceCh4()
         a.reset(self.sc[0])
-        self.assertAlmostEqual(a.steady(29.00).max_gradient("断面Ⅰ"), 0.4218, places=4)
-        self.assertAlmostEqual(a.steady(32.16).max_gradient("断面Ⅰ"), 1.6436, places=4)
-        self.assertAlmostEqual(a.steady(32.16).high_gradient_area, 7893.3, places=1)
+        self.assertAlmostEqual(a.steady(30.00).max_gradient("断面Ⅰ"), 0.9247, places=4)
+        self.assertAlmostEqual(a.steady(33.89).max_gradient("断面Ⅰ"), 2.149, places=4)
+        self.assertAlmostEqual(a.steady(30.00).max_gradient("断面Ⅱ"), 0.4216, places=4)
+        self.assertAlmostEqual(a.steady(33.89).max_gradient("断面Ⅱ"), 1.17, places=4)
+        self.assertEqual(a.steady(28.00).max_gradient("断面Ⅰ"), 0.0)
+        self.assertAlmostEqual(a.steady(33.89).high_gradient_area, 23822.2, places=1)
+        self.assertAlmostEqual(a.steady(33.89).outflow, 5.47273, places=5)
         self.assertAlmostEqual(a.steady(30.00).outflow, 1.33849, places=5)
         with self.assertRaises(NotImplementedError):
             a.steady(31.0, measure_set(relief_well=1.0))

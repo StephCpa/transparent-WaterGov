@@ -1,9 +1,11 @@
 """Stand-in seepage adapters until the Chapter 4 finite-volume code is available.
 
-R0  ResponseSurfaceCh4: quasi-steady lookup of the values printed in the Chapter 4 draft
-    (Tables 4-9 and 4-10, Sec. 4.5).  Only section I has an exit gradient at two stages
-    (29.00 m: 0.4218, 32.16 m: 1.6436), so its curve is a two-point linear interpolation and is
-    flagged as such; the three-dimensional high-gradient area and outflows have five stages.
+R0  ResponseSurfaceCh4: quasi-steady lookup of the values printed in the 1028 thesis Chapter 4
+    (Tables 4-10 and 4-12, Sec. 4.5.2-4.5.3; five stages 26.23-33.89 m, 33.89 m = flood level).
+    Section exit gradients are printed at two stages only (30.00 m and 33.89 m; no upward exit at
+    28.00 m and below), so each section curve is a piecewise-linear interpolation through
+    (28.00, 0), (30.00, i) and (33.89, i), extrapolated above 33.89 m, and flagged as such; the
+    three-dimensional high-gradient area (classes II+III, day 60) and outflows have five stages.
     No measures can be represented.  Chapter 4 reports that the 3-D outflow is within 0.28 % of
     its 30-day value after 6 h, which is what justifies a quasi-steady lookup for floods that
     change over days.
@@ -23,19 +25,32 @@ from scipy.linalg import solve_banded
 from .interfaces import I_CR_LOW, ExitFace, MeasureState, Scenario, SeepageOutputs
 
 # ---------------------------------------------------------------- R0: Chapter 4 published values
-CH4_STAGES = np.array([29.00, 30.00, 31.00, 32.00, 32.16])
-CH4_OUTFLOW_SEC1 = np.array([0.18777, 1.14698, 2.32727, 3.58803, 3.79279]) * 1e-3     # m^2/s
-CH4_OUTFLOW_SEC2 = np.array([0.33883, 1.34603, 2.43288, 3.57222, 3.75663]) * 1e-3
-CH4_OUTFLOW_3D = np.array([0.43196, 1.33849, 2.32936, 3.38475, 3.55738])               # m^3/s
-CH4_HIGH_AREA_3D = np.array([0.0, 1066.7, 2773.3, 6826.7, 7893.3])                     # m^2, i_up > 0.825
-CH4_SEC1_GRADIENT = ((29.00, 0.4218), (32.16, 1.6436))                                  # two points only
+CH4_STAGES = np.array([26.23, 28.00, 30.00, 32.00, 33.89])
+CH4_OUTFLOW_SEC1 = np.array([0.0, 0.0, 1.14698, 3.58803, 6.0274]) * 1e-3              # m^2/s, Table 4-10
+CH4_OUTFLOW_SEC2 = np.array([0.0, 0.0, 1.34603, 3.57222, 5.79195]) * 1e-3
+CH4_OUTFLOW_3D = np.array([0.0, 0.00894392, 1.33849, 3.38475, 5.47273])               # m^3/s
+CH4_HIGH_AREA_3D = np.array([0.0, 0.0, 1066.7, 6826.7, 23822.2])                       # m^2, i_up >= 0.825 (Table 4-12)
+CH4_SECTION_GRADIENT = {                                                               # max upward exit gradient, 2-D steady
+    "断面Ⅰ": ((28.00, 0.0), (30.00, 0.9247), (33.89, 2.149)),
+    "断面Ⅱ": ((28.00, 0.0), (30.00, 0.4216), (33.89, 1.17)),
+}
+CH4_GRADIENT_NOTE = "断面梯度按第4章30.00 m与33.89 m两点（28.00 m无向上出逸）分段线性插值"
+
+
+def _section_gradient(points, stage):
+    (h0, g0), (h1, g1), (h2, g2) = points
+    if stage <= h0:
+        return 0.0
+    if stage <= h1:
+        return g0 + (g1 - g0) * (stage - h0) / (h1 - h0)
+    return g1 + (g2 - g1) * (stage - h1) / (h2 - h1)       # also the extrapolation above 33.89 m
 
 
 class ResponseSurfaceCh4:
     fidelity = "R0"
     transient = False
     supported_measures: tuple[str, ...] = ()
-    sections = ("断面Ⅰ",)
+    sections = tuple(CH4_SECTION_GRADIENT)
 
     def reset(self, scenario: Scenario) -> None:
         self.stage_now, self.t = scenario.stage(0.0), 0.0
@@ -49,16 +64,15 @@ class ResponseSurfaceCh4:
 
     def steady(self, river_stage, measures=None):
         self.apply_measures(measures or [])
-        (h0, g0), (h1, g1) = CH4_SEC1_GRADIENT
-        i_sec1 = max(g0 + (g1 - g0) * (river_stage - h0) / (h1 - h0), 0.0)
+        exits = [ExitFace(f"{name}/max", name, _section_gradient(points, river_stage), 0.0, layer="出口土层（孔隙比未知）")
+                 for name, points in CH4_SECTION_GRADIENT.items()]
         s = float(np.clip(river_stage, CH4_STAGES[0], CH4_STAGES[-1]))
+        inside = CH4_STAGES[0] <= river_stage <= CH4_STAGES[-1]
         return SeepageOutputs(
             t=getattr(self, "t", 0.0), river_stage=river_stage,
-            exits=[ExitFace("断面Ⅰ/max", "断面Ⅰ", i_sec1, 0.0, layer="出口土层（孔隙比未知）")],
-            probes={}, outflow=float(np.interp(s, CH4_STAGES, CH4_OUTFLOW_3D)),
+            exits=exits, probes={}, outflow=float(np.interp(s, CH4_STAGES, CH4_OUTFLOW_3D)),
             high_gradient_area=float(np.interp(s, CH4_STAGES, CH4_HIGH_AREA_3D)), fidelity=self.fidelity,
-            notes="断面Ⅰ梯度为29.00 m与32.16 m两点线性插值；超出29.00～32.16 m时外推" if not (29.0 <= river_stage <= 32.16)
-            else "断面Ⅰ梯度为29.00 m与32.16 m两点线性插值")
+            notes=CH4_GRADIENT_NOTE + ("" if inside else "；超出26.23～33.89 m时梯度外推、出流与面积取端值"))
 
     def advance(self, dt):
         self.t += dt
