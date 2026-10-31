@@ -12,3 +12,5 @@ python3 revise.py work_clean clean ../../chapters/figures_ch5_thesis/fig5_device
 
 `revise.py` 按 1028 原稿 `word/document.xml` 的正文元素序号定位段落，并在修改前核对原文（找不到或不唯一时报错），只适用于该底稿。
 `docxedit.py` 为通用的按字符区间替换工具，`track` 模式下以 `w:ins`/`w:del` 记录修订。
+
+`omml.py` 把简化的 LaTeX 写法转换为 Word 公式对象（OMML），用于第5章公式与式（2-7）、式（2-8）；第三轮起 `revise.py` 还从 `chapters/figures_ch5_thesis/` 读取图5-1～5-3 的彩色原图。
