@@ -175,8 +175,8 @@ def method_rows() -> list[dict]:
               a_over=co["a_overestimate"])
     spec = [("规则链", b["rule"], B.RULE), ("RF多数投票", b["rf_majority"], B.RF_LIGHT), ("RF阈值", b["rf_threshold"], B.RF),
             ("GBDT", b["gbdt"], GBDT), ("堆叠RF", b["rf_rule_stacked"], STACK), ("RF+C-only下限", co, B.CONLY),
-            ("RF+序数下限", b["rf_threshold+floor"], B.FLOOR), ("GBDT+序数下限", b["gbdt+floor"], B.FLOOR_LIGHT),
-            ("堆叠RF+序数下限", b["rf_rule_stacked+floor"], "#0B5A4E")]
+            ("RF+物理下限", b["rf_threshold+floor"], B.FLOOR), ("GBDT+物理下限", b["gbdt+floor"], B.FLOOR_LIGHT),
+            ("堆叠RF+物理下限", b["rf_rule_stacked+floor"], "#0B5A4E")]
     out = []
     for name, m, col in spec:
         out.append({"name": name, "color": col, "acc": m["accuracy"], "f1": m["macro_f1"], "ba": m["balanced_accuracy"],
@@ -199,7 +199,7 @@ def fig_method_compare() -> None:
         ax.bar(x + (j - 1.5) * wbar, [r[key] for r in rows], wbar, color=col, edgecolor="#1F4E79", linewidth=0.3, label=lab)
     ax.set_ylim(0.7, 1.1); ax.set_xticks(x, [r["name"].replace("+", "+\n") for r in rows], rotation=0, fontsize=7.2)
     for t, r in zip(ax.get_xticklabels(), rows):
-        if "序数" in r["name"]:
+        if "物理下限" in r["name"]:
             t.set_color(B.FLOOR); t.set_fontweight("bold")
     ax.set_ylabel("指标值"); ax.set_yticks([0.7, 0.8, 0.9, 1.0]); ax.legend(ncol=4, loc="upper left", borderaxespad=0.1)
     title(ax, "a", "判别质量（875条记录，样本外）")
@@ -217,7 +217,7 @@ def fig_method_compare() -> None:
     ax.set_xticks(x, [str(i + 1) for i in x]); ax.set_ylabel("记录数"); ax.set_ylim(0, 195)
     ax.legend(loc="upper right")
     title(ax, "c", "相对规则链的改动")
-    fig.text(0.08, 0.015, "b、c横轴序号1—9依次对应a中的9种方法。", fontsize=B.FS_LEG, color="#444444")
+    fig.text(0.08, 0.015, "b、c横轴序号1—9依次对应a中的9种方法。", fontsize=B.FS_LEG, color="black")
     B.save(fig, "fig5_method_compare")
 
 
@@ -226,7 +226,7 @@ def fig_multiseed() -> None:
     st = json.loads((B.SRC / "paper_statistics.json").read_text(encoding="utf-8"))
     seeds = st["additional_seeds"]
     keys = [("rule", "规则\n链", B.RULE, "o"), ("rf_threshold", "RF\n阈值", B.RF, "s"), ("c_only_floor", "C-only\n下限", B.CONLY, "v"),
-            ("hybrid", "序数\n下限", B.FLOOR, "D"), ("hybrid_review_u050", "序数+\n复核", B.FLOOR_LIGHT, "D")]
+            ("hybrid", "物理\n下限", B.FLOOR, "D"), ("hybrid_review_u050", "下限+\n复核", B.FLOOR_LIGHT, "D")]
     jit = np.linspace(-0.12, 0.12, 5)  # display offsets only
     fig = plt.figure(figsize=(W, 2.35))
     gs = fig.add_gridspec(1, 3, wspace=0.45, left=0.075, right=0.99, bottom=0.25, top=0.88)
@@ -308,14 +308,14 @@ def fig_typical_records() -> None:
 # ---------------------------------------------------------------- K45+500
 def fig_k45() -> None:
     v = CA["k45500"]["variants"]
-    order = [("delivered", "①交付\n结果"), ("c3_missing", "②C3按\n缺失"), ("c1_exit_zone", "③C1取\n出口区"),
+    order = [("delivered", "①复算\n结果"), ("c3_missing", "②C3按\n缺失"), ("c1_exit_zone", "③C1取\n出口区"),
              ("c1_exit_zone_current_evidence_only", "④仅当期\n证据")]
     modes = ["漫顶失效", "渗流破坏", "边坡失稳", "冲刷破坏", "穿堤建筑物失效"]
     fig = plt.figure(figsize=(W, 2.45))
     gs = fig.add_gridspec(1, 2, width_ratios=[1.1, 1.0], wspace=0.32, left=0.08, right=0.99, bottom=0.25, top=0.88)
     ax = fig.add_subplot(gs[0, 0])
     xm = np.arange(len(modes))
-    for j, (key, lab, col) in enumerate([("delivered", "①交付结果", B.DANGER), ("c1_exit_zone", "③C1取出口区", B.RF)]):
+    for j, (key, lab, col) in enumerate([("delivered", "①复算结果", B.DANGER), ("c1_exit_zone", "③C1取出口区", B.RF)]):
         ax.bar(xm + (j - 0.5) * 0.36, [v[key]["mode_responses"][m] for m in modes], 0.34, color=col, alpha=0.85, label=lab)
     ax.set_xticks(xm, ["漫顶", "渗流破坏", "边坡失稳", "冲刷", "穿堤建筑物"], fontsize=7.4)
     ax.set_ylim(0, 1.12); ax.set_ylabel("修正后模式响应"); ax.legend(loc="upper right")
@@ -336,27 +336,32 @@ def fig_k45() -> None:
 
 # ---------------------------------------------------------------- Chapter 4 results as C1 evidence
 def fig_ch4_interval() -> None:
-    # Maximum upward exit gradients of the 1028 Chapter 4 (Sec. 4.5.2-4.5.3): 2-D steady sections, 3-D on day 30.
-    objs = [("断面Ⅰ，30.00 m", "0.9247"), ("断面Ⅱ，30.00 m", "0.4216"), ("断面Ⅰ，33.89 m", "2.149"),
-            ("断面Ⅱ，33.89 m", "1.17"), ("三维计算域，33.89 m", "3.279")]
-    fig, ax = plt.subplots(figsize=(W, 2.3))
-    fig.subplots_adjust(left=0.2, right=0.98, bottom=0.2, top=0.92)
-    for lo, hi, g, lab in [(0, 0.8, "A", "C1不触发门控"), (0.8, 1.0, "B", "不优于B级"), (1.0, 4.8, "C", "C级")]:
+    # Maximum upward exit gradients of Chapter 4 (Sec. 4.5.2-4.5.3): 2-D steady sections, 3-D on day 30.
+    # At 26.23 m and 28.00 m Chapter 4 finds no upward exit on either section; 32.00 m has no 2-D maximum.
+    objs = [("断面Ⅰ，26.23、28.00 m", None), ("断面Ⅰ，30.00 m", "0.9247"), ("断面Ⅰ，33.89 m", "2.149"),
+            ("断面Ⅱ，26.23、28.00 m", None), ("断面Ⅱ，30.00 m", "0.4216"), ("断面Ⅱ，33.89 m", "1.17"),
+            ("三维计算域，33.89 m", "3.279")]
+    fig, ax = plt.subplots(figsize=(W, 2.75))
+    fig.subplots_adjust(left=0.24, right=0.98, bottom=0.16, top=0.93)
+    for lo, hi, g, lab in [(0, 0.8, "A", "C1不触发约束"), (0.8, 1.0, "B", "不优于B级"), (1.0, 4.8, "C", "C级")]:
         ax.axvspan(lo, hi, color=BAND[g], zorder=0)
     # the B band is only 0.2 wide on this axis, so the bands are named in a legend instead of in place
     keys = [Patch(facecolor=BAND[g], edgecolor=GCOL[g], linewidth=0.6, label=lab)
-            for g, lab in (("A", "C1不触发门控"), ("B", "不优于B级"), ("C", "C级"))]
+            for g, lab in (("A", "C1不触发约束"), ("B", "不优于B级"), ("C", "C级"))]
     ax.legend(handles=keys, loc="upper right", ncol=3, fontsize=7, handlelength=1.2, columnspacing=0.9,
               frameon=True, facecolor="white", edgecolor="none", framealpha=0.9)
     for k, (lab, text) in enumerate(objs[::-1]):
+        if text is None:
+            ax.text(0.05, k, "无向上出逸，C1不由计算给出约束", va="center", fontsize=7)
+            continue
         i_up = float(text)
         lo, hi = i_up / 1.03125, i_up / 0.825
-        ax.plot([lo, hi], [k, k], color="#333333", linewidth=2.2, solid_capstyle="butt", zorder=3)
-        ax.plot([lo, hi], [k, k], linestyle="none", marker="|", markersize=8, color="#333333", zorder=3)
+        ax.plot([lo, hi], [k, k], color="black", linewidth=2.2, solid_capstyle="butt", zorder=3)
+        ax.plot([lo, hi], [k, k], linestyle="none", marker="|", markersize=8, color="black", zorder=3)
         ax.text(hi + 0.05, k, f"$i_{{up}}$={text}", va="center", fontsize=7)
     ax.set_yticks(range(len(objs)), [o[0] for o in objs[::-1]], fontsize=7.6)
-    ax.set_xlim(0, 4.8); ax.set_ylim(-0.6, len(objs) - 0.1)
-    ax.set_xlabel("风险比 R（临界梯度取0.825—1.03125）")
+    ax.set_xlim(0, 4.8); ax.set_ylim(-0.6, len(objs) + 0.2)
+    ax.set_xlabel("风险比 R（临界坡降取0.825—1.03125）")
     B.save(fig, "fig5_ch4_interval")
 
 
@@ -364,7 +369,7 @@ def fig_ch4_interval() -> None:
 def fig_injection() -> None:
     d = CA["inspection_injection"]
     cases = [("无巡检候选", d["without_candidates"]["score"], d["without_candidates"]["C3"], "A"),
-             ("原规则：2个未复核\n候选直接计入", d["delivered_rules_with_unreviewed_candidates"]["score"],
+             ("原有做法：2个未复核\n候选直接计入", d["delivered_rules_with_unreviewed_candidates"]["score"],
               d["delivered_rules_with_unreviewed_candidates"]["C3"], d["delivered_rules_with_unreviewed_candidates"]["grade"]),
              ("本章规则：合并为1个\n候选，复核为误报", d["without_candidates"]["score"], d["without_candidates"]["C3"], "A")]
     fig = plt.figure(figsize=(W, 2.05))
@@ -546,7 +551,7 @@ def fig_candidates() -> None:
     B.save(fig, "fig5_candidates")
 
 
-NAMES = {"C1": "C1 堤基坡降比", "C4": "C4 堤身坡降比", "C5": "C5 接触面坡降比", "D1": "D1 背水坡安全系数",
+NAMES = {"C1": "C1 堤基风险比", "C4": "C4 堤身风险比", "C5": "C5 接触面风险比", "D1": "D1 背水坡安全系数",
          "D2": "D2 临水坡安全系数", "B1": "B1 堤顶高程", "D3": "D3 冲刷深度", "C6": "C6 穿堤建筑物渗流",
          "B3": "B3 风浪爬高", "A6": "A6 内部隐患", "A7": "A7 堤基处理", "C2": "C2 排水设施", "A8": "A8 结合部止水",
          "D5": "D5 沉降与裂缝", "B2": "B2 防洪标准", "B4": "B4 建筑物防洪标准", "D4": "D4 穿堤结构", "A4": "A4 护坡",

@@ -172,7 +172,7 @@ def fig_error_structure(rows, stats) -> None:
     fig = plt.figure(figsize=(FIG_W, fig_h))
     rect = lambda k, w: [xs[k] / FIG_W, bottom / fig_h, w / FIG_W, h / fig_h]
     top_label = bottom + h + 0.56
-    titles = [("rule", "规则链"), ("rf_threshold", "RF阈值策略"), ("hybrid", "RF+序数物理下限")]
+    titles = [("rule", "规则链"), ("rf_threshold", "RF阈值策略"), ("hybrid", "RF+物理下限")]
     for k, (key, title) in enumerate(titles):
         ax = fig.add_axes(rect(k, h))
         cm = confusion(rows, key)
@@ -192,7 +192,7 @@ def fig_error_structure(rows, stats) -> None:
                 ax.add_patch(Rectangle((j, 2 - i), 1, 1, facecolor=face, edgecolor="white", linewidth=1.2))
                 txt_col = "white" if (i == 2 and j == 0 and n) else "black"
                 ax.text(j + 0.5, 2 - i + 0.5, str(n), ha="center", va="center", fontsize=FS_TEXT,
-                        color=txt_col if n else "#9A9A9A", fontweight="bold" if (i != j and n) else "normal")
+                        color=txt_col, fontweight="bold" if (i != j and n) else "normal")
         ax.set_xlim(0, 3); ax.set_ylim(0, 3)
         ax.set_xticks([0.5, 1.5, 2.5], list(GRADES)); ax.set_yticks([0.5, 1.5, 2.5], list(reversed(GRADES)))
         ax.tick_params(length=0, pad=2)
@@ -211,7 +211,7 @@ def fig_error_structure(rows, stats) -> None:
              ("slope", "边坡"), ("scour", "冲刷"), ("building", "穿堤建筑物"), ("mixed", "复合")]
     by_mode = stats["original_batch"]["by_target_mode"]
     series = [("rule", "规则链", RULE, "o", 0.24), ("rf_threshold", "RF阈值策略", RF, "s", 0.0),
-              ("hybrid", "RF+序数下限", FLOOR, "D", -0.24)]
+              ("hybrid", "RF+物理下限", FLOOR, "D", -0.24)]
     ms = 4.2
     for yi, (mode, label) in enumerate(modes):
         y0 = len(modes) - 1 - yi
@@ -291,7 +291,7 @@ def fig_tradeoff(rows, stats) -> None:
     pts = [
         ("规则链", -4, o["rule"]["macro_f1"], RULE, "o", RULE),
         ("RF+C-only下限", 4, o["c_only_floor"]["macro_f1"], CONLY, "v", CONLY),
-        ("RF+序数物理下限", -4, o["hybrid"]["macro_f1"], FLOOR, "D", FLOOR),
+        ("RF+物理下限", -4, o["hybrid"]["macro_f1"], FLOOR, "D", FLOOR),
         ("RF多数投票", o["rf_majority"]["c_to_a"], o["rf_majority"]["macro_f1"], "white", "s", RF),
         ("RF阈值(0.35, 0.20)", o["rf_threshold"]["c_to_a"], o["rf_threshold"]["macro_f1"], RF, "s", RF),
         ("10 000组RF阈值中宏F1最优(0.19, 0.06)", best[1], best[0], RF, "P", RF),
@@ -415,7 +415,7 @@ def fig_inspection() -> None:
             markerfacecolor="white", markeredgecolor=DANGER, markeredgewidth=0.9, zorder=4)
     ax.text(3.0, 98, "夜间时段\n（第2章推荐）", ha="center", va="top", fontsize=FS_TEXT, color="#2E5C8A",
             linespacing=1.3)
-    ax.text(19.6, 98, "共114张，2025-08-28", ha="right", va="top", fontsize=FS_TEXT, color="#333333")
+    ax.text(19.6, 98, "共114张，2025-08-28", ha="right", va="top", fontsize=FS_TEXT, color="black")
     ax.text(12.4, 34, "已复核候选点\n（9个）", ha="left", va="center", fontsize=FS_TEXT, color=DANGER,
             linespacing=1.3)
     ax.set_xlim(0, 24); ax.set_ylim(0, 100)
@@ -431,7 +431,7 @@ LEARNER_STYLE = {  # display name, colour
     "lr": ("LR", "#9A9A9A"), "olr": ("序数LR", "#B8A23A"), "svm": ("SVM", "#A0527A"),
     "gbdt": ("GBDT", "#D08C2E"), "rf": ("RF", RF), "rf_rule": ("堆叠RF", "#17375E"),
 }
-SCOPE_STYLE = {"none": ("无下限", RF_LIGHT, "o"), "c_only": ("C-only下限", CONLY, "^"), "ordinal": ("序数下限", FLOOR, "D")}
+SCOPE_STYLE = {"none": ("无下限", RF_LIGHT, "o"), "c_only": ("C-only下限", CONLY, "^"), "ordinal": ("物理下限", FLOOR, "D")}
 
 
 def fig_policy_evaluation() -> None:
@@ -473,7 +473,7 @@ def fig_policy_evaluation() -> None:
     ax.plot(rule["safe_loss"], rule["balanced_accuracy"], "s", color=RULE, markersize=5.2,
             markeredgecolor="white", markeredgewidth=0.6, zorder=4)
     ax.annotate("规则链", (rule["safe_loss"], rule["balanced_accuracy"]), xytext=(250, 0.975),
-                fontsize=ann, color=RULE, va="center",
+                fontsize=ann, color="black", va="center",
                 arrowprops=dict(arrowstyle="-", color=RULE, linewidth=0.5, shrinkA=1, shrinkB=3))
     ax.text(418, 0.345, "仅学习器策略\n（无规则输入）：\n安全损失≥100", fontsize=ann,
             color=RF, ha="right", va="center", linespacing=1.25)
@@ -493,7 +493,7 @@ def fig_policy_evaluation() -> None:
     # Notes sit in the empty upper and right parts of the panel; relpos is where each leader line leaves its note.
     marks = [(sel_u, "*", "white", "black", 11, "仅基准约束下\n的选择", (14, 1.024), "left", (0.0, 0.5)),
              (sel_f, "*", FLOOR, "black", 11, "加物理下限约束\n后的选择", (129, 0.976), "right", (0.0, 0.3)),
-             (declared, "D", "white", FLOOR, 5.2, "声明的\nRF+序数下限\n(0.35, 0.20)", (129, 0.906), "right", (0.0, 1.0))]
+             (declared, "D", "white", FLOOR, 5.2, "声明的\nRF+物理下限\n(0.35, 0.20)", (129, 0.906), "right", (0.0, 1.0))]
     for c, mk, face, edge, size, txt, xy, ha, rel in marks:
         ax.plot(c["a_over"], c["balanced_accuracy"], marker=mk, markersize=size, markerfacecolor=face,
                 markeredgecolor=edge, markeredgewidth=0.8, linestyle="none", zorder=5)
@@ -534,7 +534,7 @@ def fig_policy_evaluation() -> None:
     learner_handles = [Line2D([], [], marker="o", color=col, linestyle="none", markersize=5, label=lab)
                        for lab, col in LEARNER_STYLE.values()]
     fig.legend(handles=scope_handles, loc="lower left", bbox_to_anchor=(0.02 / FIG_W, 0.36 / fig_h), ncol=5,
-               handletextpad=0.25, columnspacing=1.3, title="下限范围：(b)中为标记形状，(a)(c)中为颜色",
+               handletextpad=0.25, columnspacing=1.3, title="下限方式：(b)中为标记形状，(a)(c)中为颜色",
                alignment="left", borderaxespad=0.0)
     fig.legend(handles=learner_handles, loc="lower left", bbox_to_anchor=(0.02 / FIG_W, 0.0), ncol=6,
                handletextpad=0.25, columnspacing=1.3, title="学习器：(b)中为颜色", alignment="left",

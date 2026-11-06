@@ -155,46 +155,71 @@ class Canvas:
 
 # --------------------------------------------------------------------- Fig. 5.1
 def fig_framework():
-    c = Canvas(4.30)
+    """Two evidence streams (Chapter 4 seepage computation, UAV inspection) feeding one decision model."""
+    c = Canvas(5.10)
     ax = c.ax
     layers = [  # (label, top, height, colour)
-        ("数据来源", 4.26, 0.52, EV), ("证据层", 3.62, 0.46, NEUT), ("指标层", 3.04, 0.30, RULE),
-        ("模型层", 2.62, 0.94, FLOOR), ("标准层", 1.56, 0.30, DANGER), ("输出层", 1.14, 0.50, RF)]
+        ("证据来源", 5.06, 2.26, EV), ("证据层", 2.68, 0.46, NEUT), ("指标层", 2.10, 0.30, RULE),
+        ("判定模型", 1.68, 0.92, FLOOR), ("输出", 0.64, 0.46, RF)]
     for lab, top, h, col in layers:
         ax.add_patch(FancyBboxPatch((0.04, top - h), 0.62, h, boxstyle="round,pad=0,rounding_size=0.04",
                                     facecolor=tint(col, 0.22), edgecolor=col, linewidth=0.8))
-        c.line(0.35, top - h / 2, lab, size=FT, weight="bold", ha="center", color=col)
-    src = [("透明地质（第3章）", "地层与土性参数"), ("透明计算（第4章）", "水头场、出逸梯度"), ("无人机巡检" if THESIS else "透明巡检（5.4节）", "候选、复核、覆盖"),
-           ("工程台账", "设计、复核、险情"), ("运行管理", "监测、制度、应急")]
-    x, w = 0.78, 1.04
-    for t, sub in src:
-        c.box(x, 4.26, w, 0.52, EV, t, [sub], align="center", title_size=8.2, fill_alpha=0.06, pad=0.05)
-        c.arrow((x + w / 2, 3.74), (x + w / 2, 3.62))
-        x += w + 0.065
-    c.box(0.78, 3.62, 5.50, 0.46, NEUT, None, ["**证据记录与状态判别：缺失、不适用、候选、已复核、可采纳",
-                                              "可采纳性门控（空间、时间、版本相容）与桩号区间关联"],
+        c.line(0.35, top - h / 2, lab, size=FT, weight="bold", ha="center")
+    # two evidence streams
+    xl, xr, ws = 0.78, 3.78, 2.50
+    c.line(xl + ws / 2, 4.95, "渗流计算证据流", size=FT, weight="bold", ha="center")
+    c.line(xr + ws / 2, 4.95, "无人机巡检证据流", size=FT, weight="bold", ha="center")
+    left = [["透明地质模型（第3章）", "地层几何、土性与渗透参数"],
+            ["透明计算（第4章）", "水头场、向上出逸梯度 $i_{up}$、管涌通道"],
+            ["出口分级与风险比", "Ⅰ～Ⅲ级出口 → 风险比 $R$ 区间"],
+            ["空间与工况关联", "出口 → 桩号区间，计算水位 → 工况 $w$"]]
+    right = [["航线与时段规划", "重点区：计算出逸区、历史险情"],
+             ["红外与可见光采集、预处理", "相对温差 ΔT、覆盖记录"],
+             ["识别与复核", "P2ES-YOLO候选 → 确认、误报、存疑"],
+             ["空间配准", "检测框足迹 → 桩号区间"]]
+    h, gap, top0 = 0.36, 0.08, 4.80
+    for k in range(4):
+        top = top0 - k * (h + gap)
+        for x, item, col in ((xl, left[k], FLOOR), (xr, right[k], EV)):
+            c.box(x, top, ws, h, col, None, ["**" + item[0], item[1]], align="center", fill_alpha=0.07, vcenter=True,
+                  gap=0.15)
+            if k < 3:
+                c.arrow((x + ws / 2, top - h), (x + ws / 2, top - h - gap))
+    # cross links between the streams
+    ya = top0 - (h + gap) - h / 2
+    yb = top0 - h / 2
+    c.arrow((xl + ws, ya), (xr, yb), color=FLOOR, ls=(0, (3, 2)))
+    c.ax.text(3.42, 4.53, "重点\n区域", fontsize=7.0, ha="center", va="center")
+    y3 = top0 - 2 * (h + gap) - h / 2
+    c.arrow((xr, y3), (xl + ws, y3), color=EV, ls=(0, (3, 2)))
+    c.ax.text(3.53, y3 + 0.03, "冲突\n复核", fontsize=7.0, ha="center", va="bottom")
+    bottom = top0 - 3 * (h + gap) - h
+    c.box(xl, 3.02, 5.50, 0.22, NEUT, None, ["其他资料：工程台账（设计、检测、险情）、边坡稳定复核（安全系数 $K$）、运行管理记录"],
+          align="center", fill_alpha=0.05, lw=0.6, vcenter=True)
+    for x in (xl + ws / 2, xr + ws / 2):
+        c.arrow((x, bottom), (x, 3.02))
+    c.arrow((3.53, 2.80), (3.53, 2.68))
+    c.box(xl, 2.68, 5.50, 0.46, NEUT, None, ["**资料状态（有效、缺失、不适用）× 巡检处理阶段（候选、确认、误报、存疑）",
+                                            "可采纳判别：空间相交、工况相符、时间有效、版本相容"],
           align="center", fill_alpha=0.06, vcenter=True)
-    c.arrow((3.53, 3.16), (3.53, 3.04))
-    c.box(0.78, 3.04, 5.50, 0.30, RULE, None, ["**29项二级指标、5个准则层 → 5类失效模式（关联矩阵）；运行管理作安全屏障修正"],
+    c.arrow((3.53, 2.22), (3.53, 2.10))
+    c.box(xl, 2.10, 5.50, 0.30, RULE, None, ["**29项指标（C1、C4、C5 ← 风险比；D1、D2 ← $K$；C3 ← 确认事件）→ 5类失效模式"],
           align="center", fill_alpha=0.06, vcenter=True)
-    c.arrow((3.53, 2.74), (3.53, 2.62))
-    mods = [("物理规则链", ["模式响应、短板项", "观测上限、硬门控"], RULE), ("随机森林决策层", ["14项特征", "阈值策略"], RF),
-            ("序数物理下限", ["学习层只可调高", "不可调低物理等级"], FLOOR), ("复核门", ["低置信度或巡检", "候选转人工复核"], NEUT)]
-    x, w = 0.78, 1.30
+    c.arrow((3.53, 1.80), (3.53, 1.68))
+    mods = [("物理规则链", ["模式响应、短板项", "观测约束、物理约束"], RULE), ("随机森林", ["14项特征", "阈值策略"], RF),
+            ("物理下限约束", ["最终等级不低于", "规则链等级"], FLOOR), ("等级范围与复核", ["缺失资料、候选", "→ 等级范围、复核门"], NEUT)]
+    x, w = xl, 1.30
     for t, sub, col in mods:
-        c.box(x, 2.58, w, 0.58, col, t, sub, align="center", title_size=8.2, fill_alpha=0.07, pad=0.05)
+        c.box(x, 1.66, w, 0.58, col, t, sub, align="center", title_size=8.2, fill_alpha=0.07, pad=0.05)
         x += w + 0.10
-    c.box(0.78, 1.94, 5.50, 0.24, FLOOR, None, ["多目标策略评价（离线）：在4051个候选策略中按安全优先原则选择并冻结运行策略"],
+    c.box(xl, 1.03, 5.50, 0.24, FLOOR, None, ["多目标策略评价（离线）：在受控情景数据集上按安全优先原则选定运行策略"],
           align="center", fill_alpha=0.04, lw=0.6, vcenter=True)
-    c.arrow((3.53, 1.68), (3.53, 1.56))
-    c.box(0.78, 1.56, 5.50, 0.30, DANGER, None, ["**等级划分（A/B/C）、门控阈值、巡检证据判定标准、预警分级"],
-          align="center", fill_alpha=0.05, vcenter=True)
-    c.arrow((3.53, 1.26), (3.53, 1.14))
-    c.box(0.78, 1.14, 4.10, 0.50, RF, None, ["**安全等级、主控失效模式、触发原因、证据清单与待复核事项",
-                                            "证据不足时输出等级范围，并给出预警级别"], align="center", fill_alpha=0.06, vcenter=True)
-    c.box(5.02, 1.14, 1.26, 0.50, NEUT, None, ["数字孪生平台", "（第6章）"], align="center", fill_alpha=0.06, vcenter=True)
-    c.arrow((4.88, 0.89), (5.02, 0.89))
-    c.crop(0.60, 4.30)
+    c.arrow((3.53, 0.79), (3.53, 0.64))
+    c.box(xl, 0.64, 4.10, 0.46, RF, None, ["**安全等级（确定或范围）、主控失效模式、触发原因",
+                                          "证据清单、待办事项与预警级别"], align="center", fill_alpha=0.06, vcenter=True)
+    c.box(5.02, 0.64, 1.26, 0.46, NEUT, None, ["数字孪生平台", "（第6章）"], align="center", fill_alpha=0.06, vcenter=True)
+    c.arrow((4.88, 0.41), (5.02, 0.41))
+    c.crop(0.14, 5.10)
     c.save("fig5_1_framework")
 
 
@@ -205,7 +230,7 @@ def fig_indicator_system():
         ("A 工程质量", "0.1818", RULE, ["A1 断面尺寸达标率", "A2 填土质量", "A3 穿堤建筑物完好性", "A4 护坡完好率", "A5 软基段沉降",
                                        "A6 内部隐患", "A7 堤基不良地质处理", "A8 结合部止水质量", "A9 跨堤交叉工程"]),
         ("B 防洪安全", "0.1818", RULE, ["B1 堤顶高程", "B2 防洪标准符合性", "B3 风浪爬高与越浪", "B4 穿堤建筑物防洪"]),
-        ("C 渗流安全", "0.3636", FLOOR, ["C1 堤基渗透比降*", "C2 排水设施有效性", "C3 管涌与渗漏观测†", "C4 堤身渗流稳定*",
+        ("C 渗流安全", "0.3636", FLOOR, ["C1 堤基渗透坡降*", "C2 排水设施有效性", "C3 管涌与渗漏观测†", "C4 堤身渗流稳定*",
                                         "C5 接触冲刷安全*", "C6 穿堤建筑物渗流"]),
         ("D 结构安全", "0.1818", RULE, ["D1 背水坡抗滑稳定*", "D2 临水坡抗滑稳定*", "D3 堤岸冲刷稳定", "D4 穿堤结构安全",
                                        "D5 不均匀沉降与裂缝"]),
@@ -230,9 +255,9 @@ def fig_indicator_system():
             c.line(x + 0.05, y, it, size=7.5, color=color)
             y -= 0.205
     c.line(0.04, 0.47, "准则层权重为AHP常权；指标经关联矩阵映射到漫顶、渗流破坏、边坡失稳、冲刷、穿堤建筑物失效5类失效模式，运行管理作为安全屏障修正",
-           size=7.3, color=NEUT)
+           size=7.3, color="black")
     c.line(0.04, 0.30, ("*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由无人机巡检提供的观测证据指标" if THESIS else
-            "*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由透明巡检（5.4节）提供的观测证据指标"), size=7.3, color=NEUT)
+            "*  物理计算指标：C1、C4、C5取自第4章渗流计算，D1、D2取自边坡稳定复核；†  由透明巡检（5.4节）提供的观测证据指标"), size=7.3, color="black")
     c.crop(0.18, 3.62)
     c.save("fig5_2_indicator_system")
 
@@ -244,7 +269,7 @@ def fig_inspection_workflow():
             ("红外与可见光采集", ["温度矩阵、可见光影像", "GPS、时间戳、航迹", "辐射参数与覆盖记录"], EV),
             ("图像预处理", ["温度反演与发射率校正", "局部背景温差 ΔT", "双光配准、地面投影"], NEUT),
             ("智能识别", ["YOLOv8n基线网络", "P2小目标层、EIoU损失", "SimAM/CBAM注意力"], RF)]
-    row2 = [("评价接入", ["C3指标输入、观测门控", "确认事件等级下限", "覆盖充分性、复核触发"], FLOOR),
+    row2 = [("评价接入", ["C3指标输入、观测约束", "确认事件等级下限", "覆盖充分性、复核触发"], FLOOR),
             ("证据化", ["事件编号、桩号区间", "采集/入库时间", "证据状态与溯源"], NEUT),
             ("人工复核", ["确认、误报、存疑", "误报原因与处置意见", "复核人与复核时间"], DANGER),
             ("后处理", ["置信度阈值与NMS", "多帧同目标合并", "水体、植被区域排除"], RF)]
@@ -270,35 +295,35 @@ def fig_inspection_workflow():
 def fig_decision_chain():
     c = Canvas(3.45)
     # column 1: evidence channels
-    c.line(0.70, 3.33, "证据通道", size=FT, weight="bold", ha="center", color=EV)
-    ev = [("地质与材料", "地层界面、土性参数"), ("渗流与稳定计算", "$i/i_{cr}$、FoS、浸润线"),
+    c.line(0.70, 3.33, "证据通道", size=FT, weight="bold", ha="center")
+    ev = [("地质与材料", "地层界面、土性参数"), ("渗流与稳定计算", "风险比$R$、安全系数$K$"),
           ("历史与工程台账", "险情记录、指标版本"), ("无人机红外巡检", "候选框、复核记录")]
     tops = [3.17, 2.47, 1.77, 1.07]
     for (t, s), top in zip(ev, tops):
         c.box(0.04, top, 1.32, 0.56, EV, t, [s])
     # column 2: admissibility gate
-    c.box(1.58, 3.17, 1.16, 2.66, NEUT, "可采纳性门控",
-          ["$a_j=1$ 当且仅当", "空间相交、", "时间有效、", "版本相容", None, "**证据状态", "缺失、不适用、", "候选、已复核、", "可采纳", None,
+    c.box(1.58, 3.17, 1.16, 2.66, NEUT, "可采纳判别",
+          ["$a_j=1$ 当且仅当", "空间相交、工况", "相符、时间有效、", "版本相容", None, "**资料状态", "有效、缺失、不适用", "**巡检处理阶段", "候选、确认、误报", None,
            "不可采纳值只进", "溯源，不进评分"])
     for top in tops:
         c.arrow((1.36, top - 0.28), (1.58, top - 0.28))
     # column 3: rule chain and random forest
-    c.box(2.97, 3.17, 1.38, 0.98, RULE, "物理规则链", ["29项指标 → $R_m$ → $S$", "观测上限 → 硬门控", "输出 $y_{rule}$"])
-    c.box(2.97, 1.92, 1.38, 0.98, RF, "随机森林决策层", ["14项特征 → $(p_A,p_B,p_C)$", "阈值 $(\\tau_C,\\tau_B)$", "输出 $\\hat{y}_{RF}$"])
+    c.box(2.97, 3.17, 1.38, 0.98, RULE, "物理规则链", ["29项指标 → $R_m$ → $S$", "观测约束、物理约束", "输出 $y_{rule}$"])
+    c.box(2.97, 1.92, 1.38, 0.98, RF, "随机森林", ["14项特征 → $(p_A,p_B,p_C)$", "阈值 $(\\tau_C,\\tau_B)$", "输出 $\\hat{y}_{RF}$"])
     c.arrow((2.74, 2.68), (2.97, 2.68)); c.arrow((2.74, 1.43), (2.97, 1.43))
     # offline policy evaluation feeding the learned layer
     c.box(2.97, 0.80, 1.38, 0.50, RF, None, ["多目标策略评价（离线）", "冻结策略 $\\pi^*$" if THESIS else "冻结策略 $\\pi^*$，见图5.6"], fill_alpha=0.03, lw=0.6)
     c.arrow((3.66, 0.80), (3.66, 0.94), color=RF, ls=(0, (3, 2)))
     # column 4: ordinal physical floor
-    c.box(4.57, 2.36, 0.98, 1.24, FLOOR, "序数物理下限", ["$\\hat{y}=\\max(\\hat{y}_{RF},y_{rule})$", None, "可提高风险等级，", "不低于物理等级"], lw=1.3)
+    c.box(4.57, 2.36, 0.98, 1.24, FLOOR, "物理下限约束", ["$\\hat{y}=\\max(\\hat{y}_{RF},y_{rule})$", None, "可提高风险等级，", "不低于物理等级"], lw=1.3)
     c.poly([(4.35, 2.68), (4.46, 2.68), (4.46, 2.02), (4.57, 2.02)])
     c.poly([(4.35, 1.43), (4.46, 1.43), (4.46, 1.62), (4.57, 1.62)])
     # column 5: review gate and published grade
-    c.box(5.70, 3.17, 0.58, 1.10, NEUT, "发布", ["等级", "触发门控", "证据状态", "版本"], align="center")
+    c.box(5.70, 3.17, 0.58, 1.10, NEUT, "发布", ["等级", "触发约束", "证据状态", "版本"], align="center")
     c.box(5.70, 1.70, 0.58, 0.98, NEUT, "复核门", ["$\\mathrm{max}_c\\,p_c<u$", "或有候选", "转工程师"], align="center")
     c.poly([(5.55, 1.74), (5.62, 1.74), (5.62, 1.21), (5.70, 1.21)])
     c.arrow((5.99, 1.70), (5.99, 2.07))
-    c.ax.text(6.05, 1.88, "已复核", fontsize=7.0, ha="left", va="center", color=NEUT, rotation=90)
+    c.ax.text(6.05, 1.88, "已复核", fontsize=7.0, ha="left", va="center", rotation=90)
     # candidate path: inspection candidates become review tasks, never confirmed events
     c.poly([(0.70, 0.51), (0.70, 0.21), (5.99, 0.21), (5.99, 0.72)], color=DANGER, ls=(0, (3, 2)))
     c.ax.text(3.33, 0.02, "巡检候选 → 复核任务；时间、位置与复核状态闭合前不作为确认事件进入等级",
@@ -311,7 +336,7 @@ def fig_evaluation_system():
     c = Canvas(3.32)
     top1, h1 = 3.24, 1.16
     c.box(0.04, top1, 2.08, h1, RF, "候选策略空间 Π",
-          ["学习器 ℓ：RF、LR、序数LR、", "SVM、GBDT、堆叠RF", "阈值 $(\\tau_C,\\tau_B)$：15×15网格", "下限范围 φ：无、C-only、序数",
+          ["学习器 ℓ：RF、LR、序数LR、", "SVM、GBDT、堆叠RF", "阈值 $(\\tau_C,\\tau_B)$：15×15网格", "下限方式 φ：无、C-only、物理下限",
            "每批 6×225×3+1 = 4051 个策略"], num=1)
     c.box(2.33, top1, 1.52, h1, NEUT, "分组样本外评价",
           ["按特征向量分组五折，", "各策略共用同一折", "与随机种子，超参数", "固定 → 每个策略", "一个混淆矩阵"], num=2)
