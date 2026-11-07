@@ -81,6 +81,7 @@ def zipdir(d, path):
     subprocess.run(["zip", "-qXr", os.path.abspath(path), "."], cwd=d, check=True)
 
 
+print("full: comments dropped (text deleted):", drop_comments(full))
 zipdir(full, f"{out}/full.docx")
 
 # ---------------------------------------------------------------- Chapter 5 excerpt

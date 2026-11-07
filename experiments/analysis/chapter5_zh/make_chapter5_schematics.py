@@ -219,7 +219,38 @@ def fig_framework():
                                           "证据清单、待办事项与预警级别"], align="center", fill_alpha=0.06, vcenter=True)
     c.box(5.02, 0.64, 1.26, 0.46, NEUT, None, ["数字孪生平台", "（第6章）"], align="center", fill_alpha=0.06, vcenter=True)
     c.arrow((4.88, 0.41), (5.02, 0.41))
-    c.crop(0.14, 5.10)
+    c.line(0.04, 5.20, "a  总体框架", size=FT, weight="bold")
+    # ---- (b) implementation procedure (replaces the former table of eight steps)
+    c.line(0.04, -0.06, "b  实施流程", size=FT, weight="bold")
+    stages = [("证据准备（第1～3步）", [("①确定", "评价单元"), ("②登记", "证据"), ("③判别", "证据状态")], EV),
+              ("等级计算（第4～6步）", [("④指标", "量化"), ("⑤规则链", "计算"), ("⑥随机森林", "与物理下限")], FLOOR),
+              ("复核与发布（第7、8步）", [("⑦复核", "与确定"), ("⑧发布", "与更新")], RF)]
+    cw, ch, cg, sg = 0.62, 0.42, 0.08, 0.14
+    x = 0.15
+    top_s, h_s = -0.20, 0.78
+    centers = []
+    for title, chips, col in stages:
+        n = len(chips)
+        sw = n * cw + (n - 1) * cg + 0.12
+        c.box(x, top_s, sw, h_s, col, None, [], fill_alpha=0.07, lw=0.8)
+        c.line(x + sw / 2, top_s - 0.12, title, size=7.6, weight="bold", ha="center")
+        cx = x + 0.06
+        for k, (l1, l2) in enumerate(chips):
+            c.box(cx, top_s - 0.26, cw, ch, col, None, [l1, l2], align="center", fill_alpha=0.12, vcenter=True,
+                  gap=0.15, lw=0.6)
+            centers.append(cx + cw / 2)
+            if k < n - 1:
+                c.arrow((cx + cw, top_s - 0.26 - ch / 2), (cx + cw + cg, top_s - 0.26 - ch / 2))
+            cx += cw + cg
+        if title.startswith("复核") is False:
+            c.arrow((x + sw, top_s - 0.26 - ch / 2), (x + sw + sg, top_s - 0.26 - ch / 2))
+        x += sw + sg
+    yb = top_s - 0.26 - ch
+    yl = yb - 0.20
+    c.poly([(centers[-1], yb), (centers[-1], yl), (centers[0], yl), (centers[0], yb)], color=DANGER, ls=(0, (3, 2)))
+    c.ax.text((centers[0] + centers[-1]) / 2, yl - 0.04, "水位工况、巡检发现或复核结论变化时，从相应步骤重新执行，结论随之更新",
+              fontsize=7.4, ha="center", va="top")
+    c.crop(yl - 0.22, 5.30)
     c.save("fig5_1_framework")
 
 
@@ -308,7 +339,7 @@ def fig_decision_chain():
     for top in tops:
         c.arrow((1.36, top - 0.28), (1.58, top - 0.28))
     # column 3: rule chain and random forest
-    c.box(2.97, 3.17, 1.38, 0.98, RULE, "物理规则链", ["29项指标 → $R_m$ → $S$", "观测约束、物理约束", "输出 $y_{rule}$"])
+    c.box(2.97, 3.17, 1.38, 0.98, RULE, "物理规则链", ["29项指标 → $\\psi_m$ → $S$", "观测约束、物理约束", "输出 $y_{rule}$"])
     c.box(2.97, 1.92, 1.38, 0.98, RF, "随机森林", ["14项特征 → $(p_A,p_B,p_C)$", "阈值 $(\\tau_C,\\tau_B)$", "输出 $\\hat{y}_{RF}$"])
     c.arrow((2.74, 2.68), (2.97, 2.68)); c.arrow((2.74, 1.43), (2.97, 1.43))
     # offline policy evaluation feeding the learned layer

@@ -369,9 +369,9 @@ def fig_ch4_interval() -> None:
 def fig_injection() -> None:
     d = CA["inspection_injection"]
     cases = [("无巡检候选", d["without_candidates"]["score"], d["without_candidates"]["C3"], "A"),
-             ("原有做法：2个未复核\n候选直接计入", d["delivered_rules_with_unreviewed_candidates"]["score"],
+             ("直接计入：2个未复核\n候选按置信度计入", d["delivered_rules_with_unreviewed_candidates"]["score"],
               d["delivered_rules_with_unreviewed_candidates"]["C3"], d["delivered_rules_with_unreviewed_candidates"]["grade"]),
-             ("本章规则：合并为1个\n候选，复核为误报", d["without_candidates"]["score"], d["without_candidates"]["C3"], "A")]
+             ("证据状态规则：合并为\n1个候选，复核为误报", d["without_candidates"]["score"], d["without_candidates"]["C3"], "A")]
     fig = plt.figure(figsize=(W, 2.05))
     gs = fig.add_gridspec(1, 2, wspace=0.55, left=0.2, right=0.97, bottom=0.2, top=0.87)
     y = np.arange(len(cases))[::-1]
