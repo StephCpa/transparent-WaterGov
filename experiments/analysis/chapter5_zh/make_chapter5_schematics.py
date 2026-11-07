@@ -166,14 +166,14 @@ def fig_framework():
                                     facecolor=tint(col, 0.22), edgecolor=col, linewidth=0.8))
         c.line(0.35, top - h / 2, lab, size=FT, weight="bold", ha="center")
     # two evidence streams
-    xl, xr, ws = 0.78, 3.78, 2.50
+    xl, xr, ws = 0.78, 3.62, 2.66
     c.line(xl + ws / 2, 4.95, "渗流计算证据流", size=FT, weight="bold", ha="center")
     c.line(xr + ws / 2, 4.95, "无人机巡检证据流", size=FT, weight="bold", ha="center")
     left = [["透明地质模型（第3章）", "地层几何、土性与渗透参数"],
             ["透明计算（第4章）", "水头场、向上出逸梯度 $i_{up}$、管涌通道"],
             ["出口分级与风险比", "Ⅰ～Ⅲ级出口 → 风险比 $R$ 区间"],
             ["空间与工况关联", "出口 → 桩号区间，计算水位 → 工况 $w$"]]
-    right = [["航线与时段规划", "重点区：计算出逸区、历史险情"],
+    right = [["航线与时段规划", "堤顶、背水坡、坡脚与历史险情处"],
              ["红外与可见光采集、预处理", "相对温差 ΔT、覆盖记录"],
              ["识别与复核", "P2ES-YOLO候选 → 确认、误报、存疑"],
              ["空间配准", "检测框足迹 → 桩号区间"]]
@@ -185,14 +185,6 @@ def fig_framework():
                   gap=0.15)
             if k < 3:
                 c.arrow((x + ws / 2, top - h), (x + ws / 2, top - h - gap))
-    # cross links between the streams
-    ya = top0 - (h + gap) - h / 2
-    yb = top0 - h / 2
-    c.arrow((xl + ws, ya), (xr, yb), color=FLOOR, ls=(0, (3, 2)))
-    c.ax.text(3.42, 4.53, "重点\n区域", fontsize=7.0, ha="center", va="center")
-    y3 = top0 - 2 * (h + gap) - h / 2
-    c.arrow((xr, y3), (xl + ws, y3), color=EV, ls=(0, (3, 2)))
-    c.ax.text(3.53, y3 + 0.03, "冲突\n复核", fontsize=7.0, ha="center", va="bottom")
     bottom = top0 - 3 * (h + gap) - h
     c.box(xl, 3.02, 5.50, 0.22, NEUT, None, ["其他资料：工程台账（设计、检测、险情）、边坡稳定复核（安全系数 $K$）、运行管理记录"],
           align="center", fill_alpha=0.05, lw=0.6, vcenter=True)
